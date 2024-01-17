@@ -1,15 +1,15 @@
-﻿PersonName,PersonDOB,DoctorSpeciality,NurseSpeciality,DoctorName,DoctorDOB,NurseName,NurseDOB,HospitalAddress,HospitalName,MedicineName,Medicine Dose,DiagnosisName,DiagnosisFrequency,DiagnosisOccurance,,,,DiagnosisName,DiagnosisFrequency,DiagnosisOccurance
-Mark Jones,3/22/1977,Family Practitioner,Cardiac System,Tim Walker,5/11/1985,Ashley Johnson,7/30/1990,1234 Acorn Street,Saint Mary,jardiance,10mg,Diabetes,chronic,11/14/2021,,,,Diabetes,chronic,11/14/2021
-Sue Smith,5/14/1993,Family Practitioner,Pediatrics,Ben Marsh,2/23/1970,Bella Thomas,2/23/1976,333 Ohio Avenue,Methodist,null,null,Back pain,acute,10/13/2023,,,,Back pain,acute,10/13/2023
-Joe Elmer,3/24/2000,Family Medicine,Oncologic,Tina Brown,1/21/1967,Paul Allen,11/2/1992,5678 Pine Avenue,Mary Greely Medical Center,null,null,Shoulder pain,acute,10/12/2014,,,,Shoulder pain,acute,10/12/2014
-Ben Gardner,2/25/1977,Cardiology,Emergency Room,Hailey Elliot,5/22/1989,Ashley Johnson,12/20/1988,1234 Acorn Street,Saint Mary,Ernesto,49mg,Heart Failure,acute,4/21/2013,,,,Heart Failure,acute,4/21/2013
-Jessie Brown,8/6/1992,Endocrinology,Pediatrics,Mike Hall,7/21/1979,Josh Raines,1/31/1970,15 Main Street,Good Shepherd,levothyroxine,null,Hypothyroidism,chronic,6/2/2019,,,,Hypothyroidism,chronic,6/2/2019
-Derrick White,11/17/1968,Family Medicine,Pediatrics,Hunter Green,3/15/1983,Kim Suzuki,3/14/1951,27 E Street,Flower Flake Clinic,metformin,8.5ml,Diabetes,chronic,5/14/2015,,,,Diabetes,chronic,5/14/2015
-Timothy Scott,10/28/1982,Family Medicine,Pediatrics,Joey Short,2/23/1970,Kim Suzuki,3/15/1951,1935 Greenwood Avenue,Fortune Hospital,null,null,Back pain,chronic,2/16/2016,,,,Back pain,chronic,2/16/2016
-Lucy Hampton,2/28/1989,Cardiology,Pediatrics,Amanda Beckett,8/19/1980,Ian Grimm,6/5/1913,155 Clover Street,Care Now,iron supplement,29mg,Anemia,chronic,4/20/1967,,,,Anemia,chronic,4/20/1967
-Matt Liang,9/21/1979,Family Medicine,Oncologic,Randy Outman,6/7/1968,Ashley Soriano,1/31/1970,222 FDR Avenue,My Care Clinic,Ernesto,51mg,Heart Failure,chronic,5/20/1988,,,,Heart Failure,chronic,5/20/1988
-Anjali Patel,4/13/1965,Cardiology,Cardiology,Hailey Elliot,5/22/1989,Abby Smith,1/4/1997,223 FDR Avenue,My Care Clinic,null,null,hyperthyroidism,chronic,8/3/2015,,,,hyperthyroidism,chronic,8/3/2015
-Mark Jones,3/22/1977,Family Practitioner,Cardiac System,Tim Walker,5/11/1985,Ashley Johnson,7/30/1990,1234 Acorn Street,Saint Mary,januvia,25mg,Diabetes,chronic,11/14/2021,,,,Diabetes,chronic,11/14/2021
+﻿Patient Name,Patient DOB,Doctor Speciality,Nurse Speciality,Doctor Name,Doctor DOB,Nurse Name,Nurse DOB,Hospital Address,Hospital Name,Medicine Name,Medicine Dose,Diagnosis Name,Diagnosis Frequency,Diagnosis Occurance,,,,,,
+Mark Jones,3/22/1977,Family Practitioner,Cardiac System,Tim Walker,5/11/1985,Ashley Johnson,7/30/1990,1234 Acorn Street,Saint Mary,jardiance,10mg,Diabetes,chronic,11/14/2021,,,,,,
+Sue Smith,5/14/1993,Family Practitioner,Pediatrics,Ben Marsh,2/23/1970,Bella Thomas,2/23/1976,333 Ohio Avenue,Methodist,null,null,Back pain,acute,10/13/2023,,,,,,
+Joe Elmer,3/24/2000,Family Medicine,Oncologic,Tina Brown,1/21/1967,Paul Allen,11/2/1992,5678 Pine Avenue,Mary Greely Medical Center,null,null,Shoulder pain,acute,10/12/2014,,,,,,
+Ben Gardner,2/25/1977,Cardiology,Emergency Room,Hailey Elliot,5/22/1989,Ashley Johnson,12/20/1988,1234 Acorn Street,Saint Mary,Ernesto,49mg,Heart Failure,acute,4/21/2013,,,,,,
+Jessie Brown,8/6/1992,Endocrinology,Pediatrics,Mike Hall,7/21/1979,Josh Raines,1/31/1970,15 Main Street,Good Shepherd,levothyroxine,null,Hypothyroidism,chronic,6/2/2019,,,,,,
+Derrick White,11/17/1968,Family Medicine,Pediatrics,Hunter Green,3/15/1983,Kim Suzuki,3/14/1951,27 E Street,Flower Flake Clinic,metformin,8.5ml,Diabetes,chronic,5/14/2015,,,,,,
+Timothy Scott,10/28/1982,Family Medicine,Pediatrics,Joey Short,2/23/1970,Kim Suzuki,3/15/1951,1935 Greenwood Avenue,Fortune Hospital,null,null,Back pain,chronic,2/16/2016,,,,,,
+Lucy Hampton,2/28/1989,Cardiology,Pediatrics,Amanda Beckett,8/19/1980,Ian Grimm,6/5/1913,155 Clover Street,Care Now,iron supplement,29mg,Anemia,chronic,4/20/1967,,,,,,
+Matt Hart Liang,9/21/1979,Family Medicine,Oncologic,Randy Outman,6/7/1968,Ashley Soriano,1/31/1970,222 FDR Avenue,My Care Clinic,Ernesto,51mg,Heart Failure,chronic,5/20/1988,,,,,,
+Anjali Patel,4/13/1965,Cardiology,Cardiology,Hailey Elliot,5/22/1989,Abby Smith,1/4/1997,223 FDR Avenue,My Care Clinic,null,null,hyperthyroidism,chronic,8/3/2015,,,,,,
+Mark Jones,3/22/1977,Family Practitioner,Cardiac System,Tim Walker,5/11/1985,Ashley Johnson,7/30/1990,1234 Acorn Street,Saint Mary,januvia,25mg,Diabetes,chronic,11/14/2021,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
