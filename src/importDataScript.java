@@ -14,8 +14,9 @@ public class importDataScript {
                 .replace("${user}", "hospitalAdmin")
                 .replace("${pass}", "Password123");
 
-        Connection connection = null;
+        String fileToRead = "";
 
+        Connection connection = null;
         try {
             connection = DriverManager.getConnection(fullURL);
             System.out.println("Success");
