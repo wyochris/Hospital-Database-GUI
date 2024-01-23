@@ -15,12 +15,6 @@ cursor = cnxn.cursor()
 file_path = 'dataSource.csv'
 df = pd.read_csv(file_path)
 
-def get_scope_identity(cursor):
-    cursor.execute("SELECT @@IDENTITY AS ID;")
-    # cursor.execute("SELECT SCOPE_IDENTITY() AS ID;")
-    result = cursor.fetchone()
-    return result.ID if result else None
-
 def format_date(date_str):
     try:
         return datetime.strptime(date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
@@ -37,6 +31,7 @@ def yes_no(value):
 
 def do_data(df, cursor):
     for index, row in df.iterrows():
+
         can_prescribe = yes_no(row['Can Prescribe'])
         paitent_person_id = None
         provider_person_id = None
@@ -46,6 +41,7 @@ def do_data(df, cursor):
         paitent_dob = None
         provider_dob = None
 
+        # INSERT INTO PERSON
         paitent_dob = format_date(row['Patient DOB'])
         if paitent_dob:
             cursor.execute("""
@@ -59,24 +55,60 @@ def do_data(df, cursor):
                  row['Patient Name'].split()[0],
                  row['Patient Name'].split()[-1], paitent_dob)
 
-            paitent_person_id = get_scope_identity(cursor)
-            if paitent_person_id is not None:
-                cursor.execute("INSERT INTO patients (ID) VALUES (?)", paitent_person_id)
+            # GET THE PERSON ID
+            cursor.execute("""
+                            SELECT ID FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?
+                            """,  row['Patient Name'].split()[0],
+                                  row['Patient Name'].split()[-1], paitent_dob)
+            
+            paitent_person_id = cursor.fetchone().ID
+            print("PAITENT ID IS: ", paitent_person_id)
 
+            #INSERT INTO PAITENT
+            if paitent_person_id is not None:
+                cursor.execute("""
+                               IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
+                               BEGIN
+                                    INSERT INTO patients (ID) VALUES (?)
+                               END
+                               """, row['Patient Name'].split()[0],
+                                  row['Patient Name'].split()[-1], paitent_dob, paitent_person_id)
+                
+###################################################################################################################################
+
+        #INSERT INTO PROVIDER
         provider_dob = format_date(row['Provider DOB'])
         if provider_dob:
             cursor.execute("""
-                INSERT INTO person (FirstName, LastName, DOB)
-                VALUES (?, ?, ?)
-            """, row['Provider Name'].split()[0], row['Provider Name'].split()[-1], provider_dob)
+                IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
+                BEGIN
+                    INSERT INTO person (FirstName, LastName, DOB)
+                    VALUES (?, ?, ?)
+                END
+            """, row['Provider Name'].split()[0], row['Provider Name'].split()[-1], provider_dob,
+            row['Provider Name'].split()[0], row['Provider Name'].split()[-1], provider_dob)
            
-            provider_person_id = get_scope_identity(cursor)
-           
+           #GET THE PERSON ID
             cursor.execute("""
-                INSERT INTO providers (ID, Speciality, CanPrescribe)
-                VALUES (?, ?, ?)
-            """, provider_person_id, row['Provider Speciality'],can_prescribe)
+                            SELECT ID FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?
+                            """, 
+                            row['Provider Name'].split()[0], row['Provider Name'].split()[-1], provider_dob)
+            
+            provider_person_id = cursor.fetchone().ID
+           
+           # INESRT INTO PROVIDOR
+            cursor.execute("""
+                IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
+                BEGIN
+                    INSERT INTO providers (ID, Speciality, CanPrescribe)
+                    VALUES (?, ?, ?)
+                END
+            """,row['Provider Name'].split()[0], row['Provider Name'].split()[-1], provider_dob,
+                 provider_person_id, row['Provider Speciality'],can_prescribe)
+            
+###################################################################################################################################
 
+        # INSERT INTO DIAGNOSIS
         cursor.execute("""
            IF NOT EXISTS (SELECT 1 FROM diagnosis WHERE Name = ?)
             BEGIN
@@ -84,8 +116,18 @@ def do_data(df, cursor):
                 VALUES (?, ?, ?)
             END
         """, row['Diagnosis Name'], row['Diagnosis Name'], row['Diagnosis Occurance'], row['Diagnosis Frequency'])
-        diagnosis_id = get_scope_identity(cursor)
 
+        # GET THE DIAGNOSIS ID
+        cursor.execute("""
+                        SELECT ID FROM diagnosis WHERE Name = ?
+                        """, 
+                        row['Diagnosis Name'])
+        
+        diagnosis_id = cursor.fetchone().ID
+
+###################################################################################################################################
+
+        # INSERT INTO SYMPTOMS
         symptom_name = row['Symptoms']
         cursor.execute("""
             IF NOT EXISTS (SELECT 1 FROM symptoms WHERE Name = ?)
@@ -94,17 +136,18 @@ def do_data(df, cursor):
                 VALUES (?)
             END
         """, symptom_name, symptom_name)
-        symptom_id = get_scope_identity(cursor)
 
-        # case where symptom is already there, so I use select statement instead of scope identity 
-        if symptom_id is None:
-                    cursor.execute("""
-                        SELECT ID FROM symptoms WHERE Name = ?
-                        """, symptom_name)
-                    symptom_id = cursor.fetchone().ID
+        # GET THE SYMPTOM ID
+        cursor.execute("""
+            SELECT ID FROM symptoms WHERE Name = ?
+            """, symptom_name)
+        symptom_id = cursor.fetchone().ID
+        
+        print("PAITENT ID IS: ", paitent_person_id)
 
-        print("SYMPTOM ID IS: ", symptom_id, "Paitent ID IS: ", paitent_person_id)
+###################################################################################################################################
 
+        # INSERT INTO EXHIBITS
         if symptom_id is not None and paitent_person_id is not None:
             cursor.execute("""
             IF NOT EXISTS (SELECT 1 FROM exhibits WHERE PatientID = ? AND SymptomID = ?)
@@ -114,26 +157,57 @@ def do_data(df, cursor):
                 END
             """, paitent_person_id, symptom_id, paitent_person_id, symptom_id)
 
-        cursor.execute("INSERT INTO hospital (Name, Address) VALUES (?, ?)", row['Hospital Name'], row['Hospital Address'])
-        hospital_id = get_scope_identity(cursor)
+###################################################################################################################################
 
+        # INSERT INTO HOSPITAL
+        cursor.execute("""
+                       IF NOT EXISTS (SELECT 1 FROM hospital WHERE Name = ? AND Address = ?)
+                       INSERT INTO hospital (Name, Address) VALUES (?, ?)
+                       """
+                       , row['Hospital Name'], row['Hospital Address'], row['Hospital Name'], row['Hospital Address'])
+        
+        # GET THE HOSPITAL ID
+        cursor.execute("""
+                        SELECT ID FROM hospital WHERE Name = ? AND Address = ?
+                        """, 
+                        row['Hospital Name'], row['Hospital Address'])
+        
+        hospital_id = cursor.fetchone().ID
+
+###################################################################################################################################
+
+        # INSERT INTO TAKESCAREOF
         if provider_person_id is not None and paitent_person_id is not None and hospital_id is not None:
             cursor.execute("""
                 INSERT INTO takesCareOf (ProviderID, PatientID, HospitalID, DateOfVisit)
                 VALUES (?, ?, ?, ?)
             """, provider_person_id, paitent_person_id, hospital_id, row['Diagnosis Occurance']) 
 
-        if pd.notna(row['Medicine Name']):
-            cursor.execute("INSERT INTO medicine (name) VALUES (?)", row['Medicine Name'])
-            medicine_id = get_scope_identity(cursor)
+###################################################################################################################################
 
-            if provider_person_id is not None and paitent_person_id is not None and medicine_id is not None:
-
-                cursor.execute("""
-                    INSERT INTO prescribes (PatientID, MedicineID, ProviderID, Dose)
-                    VALUES (?, ?, ?, ?)
-                """, paitent_person_id, medicine_id, provider_person_id, row['Medicine Dose'])
+        # INSERT INTO MEDICINE
+        cursor.execute("""
+                        IF NOT EXISTS (SELECT 1 FROM medicine WHERE Name = ?)
+                        INSERT INTO medicine (name) VALUES (?)
+                        """
+                        , row['Medicine Name'], row['Medicine Name'])
         
+        cursor.execute(""" SELECT ID FROM medicine WHERE name = ?
+                        """, row['Medicine Name'])
+        medicine_id = cursor.fetchone().ID
+
+###################################################################################################################################
+
+        # INSERT INTO PRESCRIBES
+        if provider_person_id is not None and paitent_person_id is not None and medicine_id is not None:
+            cursor.execute("""
+                INSERT INTO prescribes (PatientID, MedicineID, ProviderID, Dose)
+                VALUES (?, ?, ?, ?)
+            """, paitent_person_id, medicine_id, provider_person_id, row['Medicine Dose'])
+
+###################################################################################################################################
+
+        # INSERT INTO HAS
         if paitent_person_id is not None and diagnosis_id:
             cursor.execute("INSERT INTO has (PatientID, DiagnosisID) VALUES (?, ?)", paitent_person_id, diagnosis_id)
 
