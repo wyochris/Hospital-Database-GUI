@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 import javax.swing.*;
 
@@ -21,36 +19,54 @@ public class Main extends JFrame{
     static final int frameLocX = 250;
     static final int frameLocY = 350;
 
+    private JButton loginAsDoctor;
+    private JButton loginAsAdmin;
+    private JButton cancelButton;
+    private JButton logInButton;
+
+    private JTextField field1;
+
+    private JTextField field2;
+
+    static String field1text = "fail";
+    static String field2text = "fail";
+
 
     private void runApp() {
         frame = new JFrame();
+        panel = new JPanel();
 
         //Set Frame Properties
-        frame = new JFrame();
         frame.setTitle("Hospital");
         frame.setLocation(frameLocX, frameLocY);
         frame.setLayout(new BorderLayout());
 
 
-        connect();
+
         initializeHospitalLogin();
         frame.pack();
         frame.setVisible(true);
-        closeConnection();
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 
+
+
+
+
     private void initializeHospitalLogin() {
-        JButton loginAsDoctor = new JButton("Doctor Login");
-        JButton loginAsAdmin = new JButton("Admin Login");
-        JButton cancelButton = new JButton("Cancel");
+        loginAsDoctor = new JButton("Doctor Login");
+        loginAsAdmin = new JButton("Admin Login");
+        cancelButton = new JButton("Cancel");
+        logInButton = new JButton("Log In");
         panel = new JPanel();
 
-        JTextField field1 = new JTextField();
+        field1 = new JTextField();
 
 
-        JTextField field2 = new JTextField();
+        field2 = new JTextField();
+
 
 
 
@@ -58,79 +74,123 @@ public class Main extends JFrame{
 //		JButton loginAsPatient = new JButton();
 
 
-        loginAsDoctor.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Hello Doctor!");
-                field1.setText("Doctor Username");
+        loginAsDoctor.addActionListener(e -> {
+            System.out.println("Hello Doctor!");
+            field1.setText("Doctor Username");
 
-                panel.add(field1);
+            panel.add(field1);
 
-                field2.setText("Doctor Password");
-                panel.add(field2);
+            field2.setText("Doctor Password");
+            panel.add(field2);
 
-                panel.add(cancelButton);
+            panel.add(cancelButton);
+            panel.add(logInButton);
 
 
-                updateFrame();
-                loginAsDoctor.setVisible(false);
-                loginAsAdmin.setVisible(false);
-                frame.repaint();
+            updateFrame();
+            frame.setTitle("Doctor Login");
+            setButtons();
+            frame.repaint();
 
+        });
+
+        loginAsAdmin.addActionListener(e -> {
+            System.out.println("Hello Admin!");
+
+            field1.setText("Admin Username");
+            panel.add(field1);
+
+            field2.setText("Admin Password");
+            panel.add(field2);
+
+            panel.add(cancelButton);
+            panel.add(logInButton);
+
+
+
+           updateFrame();
+            frame.setTitle("Admin Login");
+            setButtons();
+            frame.repaint();
+        });
+
+        cancelButton.addActionListener(e -> {
+            System.out.println("Cancelled");
+
+            field1.setVisible(false);
+            field2.setVisible(false);
+
+
+            updateFrame();
+            frame.setTitle("Hospital");
+            loginAsDoctor.setVisible(true);
+            loginAsAdmin.setVisible(true);
+            logInButton.setVisible(false);
+            cancelButton.setVisible(false);
+            frame.repaint();
+        });
+
+        logInButton.addActionListener(e -> {
+            field1text = field1.getText();
+            System.out.println(field1text);
+
+            field2text = field2.getText();
+            System.out.println(field2text);
+
+            field1.setVisible(false);
+            field2.setVisible(false);
+            loginAsDoctor.setVisible(false);
+            loginAsAdmin.setVisible(false);
+            logInButton.setVisible(false);
+            cancelButton.setVisible(false);
+
+
+            connect();
+            try {
+                JLabel jlabel = new JLabel("Successfully Connected");
+                panel.add(jlabel);
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+                ResultSetMetaData rsmd = rs.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+                while (rs.next()) {
+                    for (int i = 1; i <= columnsNumber; i++) {
+                        if (i > 1) System.out.print(",  ");
+                        String columnValue = rs.getString(i);
+                        jlabel = new JLabel(columnValue);
+                        panel.add(jlabel);
+                        System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                    }
+                    System.out.println("");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
-        } );
-
-        loginAsAdmin.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Hello Admin!");
-
-                field1.setText("Admin Username");
-                panel.add(field1);
-
-                field2.setText("Admin Password");
-                panel.add(field2);
-
-                panel.add(cancelButton);
 
 
-               updateFrame();
-                loginAsDoctor.setVisible(false);
-                loginAsAdmin.setVisible(false);
-                frame.repaint();
-            }
-        } );
-
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Cancelled");
-
-                field1.setText("Admin Username");
-                panel.add(field1);
-
-                field2.setText("Admin Password");
-                panel.add(field2);
-
-                panel.add(cancelButton);
-
-
-                updateFrame();
-                loginAsDoctor.setVisible(false);
-                loginAsAdmin.setVisible(false);
-                frame.repaint();
-            }
-        } );
+            closeConnection();
+        });
 
 
         panel.add(loginAsDoctor);
         panel.add(loginAsAdmin);
-//		panel.add(loginAsPatient);
+
+        //		panel.add(loginAsPatient);
 
 
         frame.add(panel);
-        frame.add(panel);
-
         frame.repaint();
 
-        return;
+
+    }
+
+    private void setButtons(){
+        field1.setVisible(true);
+        field2.setVisible(true);
+        loginAsDoctor.setVisible(false);
+        loginAsAdmin.setVisible(false);
+        logInButton.setVisible(true);
+        cancelButton.setVisible(true);
 
     }
 
@@ -142,7 +202,7 @@ public class Main extends JFrame{
 
     private static void updateFrame() {
         frame.pack();
-        frame.setLocation(frameLocX, frameLocY);
+//        frame.setLocation(frameLocX, frameLocY);
         frame.setSize(frameWidth, frameHeight);
         frame.setLayout(new BorderLayout());
 
@@ -155,8 +215,10 @@ public class Main extends JFrame{
         String fullURL = url
                 .replace("${dbServer}", "golem.csse.rose-hulman.edu")
                 .replace("${dbName}", "Hospital")
-                .replace("${user}", "hospitalAdmin")
-                .replace("${pass}", "Password123");
+                .replace("${user}", field1text)
+                .replace("${pass}", field2text);
+//                .replace("${user}", "hospitalAdmin")
+//                .replace("${pass}", "Password123");
 
 
 
