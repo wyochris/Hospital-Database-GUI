@@ -7,11 +7,15 @@ import java.io.IOException;
 import java.sql.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 public class Main extends JFrame{
 
     private static JFrame frame;
     private JPanel panel;
+    private JPanel textPanel;
+    private JTable resultTable;
     private static Connection connection = null;
     static final int frameWidth = 600;
     static final int frameHeight = 600;
@@ -23,25 +27,29 @@ public class Main extends JFrame{
     private JButton loginAsAdmin;
     private JButton cancelButton;
     private JButton logInButton;
+    private JPanel resultPanel;
+    private JPanel bottomPanel;
 
     private JTextField field1;
 
     private JTextField field2;
 
-    static String field1text = "fail";
-    static String field2text = "fail";
+    private static String field1text = "fail";
+    private static String field2text = "fail";
+    private JLabel success;
 
 
     private void runApp() {
         frame = new JFrame();
         panel = new JPanel();
+        textPanel = new JPanel();
+        resultPanel = new JPanel();
+        bottomPanel = new JPanel();
 
         //Set Frame Properties
         frame.setTitle("Hospital");
         frame.setLocation(frameLocX, frameLocY);
         frame.setLayout(new BorderLayout());
-
-
 
         initializeHospitalLogin();
         frame.pack();
@@ -49,43 +57,32 @@ public class Main extends JFrame{
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
-
-
-
-
-
     private void initializeHospitalLogin() {
         loginAsDoctor = new JButton("Doctor Login");
         loginAsAdmin = new JButton("Admin Login");
         cancelButton = new JButton("Cancel");
         logInButton = new JButton("Log In");
         panel = new JPanel();
+//        panel.setLayout(new BorderLayout());
 
         field1 = new JTextField();
-
-
         field2 = new JTextField();
-
-
-
 
 //		TODO: add login as patient for later functionality
 //		JButton loginAsPatient = new JButton();
-
 
         loginAsDoctor.addActionListener(e -> {
             System.out.println("Hello Doctor!");
             field1.setText("Doctor Username");
 
-            panel.add(field1);
+            textPanel.add(field1);
 
             field2.setText("Doctor Password");
-            panel.add(field2);
+            textPanel.add(field2);
 
-            panel.add(cancelButton);
-            panel.add(logInButton);
+            textPanel.add(logInButton);
 
+            textPanel.add(cancelButton);
 
             updateFrame();
             frame.setTitle("Doctor Login");
@@ -98,17 +95,16 @@ public class Main extends JFrame{
             System.out.println("Hello Admin!");
 
             field1.setText("Admin Username");
-            panel.add(field1);
+            textPanel.add(field1);
 
             field2.setText("Admin Password");
-            panel.add(field2);
+            textPanel.add(field2);
 
-            panel.add(cancelButton);
-            panel.add(logInButton);
+            textPanel.add(logInButton);
 
+            textPanel.add(cancelButton);
 
-
-           updateFrame();
+            updateFrame();
             frame.setTitle("Admin Login");
             setButtons();
             frame.repaint();
@@ -120,13 +116,21 @@ public class Main extends JFrame{
             field1.setVisible(false);
             field2.setVisible(false);
 
-
             updateFrame();
             frame.setTitle("Hospital");
+//            textPanel.removeAll();
+            if(this.success != null){
+                success.setVisible(false);
+            }
+            resultPanel.removeAll();
+            if(resultPanel != null){
+                frame.remove(resultPanel);
+            }
             loginAsDoctor.setVisible(true);
             loginAsAdmin.setVisible(true);
             logInButton.setVisible(false);
             cancelButton.setVisible(false);
+            closeConnection();
             frame.repaint();
         });
 
@@ -143,45 +147,68 @@ public class Main extends JFrame{
             loginAsAdmin.setVisible(false);
             logInButton.setVisible(false);
             cancelButton.setVisible(false);
-
+            frame.repaint();
 
             connect();
             try {
-                JLabel jlabel = new JLabel("Successfully Connected");
-                panel.add(jlabel);
+                success = new JLabel("Successfully Connected");
+                textPanel.add(success);
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+
+                frame.add(textPanel, BorderLayout.SOUTH);
+
+                DefaultTableModel tableModel = new DefaultTableModel();
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
-                while (rs.next()) {
-                    for (int i = 1; i <= columnsNumber; i++) {
-                        if (i > 1) System.out.print(",  ");
-                        String columnValue = rs.getString(i);
-                        jlabel = new JLabel(columnValue);
-                        panel.add(jlabel);
-                        System.out.print(columnValue + " " + rsmd.getColumnName(i));
-                    }
-                    System.out.println("");
+
+                // Add column headers
+                for (int i = 1; i <= columnsNumber; i++) {
+                    tableModel.addColumn(rsmd.getColumnName(i));
                 }
+
+                // Add data rows
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnsNumber];
+                    for (int i = 1; i <= columnsNumber; i++) {
+                        rowData[i - 1] = rs.getString(i);
+                    }
+                    tableModel.addRow(rowData);
+                }
+
+                // Create JTable with the table model
+                resultTable = new JTable(tableModel);
+
+
+
+                // Add the table to the result panel
+                resultPanel.removeAll();
+                resultPanel.add(new JScrollPane(resultTable));
+
+                // Add the result panel to the frame
+                frame.add(resultPanel, BorderLayout.CENTER);
+                frame.revalidate();
+
+
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
 
+            cancelButton.setVisible(true);
 
-            closeConnection();
         });
 
 
-        panel.add(loginAsDoctor);
-        panel.add(loginAsAdmin);
+        textPanel.add(loginAsDoctor);
+        textPanel.add(loginAsAdmin);
 
         //		panel.add(loginAsPatient);
 
+//        frame.add(panel, BorderLayout.NORTH);
+//        frame.add(bottomPanel, BorderLayout.SOUTH);
+        frame.add(textPanel);
 
-        frame.add(panel);
         frame.repaint();
-
-
     }
 
     private void setButtons(){
@@ -205,6 +232,7 @@ public class Main extends JFrame{
 //        frame.setLocation(frameLocX, frameLocY);
         frame.setSize(frameWidth, frameHeight);
         frame.setLayout(new BorderLayout());
+        frame.repaint();
 
     }
 
@@ -217,16 +245,11 @@ public class Main extends JFrame{
                 .replace("${dbName}", "Hospital")
                 .replace("${user}", field1text)
                 .replace("${pass}", field2text);
-//                .replace("${user}", "hospitalAdmin")
-//                .replace("${pass}", "Password123");
-
-
 
         try {
             long start = System.currentTimeMillis();
 
             connection = DriverManager.getConnection(fullURL);
-
 
             connection.setAutoCommit(false);
             System.out.println("Connected");
@@ -244,7 +267,7 @@ public class Main extends JFrame{
                 System.out.println("Closed Connection");
             }
         } catch (SQLException e) {
-            //do nothing
+
         }
     }
 
