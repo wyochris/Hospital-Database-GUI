@@ -28,8 +28,8 @@ public class Main extends JFrame{
     private JButton cancelButton;
     private JButton logInButton;
 
-    private JButton addPatientButton;
-    private JButton updateButton;
+    private JButton confirmAddPatientButton;
+    private JButton addProviderButton;
 
     private JButton doctorView;
     private JButton patientView;
@@ -71,6 +71,7 @@ public class Main extends JFrame{
         logInButton = new JButton("Log In");
         doctorView = new JButton("Doctor View");
         patientView = new JButton("Patient View");
+        confirmAddPatientButton = new JButton("Confirm Add Patient");
         panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
 
@@ -141,6 +142,7 @@ public class Main extends JFrame{
             cancelButton.setVisible(false);
             doctorView.setVisible(false);
             patientView.setVisible(false);
+            confirmAddPatientButton.setVisible(false);
             closeConnection();
             frame.repaint();
         });
@@ -210,6 +212,8 @@ public class Main extends JFrame{
             doctorView.setVisible(true);
             textPanel.add(patientView);
             patientView.setVisible(true);
+            textPanel.add(confirmAddPatientButton);
+            confirmAddPatientButton.setVisible(true);
             textPanel.add(success);
 
         });
@@ -262,6 +266,80 @@ public class Main extends JFrame{
             cancelButton.setVisible(true);
 
         });
+
+//        confirmAddPatientButton.addActionListener(e -> {
+//
+//            try {
+//                String storedProcedureCall = "{? = call AddPatient(?, ?, ?)}";
+//                try {
+//                    CallableStatement cs = connection.prepareCall(storedProcedureCall);
+//                    cs.setString(2, restName);
+//                    cs.setString(3, addr);
+//                    cs.setString(4, contact);
+//
+//                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
+//                    cs.executeUpdate();
+//                    int returnCode = cs.getInt(1);
+//                    if (returnCode == 0) {
+//                        JOptionPane.showMessageDialog(null, "Restaurant added!");
+////                        rests.add(restName);
+////                        return true;
+//                    } else {
+//                        if (returnCode == 1) {
+//                            JOptionPane.showMessageDialog(null, "Error: Duplicate restaurant name.");
+//                        } else {
+//                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
+//                        }
+////                        return false;
+//                    }
+//                } catch (SQLException er) {
+//                    throw new RuntimeException(er);
+//                }
+//
+//                Statement stmt = connection.createStatement();
+//                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
+//
+////                frame.add(textPanel, BorderLayout.SOUTH);
+//
+//                DefaultTableModel tableModel = new DefaultTableModel();
+//                ResultSetMetaData rsmd = rs.getMetaData();
+//                int columnsNumber = rsmd.getColumnCount();
+//
+//                // Add column headers
+//                for (int i = 1; i <= columnsNumber; i++) {
+//                    tableModel.addColumn(rsmd.getColumnName(i));
+//                }
+//
+//                // Add data rows
+//                while (rs.next()) {
+//                    Object[] rowData = new Object[columnsNumber];
+//                    for (int i = 1; i <= columnsNumber; i++) {
+//                        rowData[i - 1] = rs.getString(i);
+//                    }
+//                    tableModel.addRow(rowData);
+//                }
+//
+//                // Create JTable with the table model
+//                resultTable = new JTable(tableModel);
+//
+//
+//
+//                // Add the table to the result panel
+//                resultPanel.removeAll();
+//                resultPanel.add(new JScrollPane(resultTable));
+//
+//                // Add the result panel to the frame
+//                frame.add(resultPanel, BorderLayout.CENTER);
+//                frame.revalidate();
+//
+//
+//            } catch (SQLException ex) {
+//                throw new RuntimeException(ex);
+//            }
+//
+//            cancelButton.setVisible(true);
+//
+//        });
 
 //        addPatientButton.addActionListener(e->{
 //
