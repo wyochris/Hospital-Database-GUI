@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="main/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="out/production/project-s1g1-hospital/external"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>

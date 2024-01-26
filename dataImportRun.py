@@ -106,6 +106,8 @@ def do_data(df, cursor):
         pat_id = None
         pro_fName = row['Provider Name'].split()[0]
         pro_minit = None
+        if row['Provider Name'].split()[1] != "":
+            pro_minit = row['Provider Name'].split()[1]
         pro_lName = row['Provider Name'].split()[-1]
         pro_id = None
         pro_dob = format_date(row['Provider DOB'])
@@ -135,10 +137,10 @@ def do_data(df, cursor):
             IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
             BEGIN
                 INSERT INTO person (FirstName, LastName, DOB)
-                VALUES (?, ?, ?)
+                VALUES (?, ?, ?, ?)
             END
         """, pat_fName, pat_lName, pat_dob,
-                pat_fName, pat_lName, pat_dob)
+                pat_fName, pat_minit, pat_lName, pat_dob)
 
         pat_id = get_scope_identity(cursor)
 
@@ -166,10 +168,10 @@ def do_data(df, cursor):
             IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
             BEGIN
                 INSERT INTO person (FirstName, LastName, DOB)
-                VALUES (?, ?, ?)
+                VALUES (?, ?, ?, ?)
             END
         """, pro_fName, pro_lName, pro_dob,
-                pro_fName, pro_lName, pro_dob)
+                pro_fName, pro_minit, pro_lName, pro_dob)
         
         pro_id = get_scope_identity(cursor)
 
