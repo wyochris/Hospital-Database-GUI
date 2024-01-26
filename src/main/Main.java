@@ -17,8 +17,8 @@ public class Main extends JFrame{
     private JPanel textPanel;
     private JTable resultTable;
     private static Connection connection = null;
-    static final int frameWidth = 600;
-    static final int frameHeight = 600;
+    static final int frameWidth = 800;
+    static final int frameHeight = 800;
 
     static final int frameLocX = 250;
     static final int frameLocY = 350;
@@ -27,6 +27,13 @@ public class Main extends JFrame{
     private JButton loginAsAdmin;
     private JButton cancelButton;
     private JButton logInButton;
+
+    private JButton addPatientButton;
+    private JButton updateButton;
+
+    private JButton doctorView;
+    private JButton patientView;
+
     private JPanel resultPanel;
     private JPanel bottomPanel;
 
@@ -62,6 +69,8 @@ public class Main extends JFrame{
         loginAsAdmin = new JButton("Admin Login");
         cancelButton = new JButton("Cancel");
         logInButton = new JButton("Log In");
+        doctorView = new JButton("Doctor View");
+        patientView = new JButton("Patient View");
         panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
 
@@ -130,6 +139,8 @@ public class Main extends JFrame{
             loginAsAdmin.setVisible(true);
             logInButton.setVisible(false);
             cancelButton.setVisible(false);
+            doctorView.setVisible(false);
+            patientView.setVisible(false);
             closeConnection();
             frame.repaint();
         });
@@ -152,7 +163,7 @@ public class Main extends JFrame{
             connect();
             try {
                 success = new JLabel("Successfully Connected");
-                textPanel.add(success);
+
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 
@@ -195,8 +206,117 @@ public class Main extends JFrame{
             }
 
             cancelButton.setVisible(true);
+            textPanel.add(doctorView);
+            doctorView.setVisible(true);
+            textPanel.add(patientView);
+            patientView.setVisible(true);
+            textPanel.add(success);
 
         });
+
+        doctorView.addActionListener(e -> {
+
+            try {
+
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
+
+//                frame.add(textPanel, BorderLayout.SOUTH);
+
+                DefaultTableModel tableModel = new DefaultTableModel();
+                ResultSetMetaData rsmd = rs.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+
+                // Add column headers
+                for (int i = 1; i <= columnsNumber; i++) {
+                    tableModel.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add data rows
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnsNumber];
+                    for (int i = 1; i <= columnsNumber; i++) {
+                        rowData[i - 1] = rs.getString(i);
+                    }
+                    tableModel.addRow(rowData);
+                }
+
+                // Create JTable with the table model
+                resultTable = new JTable(tableModel);
+
+
+
+                // Add the table to the result panel
+                resultPanel.removeAll();
+                resultPanel.add(new JScrollPane(resultTable));
+
+                // Add the result panel to the frame
+                frame.add(resultPanel, BorderLayout.CENTER);
+                frame.revalidate();
+
+
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            cancelButton.setVisible(true);
+
+        });
+
+//        addPatientButton.addActionListener(e->{
+//
+//
+//        });
+
+        patientView.addActionListener(e -> {
+
+            try {
+
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+
+//                frame.add(textPanel, BorderLayout.SOUTH);
+
+                DefaultTableModel tableModel = new DefaultTableModel();
+                ResultSetMetaData rsmd = rs.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+
+                // Add column headers
+                for (int i = 1; i <= columnsNumber; i++) {
+                    tableModel.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add data rows
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnsNumber];
+                    for (int i = 1; i <= columnsNumber; i++) {
+                        rowData[i - 1] = rs.getString(i);
+                    }
+                    tableModel.addRow(rowData);
+                }
+
+                // Create JTable with the table model
+                resultTable = new JTable(tableModel);
+
+
+
+                // Add the table to the result panel
+                resultPanel.removeAll();
+                resultPanel.add(new JScrollPane(resultTable));
+
+                // Add the result panel to the frame
+                frame.add(resultPanel, BorderLayout.CENTER);
+                frame.revalidate();
+
+
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            cancelButton.setVisible(true);
+
+        });
+
 
 
         textPanel.add(loginAsDoctor);
