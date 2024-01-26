@@ -1,0 +1,12 @@
+Patient Name,Patient DOB,Provider Speciality,Provider Name,Provider DOB,Can Prescribe,Hospital Address,Hospital Name,Medicine Name,Medicine Dose,Diagnosis Name,Diagnosis Frequency,Diagnosis Occurance,Symptoms
+Mark Jones,3/22/1977,Family Practitioner,Tim Walker,5/11/1985,Yes,1234 Acorn Street,Saint Mary,jardiance,10mg,Diabetes,chronic,11/14/2021,frequent urination
+Sue Smith,5/14/1993,Family Practitioner,Ben Marsh,2/23/1970,No,333 Ohio Avenue,Methodist,nothing,nothing,Back pain,acute,10/13/2023,back pain
+Joe Elmer,3/24/2000,Family Medicine,Tina Brown,1/21/1967,Yes,5678 Pine Avenue,Mary Greely Medical Center,nothing,nothing,Shoulder pain,acute,10/12/2014,shoulder pain
+Ben Gardner,2/25/1977,Cardiology,Hailey Elliot,5/22/1989,Yes,1234 Acorn Street,Union Hospital,Ernesto,49mg,Heart Failure,acute,4/21/2013,fatigue
+Jessie Brown,8/6/1992,Endocrinology,Mike Hall,7/21/1979,Yes,15 Main Street,Saint Martha,levothyroxine,25mg,Hypothyroidism,chronic,6/2/2019,weight gain
+Derrick White,11/17/1968,Family Medicine,Hunter Green,3/15/1983,Yes,27 E Street,Flower Flake Clinic,metformin,85ml,Diabetes,chronic,5/14/2015,fatigue
+Timothy Scott,10/28/1982,Family Medicine,Joey Short,2/23/1970,No,1935 Greenwood Avenue,Fortune Hospital,nothing,nothing,Back pain,chronic,2/16/2016,back pain
+Lucy Hampton,2/28/1989,Cardiology,Amanda Beckett,8/19/1980,Yes,155 Clover Street,Care Now,iron supplement,29mg,Anemia,chronic,4/20/1967,fever
+Matt H. Liang,9/21/1979,Family Medicine,Randy Outman,6/7/1968,Yes,222 FDR Avenue,My Care Clinic,Ernesto,51mg,Heart Failure,chronic,5/20/1988,chest pain
+Anjali Patel,4/13/1965,Cardiology,Hailey Elliot,5/22/1989,Yes,222 FDR Avenue,My Care Clinic,nothing,nothing,hyperthyroidism,chronic,8/3/2015,coughing
+Mark Jones,3/22/1977,Family Practitioner,Tim Walker,5/11/1985,Yes,1234 Acorn Street,Saint Mary,januvia,25mg,Heart Failure,chronic,11/14/2021,blurry vision
