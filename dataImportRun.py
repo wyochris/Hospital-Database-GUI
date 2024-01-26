@@ -73,13 +73,13 @@ def yes_no(value):
         return None
     
 def get_scope_identity(cursor):
-    cursor.execute("SELECT @@IDENTITY AS ID;")
+    cursor.execute("SELECT @@IDENTITY AS ID")
     # cursor.execute("SELECT SCOPE_IDENTITY() AS ID;")
     result = cursor.fetchone()
     if result:
-         return str(result.ID)
+         return result[0]
     else:
-        return "nothing!!!"
+        return None
 
 def is_med_valid(value):
     if value.lower() == "nothing":
@@ -101,6 +101,8 @@ def do_data(df, cursor):
         pat_minit = None
         pat_lName = row['Patient Name'].split()[-1]
         pat_dob = format_date(row['Patient DOB']) 
+        if row['Patient Name'].split()[1] != "":
+            pat_minit = row['Patient Name'].split()[1]
         pat_id = None
         pro_fName = row['Provider Name'].split()[0]
         pro_minit = None
@@ -127,7 +129,7 @@ def do_data(df, cursor):
         sym_id = None
                 
         ###################################################################################################################################
-
+        print("row")
         # INSERT TO PAITENT/PERSON
         cursor.execute("""
             IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
@@ -140,24 +142,23 @@ def do_data(df, cursor):
 
         pat_id = get_scope_identity(cursor)
 
-        if(pat_id is None or pat_id == "nothing!!!" or
-                pat_id == pro_id or pat_id == med_id or pat_id == diag_id or pat_id == hos_id or pat_id == sym_id):
+        if pat_id:
+            person_list.append(Person_cl(pat_fName, pat_minit, pat_lName, pat_dob, pat_id))
+
+        else:
             for pat in person_list:
                 if pat.fName == pat_fName and pat.lName == pat_lName and pat_dob == pat.dob:
                     pat_id = pat.id
 
-        if(pat_id is not None):
-            person_list.append(Person_cl(pat_fName, pat_minit, pat_lName, pat_dob, pat_id))
-
         #INSERT INTO PAITENT
-        cursor.execute("""
-                        IF NOT EXISTS (SELECT 1 FROM patients WHERE id = ?)
-                        BEGIN
-                            INSERT INTO patients (ID) VALUES (?)
-                        END
-                        """, pat_id, pat_id)
+        if pat_id:
+            cursor.execute("""
+                            IF NOT EXISTS (SELECT 1 FROM patients WHERE id = ?)
+                            BEGIN
+                                INSERT INTO patients (ID) VALUES (?)
+                            END
+                            """, pat_id, pat_id)
 
-        
 ###################################################################################################################################
 
         #INSERT INTO PERSON/PROVIDER
@@ -172,23 +173,23 @@ def do_data(df, cursor):
         
         pro_id = get_scope_identity(cursor)
 
-        if(pro_id is None or pro_id == "nothing!!!" or
-                    pat_id == pro_id or pat_id == med_id or pro_id == diag_id or pro_id == hos_id or pro_id == sym_id):
+        if pro_id:
+            person_list.append(Person_cl(pro_fName, pro_minit, pro_lName, pro_dob, pro_id))
+        
+        else:
             for pro in person_list:
                 if pro.fName == pro_fName and pro.lName == pro_lName and pro_dob == pro.dob:
                     pro_id = pro.id
 
-        if(pro_id is not None):
-            person_list.append(Person_cl(pro_fName, pro_minit, pro_lName, pro_dob, pro_id))
-
-        # INESRT INTO PROVIDOR
-        cursor.execute("""
-            IF NOT EXISTS (SELECT 1 FROM providers WHERE ID = ?)
-            BEGIN
-                INSERT INTO providers (ID, Speciality, CanPrescribe)
-                VALUES (?, ?, ?)
-            END
-        """, pro_id, pro_id, pro_spec, pro_can)
+        # INESRT INTO PROVIDER
+        if pro_id:
+            cursor.execute("""
+                IF NOT EXISTS (SELECT 1 FROM providers WHERE ID = ?)
+                BEGIN
+                    INSERT INTO providers (ID, Speciality, CanPrescribe)
+                    VALUES (?, ?, ?)
+                END
+            """, pro_id, pro_id, pro_spec, pro_can)
             
 ###################################################################################################################################
 
@@ -203,14 +204,13 @@ def do_data(df, cursor):
         
         diag_id = get_scope_identity(cursor)
 
-        if(diag_id is None or diag_id == "nothing!!!" or
-                    diag_id == pro_id or diag_id == med_id or diag_id == pat_id or diag_id == hos_id or diag_id == sym_id):
+        if diag_id:
+            diagnosis_list.append(Diagnosis_cl(diag_name, diag_id))
+
+        else:
             for diag in medicine_list:
                 if diag.dName == diag_name:
                     diag_id = diag.id
-
-        if(diag_id is not None):
-            diagnosis_list.append(Diagnosis_cl(diag_name, diag_id))
 
 ###################################################################################################################################
 
@@ -225,22 +225,18 @@ def do_data(df, cursor):
 
         sym_id = get_scope_identity(cursor)
 
-        if(sym_id is not None or sym_id == "nothing!!!" or
-                sym_id == pro_id or sym_id == med_id or sym_id == diag_id or sym_id == hos_id or sym_id == pat_id):
+        if sym_id:
             symptom_list.append(Symptom_cl(sym_name, sym_id))
 
-        if(sym_id is None):
-            print('so')
+        else:
             for sym in symptom_list:
                 if sym.sName == sym_name:
                     sym_id = sym.id
-                    print('did it')
 
 ###################################################################################################################################
 
         # INSERT INTO EXHIBITS
-        print(sym_name, sym_id, pat_id)
-        if sym_id is not None and pat_id is not None:
+        if sym_id and pat_id:
             cursor.execute("""
             IF NOT EXISTS (SELECT 1 FROM exhibits WHERE PatientID = ? AND SymptomID = ?)
                 BEGIN
@@ -259,22 +255,20 @@ def do_data(df, cursor):
                        hos_name, hos_addr, hos_name, hos_addr)
         
         hos_id = get_scope_identity(cursor)
-        if(hos_id is None or hos_id == "nothing!!!" or
-                hos_id == pro_id or hos_id == med_id or hos_id == diag_id or hos_id == pat_id or hos_id == sym_id):
+
+        if hos_id:
+            hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
+
+        else:
             for hos in hospital_list:
                 if hos.hName == hos_name:
                     hos_id = hos_id
-
-        if(hos_id is not None):
-            hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
 
 ###################################################################################################################################
 
         # INSERT INTO TAKESCAREOF
 
-        if pro_id is not None:
-            if pat_id is not None:
-                if hos_id is not None:
+        if pro_id and pat_id and hos_id:
                     cursor.execute("""
                         INSERT INTO takesCareOf (ProviderID, PatientID, HospitalID, DateOfVisit)
                         VALUES (?, ?, ?, ?)
@@ -293,33 +287,31 @@ def do_data(df, cursor):
             
             med_id = get_scope_identity(cursor)
 
-            if(med_id is None or med_id == "nothing!!!" or
-                    med_id == pro_id or med_id == pat_id or med_id == diag_id or med_id == hos_id or med_id == sym_id):
+            if med_id:
+                medicine_list.append(Medicine_cl(med_name, med_id))
+
+            else:
                 for med in medicine_list:
                     if med.mName == med_name:
                         med_id = med.id
 
-            if med_id:
-                medicine_list.append(Medicine_cl(med_name, med_id))
 ###################################################################################################################################
 
         # INSERT INTO PRESCRIBES
-        if pat_id is not None:
-            if med_valid:
-                if pro_id is not None:
-                    cursor.execute("""
-                        IF NOT EXISTS (SELECT 1 FROM prescribes WHERE PatientID = ? AND MedicineID = ? AND ProviderID = ? AND Dose = ?)
-                        BEGIN
-                            INSERT INTO prescribes (PatientID, MedicineID, ProviderID, Dose)
-                            VALUES (?, ?, ?, ?)
-                        END
-                    """, pat_id, med_id, pro_id, med_dose,
-                            pat_id, med_id, pro_id, med_dose)
+        if pat_id and med_valid and pro_id and med_id:
+                        cursor.execute("""
+                            IF NOT EXISTS (SELECT 1 FROM prescribes WHERE PatientID = ? AND MedicineID = ? AND ProviderID = ? AND Dose = ?)
+                            BEGIN
+                                INSERT INTO prescribes (PatientID, MedicineID, ProviderID, Dose)
+                                VALUES (?, ?, ?, ?)
+                            END
+                        """, pat_id, med_id, pro_id, med_dose,
+                                pat_id, med_id, pro_id, med_dose)
 
 ###################################################################################################################################
 
         # INSERT INTO HAS
-        if pat_id is not None and diag_id is not None:
+        if pat_id and diag_id:
             cursor.execute("""
                            IF NOT EXISTS(SELECT 1 FROM has WHERE PatientID = ? AND DiagnosisID = ?)
                            BEGIN   
@@ -336,4 +328,3 @@ cursor.close()
 cnxn.close()
 
 ###################################################################################################################################
-
