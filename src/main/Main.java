@@ -679,7 +679,7 @@ public class Main extends JFrame{
 
             connection = DriverManager.getConnection(fullURL);
 
-            connection.setAutoCommit(false);
+//            connection.setAutoCommit(false);
             System.out.println("Connected");
 
         } catch (SQLException e) {
