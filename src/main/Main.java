@@ -634,6 +634,7 @@ public class Main extends JFrame{
 
 //        frame.add(panel, BorderLayout.NORTH);
 //        frame.add(bottomPanel, BorderLayout.SOUTH);
+        System.out.println("Hello");
         frame.add(textPanel);
 
         frame.repaint();
