@@ -42,8 +42,31 @@ public class ScreenViewer extends JFrame{
 	 private JTextField field5;
 	 private JTextField field6;
 	 
+	 private String field1text = "fail";
+	 private String field2text = "fail";
+
+	 private String field3text = "fail";
+	 private String field4text = "fail";
+	 private String field5text = "fail";
+	 private String field6text = "fail";
+	 
 	 private JFrame frame;
 	 
+	 private JLabel success;
+
+	 private JTable resultTable;
+
+	    
+	 static final int frameWidth = 800;
+	 static final int frameHeight = 800;
+
+	 static final int frameLocX = 100;
+	 static final int frameLocY = 100;
+	 protected ConnectionService connectionService;
+	 
+	 
+	 protected String userType;
+
 
 	public ScreenViewer(JFrame frame) {
 		this.panel = new JPanel();
@@ -52,12 +75,29 @@ public class ScreenViewer extends JFrame{
         this.bottomPanel = new JPanel();
         this.frame = frame;
         
-        initializeHospitalLogin();
+        this.frame.setTitle("Hospital");
+        this.frame.setLocation(frameLocX, frameLocY);
+        this.frame.setLayout(new BorderLayout());
+        
+        
+        this.userType = initializeHospitalLogin();
+        
+//        after initalizing login buttons, pack the frame
+//        this.frame.setSize(frameWidth, frameHeight);
+        this.frame.pack();
+        this.frame.setVisible(true);
+        
+        if(this.userType.equals("Admin")) {
+        	//create a admin type
+        } else {
+        	//create a doctor type
+        }
+        
 		
 	}
 	
 	
-	private void initializeHospitalLogin() {
+	private String initializeHospitalLogin() {
         loginAsDoctor = new JButton("Doctor Login");
         loginAsAdmin = new JButton("Admin Login");
         cancelButton = new JButton("Cancel");
@@ -83,42 +123,12 @@ public class ScreenViewer extends JFrame{
 //		JButton loginAsPatient = new JButton();
 
         loginAsDoctor.addActionListener(e -> {
-            System.out.println("Hello Doctor!");
-            field1.setText("Doctor Username");
-
-            textPanel.add(field1);
-
-            field2.setText("Doctor Password");
-            textPanel.add(field2);
-
-            textPanel.add(logInButton);
-
-            textPanel.add(cancelButton);
-
-            updateFrame();
-            frame.setTitle("Doctor Login");
-            setButtons();
-            frame.repaint();
+        	loginActionListener("Doctor");
 
         });
 
         loginAsAdmin.addActionListener(e -> {
-            System.out.println("Hello Admin!");
-
-            field1.setText("Admin Username");
-            textPanel.add(field1);
-
-            field2.setText("Admin Password");
-            textPanel.add(field2);
-
-            textPanel.add(logInButton);
-
-            textPanel.add(cancelButton);
-
-            updateFrame();
-            frame.setTitle("Admin Login");
-            setButtons();
-            frame.repaint();
+            loginActionListener("Admin");
         });
 
         cancelButton.addActionListener(e -> {
@@ -145,7 +155,10 @@ public class ScreenViewer extends JFrame{
             patientView.setVisible(false);
             addPatientButton.setVisible(false);
             addProviderButton.setVisible(false);
-            closeConnection();
+            
+//            THIS WILL FAIL??
+            connectionService.closeConnection();
+            
             frame.repaint();
         });
 
@@ -163,12 +176,13 @@ public class ScreenViewer extends JFrame{
             logInButton.setVisible(false);
             cancelButton.setVisible(false);
             frame.repaint();
+            connectionService = new ConnectionService(field1, field2);
 
-            connect();
+            connectionService.connect();
             try {
                 success = new JLabel("Successfully Connected");
 
-                Statement stmt = connection.createStatement();
+                Statement stmt = connectionService.getConnection().createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 
                 frame.add(textPanel, BorderLayout.SOUTH);
@@ -219,8 +233,59 @@ public class ScreenViewer extends JFrame{
             textPanel.add(success);
 
         });
+        
+
+        textPanel.add(loginAsDoctor);
+        textPanel.add(loginAsAdmin);
+
+        //		panel.add(loginAsPatient);
+
+//        frame.add(panel, BorderLayout.NORTH);
+//        frame.add(bottomPanel, BorderLayout.SOUTH);
+        System.out.println("Hello");
+        frame.add(textPanel);
+        frame.repaint();
+        
+        return "Admin";
 	}
     
 	
+	 private void updateFrame() {
+	        frame.pack();
+//	        frame.setLocation(frameLocX, frameLocY);
+	        frame.setSize(frameWidth, frameHeight);
+	        frame.setLayout(new BorderLayout());
+	        frame.repaint();
+
+	 }
+	
+	 
+	 private void setButtons(){
+	        field1.setVisible(true);
+	        field2.setVisible(true);
+	        loginAsDoctor.setVisible(false);
+	        loginAsAdmin.setVisible(false);
+	        logInButton.setVisible(true);
+	        cancelButton.setVisible(true);
+
+	 }
+	 
+	 private void loginActionListener(String userType) {
+         field1.setText(userType+" Username");
+
+         textPanel.add(field1);
+
+         field2.setText(userType +" Password");
+         textPanel.add(field2);
+
+         textPanel.add(logInButton);
+
+         textPanel.add(cancelButton);
+
+         updateFrame();
+         frame.setTitle(userType+" Login");
+         setButtons();
+         frame.repaint();
+	 }
 	
 }
