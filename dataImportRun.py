@@ -137,10 +137,10 @@ def do_data(df, cursor):
             IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
             BEGIN
                 INSERT INTO person (FirstName, LastName, DOB)
-                VALUES (?, ?, ?, ?)
+                VALUES (?, ?, ?)
             END
         """, pat_fName, pat_lName, pat_dob,
-                pat_fName, pat_minit, pat_lName, pat_dob)
+                pat_fName, pat_lName, pat_dob)
 
         pat_id = get_scope_identity(cursor)
 
@@ -168,10 +168,10 @@ def do_data(df, cursor):
             IF NOT EXISTS (SELECT 1 FROM person WHERE FirstName = ? AND LastName = ? AND DOB = ?)
             BEGIN
                 INSERT INTO person (FirstName, LastName, DOB)
-                VALUES (?, ?, ?, ?)
+                VALUES (?, ?, ?)
             END
         """, pro_fName, pro_lName, pro_dob,
-                pro_fName, pro_minit, pro_lName, pro_dob)
+                pro_fName, pro_lName, pro_dob)
         
         pro_id = get_scope_identity(cursor)
 
