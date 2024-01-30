@@ -10,7 +10,7 @@ public class ConnectionService {
     private JTextField field1;
     private JTextField field2;
 
-    public boolean connect() {
+    public boolean connect(JTextField field1, JTextField field2) {
         String url = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}};encrypt=false";
 
         String fullURL = url
@@ -28,14 +28,6 @@ public class ConnectionService {
             throw new RuntimeException(e);
         }
         return true;
-    }
-    
-    public void setUsername(JTextField text) {
-    	this.field1 = text;	
-    }
-    
-    public void setPass(JTextField text) {
-    	this.field2 = text;	
     }
 
 	public Connection getConnection() {
