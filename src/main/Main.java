@@ -688,6 +688,7 @@ public class Main extends JFrame{
         }
     }
 
+
     public void closeConnection() {
         //TODO: Task 1
         try {
