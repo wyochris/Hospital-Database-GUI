@@ -634,6 +634,7 @@ public class Main extends JFrame{
 
 //        frame.add(panel, BorderLayout.NORTH);
 //        frame.add(bottomPanel, BorderLayout.SOUTH);
+        System.out.println("Hello");
         frame.add(textPanel);
 
         frame.repaint();
@@ -686,6 +687,7 @@ public class Main extends JFrame{
             throw new RuntimeException(e);
         }
     }
+
 
     public void closeConnection() {
         //TODO: Task 1
