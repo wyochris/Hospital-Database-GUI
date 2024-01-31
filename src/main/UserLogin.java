@@ -49,7 +49,7 @@ public class UserLogin {
 	                return true; 
 	            }
 	        }
-	        JOptionPane.showMessageDialog(null, "Login Failed.");
+	        JOptionPane.showMessageDialog(null, "Login Failed. !");
 	        return false; // Login failed
 	    } catch (SQLException e) {
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -64,29 +64,36 @@ public class UserLogin {
 	        }
 	    }
 	}
-
-	public boolean register(String firstName, String lastName, String dob, String username, String password) {
-		String existsProc = "{? = call isUserExists(?, ?, ?)}";
+	/*
+	 * Register will call register stored procedure if the user exists in provider or patient table
+	 * @return if the registration is successful 
+	 */
+	public boolean register(String firstName, String lastName, String dob, String username, String password, String isProvider) {
+		String existsProc = "{? = call isUserExists(?, ?, ?, ?)}";
 		CallableStatement estmt = null;
 		try {
 			estmt = con.getConnection().prepareCall(existsProc);
 			estmt.setString(2, firstName);
 			estmt.setString(3, lastName);
+			estmt.setString(5, isProvider);
+
 			
             Date date = Date.valueOf(dob);
 			estmt.setDate(4, date);
+			System.out.println(firstName + " " + lastName + " " + date + " " + isProvider);
 
 			estmt.registerOutParameter(1, Types.INTEGER);
 			estmt.executeUpdate();
 			
             int returnCode = estmt.getInt(1);
             if (returnCode != 0) {
-				JOptionPane.showMessageDialog(null, "Registration failed.");
+				JOptionPane.showMessageDialog(null, "Registration failed. Error Code: " + returnCode);
             	return false;
             }
 		}
 		catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Registration failed.");
+			System.out.println("isUserExists");
 			return false;
 		}
 		
@@ -98,12 +105,13 @@ public class UserLogin {
 			cstmt.setString(2, username);
 			cstmt.setString(3, salt.toString());
 			cstmt.setString(4, hashPassword(salt, password));
+
 			cstmt.registerOutParameter(1, Types.INTEGER);
 
 			cstmt.execute();
 			
 			int returnCode = cstmt.getInt(1);
-			if(returnCode == 1 || returnCode == 2 || returnCode == 3 || returnCode == 4) {
+			if(returnCode != 0) {
 				JOptionPane.showMessageDialog(null, "Registration failed.");
 				return false;
 			}
