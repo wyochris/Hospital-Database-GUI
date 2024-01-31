@@ -247,7 +247,7 @@ public class Main extends JFrame{
 ////
 ////        });
 //        
-////        STOPPED COPYING HERE
+////        
 //
 //        doctorView.addActionListener(e -> {
 //

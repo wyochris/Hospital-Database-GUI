@@ -27,13 +27,6 @@ public class ScreenViewer extends JFrame {
 	private JButton cancelButton;
 	private JButton logInButton;
 
-//	 private JButton confirmAddPatientButton;
-//	 private JButton addPatientButton;
-//	 private JButton addProviderButton;
-//	 private JButton confirmAddProviderButton;
-//	
-//	 private JButton doctorView;
-//	 private JButton patientView;
 
 	private JTextField field1;
 	private JTextField field2;
@@ -77,12 +70,7 @@ public class ScreenViewer extends JFrame {
 		this.frame.setLayout(new BorderLayout());
 
 		initializeHospitalLogin();
-		// this.user is set to someone in the above method
-//		if (this.user != null) {
-//			this.user.initializeUserScreen();
-//		} else {
-//			System.out.println("no user!");
-//		}
+
 		this.frame.pack();
 		this.frame.setVisible(true);
 
@@ -96,12 +84,7 @@ public class ScreenViewer extends JFrame {
 		loginAsAdmin = new JButton("Admin Login");
 		cancelButton = new JButton("Cancel");
 		logInButton = new JButton("Log In");
-//        doctorView = new JButton("Doctor View");
-//        patientView = new JButton("Patient View");
-//        confirmAddPatientButton = new JButton("Confirm Add Patient");
-//        addPatientButton = new JButton("Add Patient");
-//        addProviderButton = new JButton("Add Provider");
-//        confirmAddProviderButton = new JButton("Confirm Add Provider");
+
 		panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
 
@@ -145,17 +128,13 @@ public class ScreenViewer extends JFrame {
 			loginAsAdmin.setVisible(true);
 			logInButton.setVisible(false);
 			cancelButton.setVisible(false);
-//            doctorView.setVisible(false);
-//            patientView.setVisible(false);
-//            addPatientButton.setVisible(false);
-//            addProviderButton.setVisible(false);
+//      
 
 			connectionService.closeConnection();
 
 			frame.repaint();
 		});
 
-//login as admin
 		logInButton.addActionListener(e -> {
 			field1text = field1.getText();
 			System.out.println(field1text);
@@ -170,65 +149,12 @@ public class ScreenViewer extends JFrame {
 			logInButton.setVisible(false);
 			cancelButton.setVisible(false);
 			frame.repaint();
-			connectionService = new ConnectionService(field1, field2);
+			connectionService = new ConnectionService(field1text, field2text);
 
 			connectionService.connect();
 			this.user = new Admin(connectionService, frame);
 			return;
-
-//            try {
-//                success = new JLabel("Successfully Connected");
-//
-//                Statement stmt = connectionService.getConnection().createStatement();
-//                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-//
-//                frame.add(textPanel, BorderLayout.SOUTH);
-//
-//                DefaultTableModel tableModel = new DefaultTableModel();
-//                ResultSetMetaData rsmd = rs.getMetaData();
-//                int columnsNumber = rsmd.getColumnCount();
-//
-//                // Add column headers
-//                for (int i = 1; i <= columnsNumber; i++) {
-//                    tableModel.addColumn(rsmd.getColumnName(i));
-//                }
-//
-//                // Add data rows
-//                while (rs.next()) {
-//                    Object[] rowData = new Object[columnsNumber];
-//                    for (int i = 1; i <= columnsNumber; i++) {
-//                        rowData[i - 1] = rs.getString(i);
-//                    }
-//                    tableModel.addRow(rowData);
-//                }
-//
-//                // Create JTable with the table model
-//                resultTable = new JTable(tableModel);
-//
-//
-//
-//                // Add the table to the result panel
-//                resultPanel.removeAll();
-//                resultPanel.add(new JScrollPane(resultTable));
-//
-//                // Add the result panel to the frame
-//                frame.add(resultPanel, BorderLayout.CENTER);
-//                frame.revalidate();
-//
-//
-//            } catch (SQLException ex) {
-//                throw new RuntimeException(ex);
-//            }
-
-//            cancelButton.setVisible(true);
-//            textPanel.add(doctorView);
-//            doctorView.setVisible(true);
-//            textPanel.add(patientView);
-//            patientView.setVisible(true);
-//            textPanel.add(addPatientButton);
-//            addPatientButton.setVisible(true);
-//            textPanel.add(success);
-
+          
 		});
 
 		textPanel.add(loginAsDoctor);
