@@ -10,9 +10,9 @@ public class ConnectionService {
     private String field1;
     private String field2;
 
-    public ConnectionService(JTextField field1, JTextField field2) {
-    	this.field1 = field1.getText();
-    	this.field2 = field2.getText();
+    public ConnectionService(String field1, String field2) {
+    	this.field1 = field1;
+    	this.field2 = field2;
     }
     public boolean connect() {
         String url = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}};encrypt=false";
