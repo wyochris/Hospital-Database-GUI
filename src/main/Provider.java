@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -24,6 +25,8 @@ public class Provider extends User {
 	private JButton confirmAddPatientButton;
 	private JButton addPatientButton;
 	private JButton logoutButton;
+	private JButton confirmDeleteMedicationButton;
+	private JButton deleteMedicationButton;
 
 	// views
 	private JButton patientView;
@@ -66,8 +69,11 @@ public class Provider extends User {
 		confirmAddPatientButton = new JButton("Confirm Add Patient");
 		addPatientButton = new JButton("Add Patient");
 		logoutButton = new JButton("Logout");
-
-//		init panels
+		confirmDeleteMedicationButton = new JButton("Confirm Delete Medication");
+		deleteMedicationButton = new JButton("Delete Patient Medication");
+		
+	
+		//init panels
 		resultPanel = new JPanel();
 		textPanel = new JPanel();
 
@@ -86,10 +92,10 @@ public class Provider extends User {
 
 		// initlaize tables
 		try {
-//             success = new JLabel("Successfully Connected");
 			Statement stmt = this.connection.getConnection().createStatement();
 			//TODO: make it so that they can only see their own patients
-			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+			
 
 			frame.add(textPanel, BorderLayout.SOUTH);
 
@@ -107,6 +113,10 @@ public class Provider extends User {
 		textPanel.add(addPatientButton);
 		addPatientButton.setVisible(true);
 		textPanel.add(logoutButton);
+		
+		deleteMedicationButton.setVisible(true);
+		textPanel.add(deleteMedicationButton);
+		
 
 		logoutButton.addActionListener(e -> {
 			try {
@@ -187,6 +197,9 @@ public class Provider extends User {
 			logoutButton.setVisible(false);
 			patientView.setVisible(false);
 			addPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			confirmDeleteMedicationButton.setVisible(false);
+			confirmAddPatientButton.setVisible(true);
 
 			field1.setText("First Name");
 
@@ -205,7 +218,6 @@ public class Provider extends User {
 			field4.setVisible(true);
 
 			textPanel.add(confirmAddPatientButton);
-			confirmAddPatientButton.setVisible(true);
 
 		});
 
@@ -227,6 +239,108 @@ public class Provider extends User {
 
 		});
 		
+		deleteMedicationButton.addActionListener(e -> {
+
+			logoutButton.setVisible(false);
+//			patientView.setVisible(false);
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+
+			field1.setText("MedicineName");
+			field1.setVisible(true);
+
+			field2.setText("PatientID");
+			field2.setVisible(true);
+			
+//			field3.setText("ProviderID");
+//			field3.setVisible(true);
+			
+//			textPanel.add(field3);
+			
+
+			textPanel.add(confirmDeleteMedicationButton);
+			confirmDeleteMedicationButton.setVisible(true);
+			
+			addPatientButton.setVisible(false);
+            confirmAddPatientButton.setVisible(false);
+            deleteMedicationButton.setVisible(false);
+            patientView.setVisible(false);
+            
+         
+
+		});
+		
+		confirmDeleteMedicationButton.addActionListener(e -> {
+
+            try {
+                String storedProcedureCall = "{? = call deleteMedicine(?, ?)}";
+                field1text = field1.getText();
+                field2text = field2.getText();
+                field3text = field3.getText();
+                int field2int = Integer.parseInt(field2text);
+                //if you need it to go with the provider id..someting we should add?
+//                int field3int = Integer.parseInt(field3text);
+
+
+
+
+                try {
+                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+                    cs.setString(2, field1text);
+                    cs.setInt(3, field2int);
+//                    cs.setInt(4, field3int);
+
+
+                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
+                    cs.executeUpdate();
+                    int returnCode = cs.getInt(1);
+                    if (returnCode == 0) {
+                        JOptionPane.showMessageDialog(null, "Medicine deleted!");
+                    } else {
+                        if (returnCode == 1) {
+                            JOptionPane.showMessageDialog(null, "Error: medicineName or patient id or provider id is null");
+                        } else if(returnCode == 2){
+                            JOptionPane.showMessageDialog(null, "Error: Medicine does not exist.");
+                        } else if(returnCode == 3) {
+                            JOptionPane.showMessageDialog(null, "Error: Patient is not taking this medicine.");
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
+                        }
+
+                    }
+                } catch (SQLException er) {
+                   JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+                }
+
+                Statement stmt = connection.getConnection().createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+
+//                frame.add(textPanel, BorderLayout.SOUTH);
+
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+
+
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+//            doctorView.setVisible(true);
+//            patientView.setVisible(true);
+//            success.setVisible(true);
+//            addPatientButton.setVisible(false);
+//            confirmAddPatientButton.setVisible(false);
+//            deleteMedicationButton.setVisible(false);
+//            patientView.setVisible(false);
+//            resultPanel.setVisible(true);
+//            field1.setVisible(false);
+//            field2.setVisible(false);
+//            field3.setVisible(false);
+//            field4.setVisible(false);
+//            cancelButton.setVisible(true);
+
+
+        });
 
 
 		// repaint the frame
