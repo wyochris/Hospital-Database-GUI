@@ -20,16 +20,17 @@ public class Main extends JFrame{
 //    private JPanel panel;
 //    private JPanel textPanel;
 //    private static Connection connection = null;
-    static final int frameWidth = 800;
+    static final int frameWidth = 1600;
     static final int frameHeight = 800;
 
-    static final int frameLocX = 100;
-    static final int frameLocY = 100;
+    static final int frameLocX = 50;
+    static final int frameLocY = 50;
 
-
+//COMMENT COMMMENT COMMENT fadsdsfdsafdsafdsaafhdhdsag dsfadsfds 
 
     private void runApp() {
         frame = new JFrame();
+        frame.setSize(frameWidth, frameHeight);
 
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
