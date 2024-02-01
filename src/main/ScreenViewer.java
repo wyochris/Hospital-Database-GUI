@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -89,7 +90,13 @@ public class ScreenViewer extends JFrame {
 //		this.frame.setLayout(new BorderLayout());
 
 		initializeHospitalLogin();
-
+//        Color c = new Color(47, 47, 47);
+//        frame.getContentPane().setBackground( c );
+//        panel.setBackground(c);
+//        textPanel.setBackground(c);
+//        resultPanel.setBackground(c);
+//        bottomPanel.setBackground(c);
+        
 //		this.frame.pack();
 		this.frame.setVisible(true);
 
@@ -112,6 +119,20 @@ public class ScreenViewer extends JFrame {
 
 		confirmRegisterAsProvider = new JButton("Register");
 		confirmRegisterAsPatient = new JButton("Register");
+		
+//		Color colour = new Color(204, 129, 186);		
+//		
+//		loginAsProvider.setBackground(colour);
+//		loginAsAdmin.setBackground(colour);
+//		cancelButton.setBackground(colour);
+//		confirmLogInButtonAdmin.setBackground(colour);
+//		confirmLogInButton.setBackground(colour);
+//		registerAsProviderButton.setBackground(colour);
+//		registerAsPatientButton.setBackground(colour);
+//		confirmRegisterAsProvider.setBackground(colour);
+//		confirmRegisterAsPatient.setBackground(colour);
+//		loginAsPatient.setBackground(colour);
+
 
 		panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
