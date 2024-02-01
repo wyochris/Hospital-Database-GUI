@@ -59,13 +59,11 @@ public class Admin implements User {
 	private String field5text = "fail";
 	private String field6text = "fail";
 	
-	private ScreenViewer orgScreen;
 
-	public Admin(ConnectionService connection, JFrame frame, ScreenViewer screenView) {
+	public Admin(ConnectionService connection, JFrame frame) {
 		System.out.println("made an admin");
 		this.connection = connection;
 		this.frame = frame;
-		this.orgScreen = screenView;
 		initializeUserScreen();
 	}
 

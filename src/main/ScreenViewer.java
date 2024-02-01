@@ -192,7 +192,7 @@ public class ScreenViewer extends JFrame {
 				confirmRegisterAsProvider.setVisible(false);
 				cancelButton.setVisible(false);
 				frame.repaint();
-				this.user = new Admin(connectionService, frame, this);
+				this.user = new Admin(connectionService, frame);
 			}
 
 			return;
