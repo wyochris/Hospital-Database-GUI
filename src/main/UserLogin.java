@@ -40,12 +40,12 @@ public class UserLogin {
 	        rs = pstmt.executeQuery();
 
 	        if (rs.next()) {
-	            String storedSalt = rs.getString("PasswordSalt");
+	            byte[] storedSalt = rs.getBytes("PasswordSalt");
 	            String storedHash = rs.getString("passwordHash");
 
-	            String hashedPassword = hashPassword(storedSalt.getBytes(), password);
+	            String hashedPassword = hashPassword(storedSalt, password);
 	            
-	            System.out.println(storedHash.equals(hashedPassword) + " " + storedHash + " " + storedSalt + " " + hashedPassword);
+	            System.out.println(storedHash.equals(hashedPassword) + " DB " + storedHash + " DB " + storedSalt + " USER " + hashedPassword);
 
 	            if (storedHash.equals(hashedPassword)) {
 	                return true; 
@@ -105,10 +105,10 @@ public class UserLogin {
 			byte[] salt = getNewSalt();
 			cstmt = con.getConnection().prepareCall(storedProc);
 			cstmt.setString(2, username);
-			cstmt.setString(3, salt.toString());
+			cstmt.setBytes(3, salt);
 			cstmt.setString(4, hashPassword(salt, password));
 			
-			System.out.println(salt.toString() + " " + hashPassword(salt, password));
+			System.out.println("entered pass" + " " + hashPassword(salt, password));
 
 			cstmt.registerOutParameter(1, Types.INTEGER);
 
@@ -144,12 +144,13 @@ public class UserLogin {
 	}
 	
 	public String getStringFromBytes(byte[] data) {
+		System.out.println("enc from USER " + " " + enc.encodeToString(data));
 		return enc.encodeToString(data);
 	}
 
 	public String hashPassword(byte[] salt, String password) {
 		
-		System.out.println(salt + " " + password);
+		System.out.println("USER " + salt + " " + password);
 
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
 		SecretKeyFactory f;
