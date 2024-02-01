@@ -415,6 +415,10 @@ public class Provider extends User {
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Could Not Add Medicine");
             }
+            
+            //updating medications buttons
+            
+            
 
 
 

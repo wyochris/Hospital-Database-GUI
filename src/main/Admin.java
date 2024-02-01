@@ -183,17 +183,23 @@ public class Admin extends User {
 
 			try {
 				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?)}";
-				field1text = field1.getText();
+				field1text = field1.getText(); //firstname
 
-				field2text = field2.getText();
-				field3text = field3.getText();
+				field2text = field2.getText(); //last anme
+				field3text = field3.getText(); //middle inital
 
-				field4text = field4.getText();
+				field4text = field4.getText(); //date of birth
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
-					cs.setString(4, field3text);
+					
+					//first need to check if middle initial
+					if (field3text.equals("Middle Initial")) {
+						cs.setString(4, null); //unchanged so we set to null
+					} else {
+						cs.setString(4, field3text);
+					}
 					java.sql.Date date = java.sql.Date.valueOf(field4text);
 
 					cs.setDate(5, date);
