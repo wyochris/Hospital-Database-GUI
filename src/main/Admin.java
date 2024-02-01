@@ -31,6 +31,11 @@ public class Admin extends User {
 	private JButton addProviderButton;
 	private JButton confirmAddProviderButton;
 	private JButton logoutButton;
+	private JButton deletePatientButton;
+	private JButton confirmDeletePatientButton;
+
+	private JButton deleteProviderButton;
+	private JButton confirmDeleteProviderButton;
 
 	// views
 	private JButton doctorView;
@@ -85,7 +90,11 @@ public class Admin extends User {
 		addPatientButton = new JButton("Add Patient");
 		addProviderButton = new JButton("Add Provider");
 		confirmAddProviderButton = new JButton("Confirm Add Provider");
+		deletePatientButton = new JButton("Delete Patient");
+		confirmDeletePatientButton = new JButton("Confirm Delete Patient");
 		logoutButton = new JButton("Logout");
+		deleteProviderButton = new JButton("Delete Provider");
+		confirmDeleteProviderButton = new JButton("Confirm Delete Provider");
 
 //		init panels
 		resultPanel = new JPanel();
@@ -130,6 +139,9 @@ public class Admin extends User {
 		textPanel.add(addPatientButton);
 		addPatientButton.setVisible(true);
 		textPanel.add(logoutButton);
+		textPanel.add(deletePatientButton);
+		textPanel.add(deleteProviderButton);
+		deleteProviderButton.setVisible(false);
 
 		logoutButton.addActionListener(e -> {
 			try {
@@ -161,6 +173,9 @@ public class Admin extends User {
 			addPatientButton.setVisible(false);
 			textPanel.add(addProviderButton);
 			addProviderButton.setVisible(true);
+			deletePatientButton.setVisible(false);
+			deleteProviderButton.setVisible(true);
+			confirmDeleteProviderButton.setVisible(false);
 
 		});
 
@@ -189,15 +204,9 @@ public class Admin extends User {
 					int returnCode = cs.getInt(1);
 					if (returnCode == 0) {
 						JOptionPane.showMessageDialog(null, "Patient added!");
-//	                        rests.add(restName);
-//	                        return true;
+
 					} else {
-//	                        if (returnCode == 1) {
-//	                            JOptionPane.showMessageDialog(null, "Error: Duplicate restaurant name.");
-//	                        } else {
-//	                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
-//	                        }
-//	                        return false;
+
 					}
 				} catch (SQLException er) {
 					throw new RuntimeException(er);
@@ -224,17 +233,165 @@ public class Admin extends User {
 			field3.setVisible(false);
 			field4.setVisible(false);
 			logoutButton.setVisible(true);
+			deletePatientButton.setVisible(true);
 
 		});
 
-		addPatientButton.addActionListener(e -> {
+		deletePatientButton.addActionListener(e -> {
 
-			resultPanel.setVisible(false);
+//			resultPanel.setVisible(false);
 			logoutButton.setVisible(false);
 			doctorView.setVisible(false);
 			patientView.setVisible(false);
 //	            success.setVisible(false);
 			addPatientButton.setVisible(false);
+			deletePatientButton.setVisible(false);
+
+			field1.setText("Patient ID");
+
+			field1.setVisible(true);
+
+
+
+			textPanel.add(confirmDeletePatientButton);
+			confirmDeletePatientButton.setVisible(true);
+
+		});
+
+
+		deleteProviderButton.addActionListener(e -> {
+
+//			resultPanel.setVisible(false);
+			logoutButton.setVisible(false);
+			doctorView.setVisible(false);
+			patientView.setVisible(false);
+//	            success.setVisible(false);
+			addProviderButton.setVisible(false);
+			deleteProviderButton.setVisible(false);
+
+			field1.setText("Provider ID");
+
+			field1.setVisible(true);
+
+
+
+			textPanel.add(confirmDeleteProviderButton);
+			confirmDeleteProviderButton.setVisible(true);
+
+		});
+
+		    confirmDeleteProviderButton.addActionListener(e -> {
+
+            try {
+                String storedProcedureCall = "{? = call deleteProvider(?)}";
+                field1text = field1.getText();
+				int field1int;
+                field1int = Integer.parseInt(field1text);
+
+
+                try {
+                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+                    cs.setInt(2, field1int);
+
+
+                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
+                    cs.executeUpdate();
+                    int returnCode = cs.getInt(1);
+                    if (returnCode == 0) {
+                        JOptionPane.showMessageDialog(null, "Provider deleted!");
+                    } else {
+                        if (returnCode == 1) {
+                            JOptionPane.showMessageDialog(null, "Error: Provider does not exist.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
+                        }
+
+                    }
+                } catch (SQLException er) {
+                    throw new RuntimeException(er);
+                }
+
+                Statement stmt = connection.getConnection().createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+				doctorView.setVisible(true);
+				patientView.setVisible(true);
+//	            success.setVisible(true);
+				addProviderButton.setVisible(true);
+				confirmDeleteProviderButton.setVisible(false);
+				resultPanel.setVisible(true);
+				field1.setVisible(false);
+				field2.setVisible(false);
+				field3.setVisible(false);
+				field4.setVisible(false);
+				field5.setVisible(false);
+				field6.setVisible(false);
+				logoutButton.setVisible(true);
+				deletePatientButton.setVisible(true);
+
+        });
+
+		confirmDeletePatientButton.addActionListener(e -> {
+
+            try {
+                String storedProcedureCall = "{? = call deletePatient(?)}";
+                field1text = field1.getText();
+				int field1int;
+
+
+                field1int = Integer.parseInt(field1text);
+                try {
+                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+                    cs.setInt(2, field1int);
+
+
+                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
+                    cs.executeUpdate();
+                    int returnCode = cs.getInt(1);
+                    if (returnCode == 0) {
+                        JOptionPane.showMessageDialog(null, "Patient deleted!");
+                    } else {
+                            JOptionPane.showMessageDialog(null, "Error: Patient does not exist.");
+                        }
+//                        return false;
+
+                } catch (SQLException er) {
+                    throw new RuntimeException(er);
+                }
+
+                Statement stmt = connection.getConnection().createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+			doctorView.setVisible(true);
+			patientView.setVisible(true);
+//	            success.setVisible(true);
+			addPatientButton.setVisible(true);
+			confirmAddProviderButton.setVisible(false);
+			resultPanel.setVisible(true);
+			field1.setVisible(false);
+			logoutButton.setVisible(true);
+			deletePatientButton.setVisible(true);
+			confirmDeletePatientButton.setVisible(false);
+
+
+        });
+
+		addPatientButton.addActionListener(e -> {
+
+//			resultPanel.setVisible(false);
+			logoutButton.setVisible(false);
+			doctorView.setVisible(false);
+			patientView.setVisible(false);
+//	            success.setVisible(false);
+			addPatientButton.setVisible(false);
+			deletePatientButton.setVisible(false);
 
 			field1.setText("First Name");
 
@@ -325,17 +482,19 @@ public class Admin extends User {
 			field5.setVisible(false);
 			field6.setVisible(false);
 			logoutButton.setVisible(true);
+			deleteProviderButton.setVisible(true);
 
 		});
 
 		addProviderButton.addActionListener(e -> {
 
-			resultPanel.setVisible(false);
+//			resultPanel.setVisible(false);
 			logoutButton.setVisible(false);
 			doctorView.setVisible(false);
 			patientView.setVisible(false);
 //	            success.setVisible(false);
 			addProviderButton.setVisible(false);
+			deleteProviderButton.setVisible(false);
 
 			field1.setText("First Name");
 
@@ -385,6 +544,9 @@ public class Admin extends User {
 			logoutButton.setVisible(true);
 			addPatientButton.setVisible(true);
 			addProviderButton.setVisible(false);
+			deleteProviderButton.setVisible(false);
+			deletePatientButton.setVisible(true);
+			confirmDeletePatientButton.setVisible(false);
 
 		});
 
