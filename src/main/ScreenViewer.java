@@ -241,8 +241,8 @@ public class ScreenViewer extends JFrame {
 				System.out.println(e1);
 			}
 
-			cancelButton.setVisible(true);
-//            textPanel.add(success);
+			this.user = new Provider(connectionService, frame);
+			return;
 
 		});
 
