@@ -33,7 +33,7 @@ public class UserLogin {
 	    ResultSet rs = null;
 
 	    try {
-	        String query = "SELECT passwordSalt, passwordHash FROM User WHERE username = ?";
+	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
 	        pstmt = con.getConnection().prepareStatement(query);
 	        pstmt.setString(1, username);
 
@@ -44,6 +44,8 @@ public class UserLogin {
 	            String storedHash = rs.getString("passwordHash");
 
 	            String hashedPassword = hashPassword(storedSalt.getBytes(), password);
+	            
+	            System.out.println(storedHash.equals(hashedPassword) + " " + storedHash + " " + storedSalt + " " + hashedPassword);
 
 	            if (storedHash.equals(hashedPassword)) {
 	                return true; 
@@ -105,6 +107,8 @@ public class UserLogin {
 			cstmt.setString(2, username);
 			cstmt.setString(3, salt.toString());
 			cstmt.setString(4, hashPassword(salt, password));
+			
+			System.out.println(salt.toString() + " " + hashPassword(salt, password));
 
 			cstmt.registerOutParameter(1, Types.INTEGER);
 
@@ -144,6 +148,8 @@ public class UserLogin {
 	}
 
 	public String hashPassword(byte[] salt, String password) {
+		
+		System.out.println(salt + " " + password);
 
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
 		SecretKeyFactory f;

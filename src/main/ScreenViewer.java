@@ -16,16 +16,31 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import ScreenViewer.User;
+import main.ScreenViewer.UserType;
+
 public class ScreenViewer extends JFrame {
 
 	private JPanel panel;
 	private JPanel textPanel;
 	private JPanel resultPanel;
 	private JPanel bottomPanel;
-	private JButton loginAsDoctor;
+	private JButton loginAsProvider;
 	private JButton loginAsAdmin;
 	private JButton cancelButton;
-	private JButton logInButton;
+	
+	private JButton loginAsPatient;
+	private JButton confirmLogInButtonProvider;
+	private JButton confirmLogInButtonPatient;
+	private JButton confirmLogInButtonAdmin;
+	private JButton registerAsProviderButton;
+	private JButton confirmRegisterAsProvider;
+	 
+	private JButton confirmAddPatientButton;
+	private JButton addPatientButton;
+	private JButton addProviderButton;
+	private JButton confirmAddProviderButton;
+	
 
 
 	private JTextField field1;
@@ -57,6 +72,10 @@ public class ScreenViewer extends JFrame {
 	protected ConnectionService connectionService;
 
 	protected User user;
+	
+	 enum UserType {
+			PATIENT, PROVIDER, ADMIN;
+	 }
 
 	public ScreenViewer(JFrame frame) {
 		this.panel = new JPanel();
@@ -80,10 +99,16 @@ public class ScreenViewer extends JFrame {
 	}
 
 	public void initializeHospitalLogin() {
-		loginAsDoctor = new JButton("Doctor Login");
+		loginAsProvider = new JButton("Doctor Login");
 		loginAsAdmin = new JButton("Admin Login");
 		cancelButton = new JButton("Cancel");
-		logInButton = new JButton("Log In");
+		
+        loginAsPatient = new JButton("Patient Login");
+        confirmLogInButtonAdmin = new JButton("Log In");
+        confirmLogInButtonProvider = new JButton("Log In");
+        confirmLogInButtonPatient = new JButton("Login");
+        registerAsProviderButton = new JButton("Provider Registration");
+        confirmRegisterAsProvider = new JButton("Register");
 
 		panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
@@ -98,21 +123,28 @@ public class ScreenViewer extends JFrame {
 
 //		TODO: add login as patient for later functionality
 //		JButton loginAsPatient = new JButton();
+		
+        registerAsProviderButton.addActionListener(e -> {
+        	registerActionListener(UserType.PROVIDER);
+        });
 
-		loginAsDoctor.addActionListener(e -> {
-			loginActionListener("Doctor");
+		loginAsProvider.addActionListener(e -> {
+			loginActionListener(UserType.PROVIDER);
 
 		});
 
 		loginAsAdmin.addActionListener(e -> {
-			loginActionListener("Admin");
+			loginActionListener(UserType.ADMIN);
 		});
 
 		cancelButton.addActionListener(e -> {
 			System.out.println("Cancelled");
 
-			field1.setVisible(false);
-			field2.setVisible(false);
+            field1.setVisible(false);
+            field2.setVisible(false);
+            field3.setVisible(false);
+            field4.setVisible(false);
+            field5.setVisible(false);
 
 			updateFrame();
 			frame.setTitle("Hospital");
@@ -124,10 +156,18 @@ public class ScreenViewer extends JFrame {
 			if (resultPanel != null) {
 				frame.remove(resultPanel);
 			}
-			loginAsDoctor.setVisible(true);
+			loginAsProvider.setVisible(true);
 			loginAsAdmin.setVisible(true);
-			logInButton.setVisible(false);
-			cancelButton.setVisible(false);
+            loginAsPatient.setVisible(true);
+            confirmLogInButtonAdmin.setVisible(false);
+            confirmLogInButtonProvider.setVisible(false);
+            confirmLogInButtonPatient.setVisible(false);
+            confirmRegisterAsProvider.setVisible(false);
+            registerAsProviderButton.setVisible(true);
+
+            cancelButton.setVisible(false);
+//            addPatientButton.setVisible(false);
+//            addProviderButton.setVisible(false);
 //      
 
 			connectionService.closeConnection();
@@ -135,7 +175,7 @@ public class ScreenViewer extends JFrame {
 			frame.repaint();
 		});
 
-		logInButton.addActionListener(e -> {
+		confirmLogInButtonAdmin.addActionListener(e -> {
 			field1text = field1.getText();
 			System.out.println(field1text);
 
@@ -144,9 +184,13 @@ public class ScreenViewer extends JFrame {
 
 			field1.setVisible(false);
 			field2.setVisible(false);
-			loginAsDoctor.setVisible(false);
+			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
-			logInButton.setVisible(false);
+			confirmLogInButtonAdmin.setVisible(false);
+			confirmRegisterAsProvider.setVisible(false);
+			confirmLogInButtonPatient.setVisible(false);
+			loginAsPatient.setVisible(false);
+            confirmRegisterAsProvider.setVisible(false);
 			cancelButton.setVisible(false);
 			frame.repaint();
 			connectionService = new ConnectionService(field1text, field2text);
@@ -156,9 +200,97 @@ public class ScreenViewer extends JFrame {
 			return;
           
 		});
+		
+		// TODO: Refactor? 
+		confirmLogInButtonProvider.addActionListener(e -> {
+            field1text = field1.getText();
+            System.out.println(field1text);
 
-		textPanel.add(loginAsDoctor);
+            field2text = field2.getText();
+            System.out.println(field2text);
+
+            field1.setVisible(false);
+            field2.setVisible(false);
+            loginAsProvider.setVisible(false);
+            loginAsAdmin.setVisible(false);
+            loginAsPatient.setVisible(false);
+            confirmLogInButtonProvider.setVisible(false);
+            cancelButton.setVisible(false);
+            frame.repaint();
+            
+            Encryption en = new Encryption();
+            connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
+            connectionService.connect();
+
+            UserLogin userLog = new UserLogin(connectionService);
+            try {
+                Boolean loginSuccess = userLog.login(field1text, field2text);
+
+            }
+            catch(Exception e1) {
+            	System.out.println(e1);
+            }
+            
+            cancelButton.setVisible(true);
+//            textPanel.add(success);
+            
+        });
+		
+		// TODO: Refactor??
+        confirmRegisterAsProvider.addActionListener(e -> {
+            field1text = field1.getText();
+            System.out.println(field1text);
+
+            field2text = field2.getText();
+            System.out.println(field2text);
+            
+            field3text = field3.getText();
+            System.out.println(field3text);
+            
+            field4text = field4.getText();
+            System.out.println(field4text);
+            
+            field5text = field5.getText();
+            System.out.println(field5text);
+
+            field1.setVisible(false);
+            field2.setVisible(false);
+            field3.setVisible(false);
+            field4.setVisible(false);
+            field5.setVisible(false);
+            loginAsProvider.setVisible(false);
+            loginAsAdmin.setVisible(false);
+            loginAsPatient.setVisible(false);
+            confirmRegisterAsProvider.setVisible(false);
+            cancelButton.setVisible(false);
+            frame.repaint();
+            
+            Encryption en = new Encryption();
+            connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
+            connectionService.connect();
+            UserLogin userLog = new UserLogin(connectionService);
+                
+            if( userLog.con != null){
+                try{
+                	
+//                	Boolean register = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
+                	Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
+
+                }
+                catch(Exception e1) {
+                	System.out.println(e1);
+                }
+            }
+            
+            
+            cancelButton.setVisible(true);
+        });
+
+		textPanel.add(loginAsProvider);
 		textPanel.add(loginAsAdmin);
+		
+        textPanel.add(loginAsPatient);
+        textPanel.add(registerAsProviderButton);
 
 		// panel.add(loginAsPatient);
 
@@ -180,31 +312,102 @@ public class ScreenViewer extends JFrame {
 	}
 
 	private void setButtons() {
-		field1.setVisible(true);
-		field2.setVisible(true);
-		loginAsDoctor.setVisible(false);
-		loginAsAdmin.setVisible(false);
-		logInButton.setVisible(true);
-		cancelButton.setVisible(true);
+        field1.setVisible(true);
+        field2.setVisible(true);
+        loginAsProvider.setVisible(false);
+        loginAsPatient.setVisible(false);
+        loginAsAdmin.setVisible(false);
+        cancelButton.setVisible(true);
+        confirmRegisterAsProvider.setVisible(false);
+        registerAsProviderButton.setVisible(false);
 
 	}
 
-	private void loginActionListener(String userType) {
-		field1.setText(userType + " Username");
+	private void loginActionListener(UserType typeOfUser) {
+		field1.setText(typeOfUser + " Username");
 
 		textPanel.add(field1);
 
-		field2.setText(userType + " Password");
+		field2.setText(typeOfUser + " Password");
 		textPanel.add(field2);
 
-		textPanel.add(logInButton);
+        // NEW BY CHRIS
+        
+        if(typeOfUser == UserType.ADMIN) {
+        	textPanel.add(confirmLogInButtonAdmin);
+        	confirmLogInButtonAdmin.setVisible(true);
+        }
+        
+        else if(typeOfUser == UserType.PATIENT) {
+        	textPanel.add(confirmLogInButtonPatient);
+        	confirmLogInButtonPatient.setVisible(true);
+
+        }
+        
+        else {
+        	textPanel.add(confirmLogInButtonProvider);
+        	confirmLogInButtonProvider.setVisible(true);
+
+        	
+        }
 
 		textPanel.add(cancelButton);
 
 		updateFrame();
-		frame.setTitle(userType + " Login");
+		frame.setTitle(typeOfUser + " Login");
 		setButtons();
 		frame.repaint();
+	}
+	
+	private void registerActionListener(UserType userType) {
+        field1.setText(userType+" First Name");
+        textPanel.add(field1);
+
+        field2.setText(userType +" Last Name");
+        textPanel.add(field2);
+        
+        field3.setText(userType+" DOB");
+        textPanel.add(field3);
+
+        field4.setText(userType +" Username");
+        textPanel.add(field4);
+        
+        field5.setText(userType+" Password");
+        textPanel.add(field5);
+        
+        if(userType == UserType.PROVIDER) {
+       	 textPanel.add(confirmRegisterAsProvider);
+        }
+        
+//        else if(userType == User.PATIENT) {
+//       	 textPanel.add(confirmLogInButtonPatient);
+//        }
+//        
+//        else {
+//       	 textPanel.add(confirmLogInButtonProvider);
+//        }
+
+        textPanel.add(cancelButton);
+
+        updateFrame();
+        frame.setTitle(userType+" Register");
+        setRegisterButtons();
+        frame.repaint();
+	}
+	
+	private void setRegisterButtons() {
+        field1.setVisible(true);
+        field2.setVisible(true);
+        field3.setVisible(true);
+        field4.setVisible(true);
+        field5.setVisible(true);
+
+        loginAsProvider.setVisible(false);
+        loginAsPatient.setVisible(false);
+        loginAsAdmin.setVisible(false);
+        confirmRegisterAsProvider.setVisible(true);
+        registerAsProviderButton.setVisible(false);
+        cancelButton.setVisible(true);
 	}
 
 }
