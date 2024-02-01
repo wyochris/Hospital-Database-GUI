@@ -19,7 +19,6 @@ public class Main extends JFrame{
     private static JFrame frame;
 //    private JPanel panel;
 //    private JPanel textPanel;
-    private JTable resultTable;
 //    private static Connection connection = null;
     static final int frameWidth = 800;
     static final int frameHeight = 800;

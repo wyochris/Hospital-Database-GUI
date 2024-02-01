@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -57,11 +58,14 @@ public class Admin implements User {
 	private String field4text = "fail";
 	private String field5text = "fail";
 	private String field6text = "fail";
+	
+	private ScreenViewer orgScreen;
 
-	public Admin(ConnectionService connection, JFrame frame) {
+	public Admin(ConnectionService connection, JFrame frame, ScreenViewer screenView) {
 		System.out.println("made an admin");
 		this.connection = connection;
 		this.frame = frame;
+		this.orgScreen = screenView;
 		initializeUserScreen();
 	}
 
@@ -127,32 +131,17 @@ public class Admin implements User {
 		patientView.setVisible(true);
 		textPanel.add(addPatientButton);
 		addPatientButton.setVisible(true);
+		textPanel.add(logoutButton);
 
 		logoutButton.addActionListener(e -> {
-			System.out.println("Cancelled");
-
-			field1.setVisible(false);
-			field2.setVisible(false);
-
-			frame.setTitle("Hospital");
-            textPanel.removeAll();
-//			if (this.success != null) {
-//				success.setVisible(false);
-//			}
-			resultPanel.removeAll();
-			if (resultPanel != null) {
-				frame.remove(resultPanel);
+			try {
+				//makes a new frame and reinitalizes the program
+				this.frame.dispose();
+				Main.main(null);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-
-			logoutButton.setVisible(false);
-			doctorView.setVisible(false);
-			patientView.setVisible(false);
-			addPatientButton.setVisible(false);
-			addProviderButton.setVisible(false);
-
-			this.connection.closeConnection();
-
-			frame.repaint();
 		});
 
 		// action listeners to buttons
