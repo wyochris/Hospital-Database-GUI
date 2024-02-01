@@ -27,6 +27,8 @@ public class Provider extends User {
 	private JButton logoutButton;
 	private JButton confirmDeleteMedicationButton;
 	private JButton deleteMedicationButton;
+	private JButton addMedicationButton;
+	private JButton confirmAddMedicationButton;
 
 	// views
 	private JButton patientView;
@@ -71,6 +73,8 @@ public class Provider extends User {
 		logoutButton = new JButton("Logout");
 		confirmDeleteMedicationButton = new JButton("Confirm Delete Medication");
 		deleteMedicationButton = new JButton("Delete Patient Medication");
+		addMedicationButton = new JButton("Add Patient Medication");
+		confirmAddMedicationButton = new JButton("Confirm Add Medicine");
 		
 	
 		//init panels
@@ -106,7 +110,6 @@ public class Provider extends User {
 		}
 		// set buttons visible
 		System.out.println("setting buttons");
-		logoutButton.setVisible(true);
 
 		textPanel.add(patientView);
 		patientView.setVisible(true);
@@ -117,6 +120,10 @@ public class Provider extends User {
 		deleteMedicationButton.setVisible(true);
 		textPanel.add(deleteMedicationButton);
 		
+		addMedicationButton.setVisible(true);
+		textPanel.add(addMedicationButton);
+		
+		logoutButton.setVisible(true);
 
 		logoutButton.addActionListener(e -> {
 			try {
@@ -325,23 +332,94 @@ public class Provider extends User {
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-//            doctorView.setVisible(true);
-//            patientView.setVisible(true);
-//            success.setVisible(true);
-//            addPatientButton.setVisible(false);
-//            confirmAddPatientButton.setVisible(false);
-//            deleteMedicationButton.setVisible(false);
-//            patientView.setVisible(false);
-//            resultPanel.setVisible(true);
-//            field1.setVisible(false);
-//            field2.setVisible(false);
-//            field3.setVisible(false);
-//            field4.setVisible(false);
-//            cancelButton.setVisible(true);
+
 
 
         });
+		
+		//adding medication buttons
+		addMedicationButton.addActionListener(e -> {
 
+			logoutButton.setVisible(false);
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+
+			field1.setText("MedicineName");
+			field1.setVisible(true);
+
+			field2.setText("Dose, include units");
+			field2.setVisible(true);
+
+			field3.setText("PatientID");
+			field3.setVisible(true);
+			textPanel.add(field3);
+			
+			field4.setText("ProviderID");
+			field4.setVisible(true);
+			textPanel.add(field4);
+			
+			
+			textPanel.add(confirmAddMedicationButton);
+			confirmAddMedicationButton.setVisible(true);
+			
+			addPatientButton.setVisible(false);
+            confirmAddPatientButton.setVisible(false);
+            deleteMedicationButton.setVisible(false);
+            patientView.setVisible(false);
+            addMedicationButton.setVisible(false);
+            confirmDeleteMedicationButton.setVisible(false);
+            
+            
+         
+
+		});
+
+		confirmAddMedicationButton.addActionListener(e -> {
+
+            try {
+                String storedProcedureCall = "{? = call addMedicine(?, ?,?,?)}";
+                field1text = field1.getText(); //medicine name
+                field2text = field2.getText(); //dose
+                field3text = field3.getText();//patientid
+                field4text = field4.getText();//providerid
+                int field3int = Integer.parseInt(field3text);
+                int field4int = Integer.parseInt(field4text);
+
+                try {
+                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+                    cs.setString(2, field1text);
+                    cs.setString(3, field2text);
+                    cs.setInt(4, field3int);
+                    cs.setInt(5, field4int);
+
+
+                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
+                    cs.executeUpdate();
+                    int returnCode = cs.getInt(1);
+                    if (returnCode == 0) {
+                        JOptionPane.showMessageDialog(null, "Medicine added!");
+
+                    }
+                } catch (SQLException er) {
+                   JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+                }
+
+                Statement stmt = connection.getConnection().createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+
+
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+
+
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Could Not Add Medicine");
+            }
+
+
+
+        });
+		
 
 		// repaint the frame
 
