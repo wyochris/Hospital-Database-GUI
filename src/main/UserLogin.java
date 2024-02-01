@@ -61,6 +61,8 @@ public class UserLogin {
 	            if (pstmt != null) pstmt.close();
 	        } catch (SQLException e) {
 	            e.printStackTrace();
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+
 	        }
 	    }
 	}
@@ -115,7 +117,6 @@ public class UserLogin {
 				return false;
 			}
 			else {
-				JOptionPane.showMessageDialog(null, "Success.");
 				return true;
 			}
 		} catch (SQLException e) {
@@ -126,6 +127,8 @@ public class UserLogin {
 				if (cstmt != null) cstmt.close();
 			}
 			catch (SQLException e) {
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+
 				e.printStackTrace(); 
 			} 
 		}

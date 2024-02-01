@@ -10,6 +10,7 @@ import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -63,11 +64,11 @@ public class ScreenViewer extends JFrame {
 
 	private JTable resultTable;
 
-	static final int frameWidth = 800;
+	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
 
-	static final int frameLocX = 100;
-	static final int frameLocY = 100;
+	static final int frameLocX = 50;
+	static final int frameLocY = 50;
 	protected ConnectionService connectionService;
 
 	protected User user;
@@ -84,12 +85,12 @@ public class ScreenViewer extends JFrame {
 		this.frame = frame;
 
 		this.frame.setTitle("Hospital");
-		this.frame.setLocation(frameLocX, frameLocY);
-		this.frame.setLayout(new BorderLayout());
+//		this.frame.setLocation(frameLocX, frameLocY);
+//		this.frame.setLayout(new BorderLayout());
 
 		initializeHospitalLogin();
 
-		this.frame.pack();
+//		this.frame.pack();
 		this.frame.setVisible(true);
 
 //        after initalizing login buttons, pack the frame
@@ -232,13 +233,20 @@ public class ScreenViewer extends JFrame {
 			Encryption en = new Encryption();
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
+			
+			Boolean loginSuccess = false;
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-				Boolean loginSuccess = userLog.login(field1text, field2text);
+				loginSuccess = userLog.login(field1text, field2text);
 
 			} catch (Exception e1) {
+		        JOptionPane.showMessageDialog(null, "Login Failed.");
 				System.out.println(e1);
+			}
+			
+			if(loginSuccess) {
+				JOptionPane.showMessageDialog(null, "Login success.");
 			}
 
 			this.user = new Provider(connectionService, frame);
@@ -279,16 +287,24 @@ public class ScreenViewer extends JFrame {
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
 			UserLogin userLog = new UserLogin(connectionService);
-
+			
+			Boolean reg = false;
+			
 			if (userLog.con != null) {
 				try {
 
-                	Boolean reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
+                	reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
 //					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
 
 				} catch (Exception e1) {
+			        JOptionPane.showMessageDialog(null, "Registration Failed.");
 					System.out.println(e1);
 				}
+				
+			
+			}
+			if(reg) {
+				JOptionPane.showMessageDialog(null, "Registration success.");
 			}
 
 			cancelButton.setVisible(true);
@@ -322,25 +338,36 @@ public class ScreenViewer extends JFrame {
 			confirmRegisterAsPatient.setVisible(false);
 			cancelButton.setVisible(false);
 			frame.repaint();
+			
+			Boolean reg = false;
 
 			Encryption en = new Encryption();
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
 			UserLogin userLog = new UserLogin(connectionService);
+			
+			Boolean regPat = false;
 
 			if (userLog.con != null) {
 				try {
 
-		                	Boolean reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "false");
+					regPat = userLog.register(field1text, field2text, field3text, field4text,field5text, "false");
 //					Boolean reg = userLog.register("Sue", "Smith", "1993-05-14", "suesmith", "Password123", "false");
 
 				} catch (Exception e1) {
+			        JOptionPane.showMessageDialog(null, "Registration Failed.");
 					System.out.println(e1);
 				}
+			}
+			
+			if(regPat) {
+				JOptionPane.showMessageDialog(null, "Registration success.");
 			}
 
 			cancelButton.setVisible(true);
 		});
+		
+
 
 		textPanel.add(loginAsProvider);
 		textPanel.add(loginAsAdmin);
@@ -363,7 +390,7 @@ public class ScreenViewer extends JFrame {
 	}
 
 	private void updateFrame() {
-		frame.pack();
+//		frame.pack();
 //	        frame.setLocation(frameLocX, frameLocY);
 		frame.setSize(frameWidth, frameHeight);
 		frame.setLayout(new BorderLayout());
