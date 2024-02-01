@@ -233,6 +233,7 @@ public class Admin extends User {
 			field3.setVisible(false);
 			field4.setVisible(false);
 			logoutButton.setVisible(true);
+			deletePatientButton.setVisible(true);
 
 		});
 
@@ -371,13 +372,13 @@ public class Admin extends User {
 			doctorView.setVisible(true);
 			patientView.setVisible(true);
 //	            success.setVisible(true);
-			addProviderButton.setVisible(true);
+			addPatientButton.setVisible(true);
 			confirmAddProviderButton.setVisible(false);
 			resultPanel.setVisible(true);
 			field1.setVisible(false);
 			logoutButton.setVisible(true);
-			deleteProviderButton.setVisible(true);
-			confirmDeleteProviderButton.setVisible(false);
+			deletePatientButton.setVisible(true);
+			confirmDeletePatientButton.setVisible(false);
 
 
         });
