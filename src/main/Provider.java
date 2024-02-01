@@ -2,13 +2,9 @@ package main;
 
 import javax.swing.JFrame;
 
-public class Provider implements User {
+public class Provider extends User {
+	
 
-	@Override
-	public void updateScreen(JFrame frame) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void initializeUserScreen() {

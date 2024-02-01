@@ -18,7 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class Admin implements User {
+public class Admin extends User {
 
 	// frame
 	private JFrame frame;
@@ -114,7 +114,7 @@ public class Admin implements User {
 
 			frame.add(textPanel, BorderLayout.SOUTH);
 			
-			initalizeTable(rs);
+			initalizeTable(rs, resultTable, resultPanel, frame);
 
 
 		} catch (SQLException ex) {
@@ -151,7 +151,7 @@ public class Admin implements User {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
 
 //                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs);
+				initalizeTable(rs, resultTable, resultPanel, frame);
 //		
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
@@ -207,7 +207,7 @@ public class Admin implements User {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 
 //	                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs);
+				initalizeTable(rs, resultTable, resultPanel, frame);
 //				
 
 			} catch (SQLException ex) {
@@ -306,7 +306,7 @@ public class Admin implements User {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
 
 //	                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs);
+				initalizeTable(rs, resultTable, resultPanel, frame);
 //				
 
 			} catch (SQLException ex) {
@@ -373,7 +373,7 @@ public class Admin implements User {
 
 				Statement stmt = connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-				initalizeTable(rs);
+				initalizeTable(rs, resultTable, resultPanel, frame);
 //	                frame.add(textPanel, BorderLayout.SOUTH);
 
 
@@ -395,45 +395,6 @@ public class Admin implements User {
 
 	}
 
-	public void updateScreen(JFrame frame) {
-//		initalize new buttons here
-//		action listeners for the buttons
-//		call the stored procedures from here
-	}
 
-	public void initalizeTable(ResultSet rs) {
-		try {
-		DefaultTableModel tableModel = new DefaultTableModel();
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();
-
-		// Add column headers
-		for (int i = 1; i <= columnsNumber; i++) {
-			tableModel.addColumn(rsmd.getColumnName(i));
-		}
-
-		// Add data rows
-		while (rs.next()) {
-			Object[] rowData = new Object[columnsNumber];
-			for (int i = 1; i <= columnsNumber; i++) {
-				rowData[i - 1] = rs.getString(i);
-			}
-			tableModel.addRow(rowData);
-		}
-
-		// Create JTable with the table model
-		resultTable = new JTable(tableModel);
-
-		// Add the table to the result panel
-		resultPanel.removeAll();
-		resultPanel.add(new JScrollPane(resultTable));
-
-		// Add the result panel to the frame
-		frame.add(resultPanel, BorderLayout.CENTER);
-		frame.revalidate();
-		} catch(SQLException ex){
-			throw new RuntimeException(ex);
-		}
-		
-	}
+	
 }

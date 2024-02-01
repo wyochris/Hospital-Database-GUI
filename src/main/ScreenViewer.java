@@ -97,7 +97,7 @@ public class ScreenViewer extends JFrame {
 
 	public void initializeHospitalLogin() {
 		System.out.println("hospital init");
-		loginAsProvider = new JButton("Doctor Login");
+		loginAsProvider = new JButton("Provider Login");
 		loginAsAdmin = new JButton("Admin Login");
 		cancelButton = new JButton("Cancel");
 
