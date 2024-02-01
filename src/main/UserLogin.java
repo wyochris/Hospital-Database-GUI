@@ -91,6 +91,7 @@ public class UserLogin {
 		}
 		catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Registration failed.");
+			System.out.println(e);
 			return false;
 		}
 		
@@ -110,6 +111,7 @@ public class UserLogin {
 			int returnCode = cstmt.getInt(1);
 			if(returnCode != 0) {
 				JOptionPane.showMessageDialog(null, "Registration failed.");
+				System.out.println("returnCode: " + returnCode);
 				return false;
 			}
 			else {

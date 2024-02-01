@@ -29,16 +29,18 @@ public class ScreenViewer extends JFrame {
 	private JButton cancelButton;
 
 	private JButton loginAsPatient;
-	private JButton confirmLogInButtonProvider;
-	private JButton confirmLogInButtonPatient;
+	private JButton confirmLogInButton;
 	private JButton confirmLogInButtonAdmin;
 	private JButton registerAsProviderButton;
+	private JButton registerAsPatientButton;
+
 	private JButton confirmRegisterAsProvider;
 
 	private JButton confirmAddPatientButton;
 	private JButton addPatientButton;
 	private JButton addProviderButton;
 	private JButton confirmAddProviderButton;
+	private JButton confirmRegisterAsPatient;
 
 	private JTextField field1;
 	private JTextField field2;
@@ -97,16 +99,18 @@ public class ScreenViewer extends JFrame {
 
 	public void initializeHospitalLogin() {
 		System.out.println("hospital init");
-		loginAsProvider = new JButton("Doctor Login");
+		loginAsProvider = new JButton("Provider Login");
 		loginAsAdmin = new JButton("Admin Login");
 		cancelButton = new JButton("Cancel");
 
 		loginAsPatient = new JButton("Patient Login");
 		confirmLogInButtonAdmin = new JButton("Log In");
-		confirmLogInButtonProvider = new JButton("Log In");
-		confirmLogInButtonPatient = new JButton("Login");
+		confirmLogInButton = new JButton("Log In");
 		registerAsProviderButton = new JButton("Provider Registration");
+		registerAsPatientButton = new JButton("Patient Registration");
+
 		confirmRegisterAsProvider = new JButton("Register");
+		confirmRegisterAsPatient = new JButton("Register");
 
 		panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
@@ -125,6 +129,10 @@ public class ScreenViewer extends JFrame {
 		registerAsProviderButton.addActionListener(e -> {
 			registerActionListener(UserType.PROVIDER);
 		});
+		
+		registerAsPatientButton.addActionListener(e -> {
+			registerActionListener(UserType.PATIENT);
+		});
 
 		loginAsProvider.addActionListener(e -> {
 			loginActionListener(UserType.PROVIDER);
@@ -133,6 +141,11 @@ public class ScreenViewer extends JFrame {
 
 		loginAsAdmin.addActionListener(e -> {
 			loginActionListener(UserType.ADMIN);
+		});
+		
+		// NEW from CHRIS
+		loginAsPatient.addActionListener(e -> {
+			loginActionListener(UserType.PATIENT);
 		});
 
 		cancelButton.addActionListener(e -> {
@@ -158,10 +171,11 @@ public class ScreenViewer extends JFrame {
 			loginAsAdmin.setVisible(true);
 			loginAsPatient.setVisible(true);
 			confirmLogInButtonAdmin.setVisible(false);
-			confirmLogInButtonProvider.setVisible(false);
-			confirmLogInButtonPatient.setVisible(false);
+			confirmLogInButton.setVisible(false);
 			confirmRegisterAsProvider.setVisible(false);
 			registerAsProviderButton.setVisible(true);
+			registerAsPatientButton.setVisible(true);
+
 
 			cancelButton.setVisible(false);
 //            addPatientButton.setVisible(false);
@@ -187,7 +201,6 @@ public class ScreenViewer extends JFrame {
 				loginAsAdmin.setVisible(false);
 				confirmLogInButtonAdmin.setVisible(false);
 				confirmRegisterAsProvider.setVisible(false);
-				confirmLogInButtonPatient.setVisible(false);
 				loginAsPatient.setVisible(false);
 				confirmRegisterAsProvider.setVisible(false);
 				cancelButton.setVisible(false);
@@ -200,7 +213,7 @@ public class ScreenViewer extends JFrame {
 		});
 
 		// TODO: Refactor?
-		confirmLogInButtonProvider.addActionListener(e -> {
+		confirmLogInButton.addActionListener(e -> {
 			field1text = field1.getText();
 			System.out.println(field1text);
 
@@ -212,7 +225,7 @@ public class ScreenViewer extends JFrame {
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
-			confirmLogInButtonProvider.setVisible(false);
+			confirmLogInButton.setVisible(false);
 			cancelButton.setVisible(false);
 			frame.repaint();
 
@@ -233,7 +246,7 @@ public class ScreenViewer extends JFrame {
 
 		});
 
-		// TODO: Refactor??
+		// TODO: Refactor?? - PROVIDER LOGIN CONFIRMATION
 		confirmRegisterAsProvider.addActionListener(e -> {
 			field1text = field1.getText();
 			System.out.println(field1text);
@@ -270,8 +283,56 @@ public class ScreenViewer extends JFrame {
 			if (userLog.con != null) {
 				try {
 
-//                	Boolean register = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
-					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
+                	Boolean reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
+//					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
+
+				} catch (Exception e1) {
+					System.out.println(e1);
+				}
+			}
+
+			cancelButton.setVisible(true);
+		});
+		
+		// TODO: Refactor?? - PATIENT LOGIN CONFIRMATION
+		confirmRegisterAsPatient.addActionListener(e -> {
+			field1text = field1.getText();
+			System.out.println(field1text);
+
+			field2text = field2.getText();
+			System.out.println(field2text);
+
+			field3text = field3.getText();
+			System.out.println(field3text);
+
+			field4text = field4.getText();
+			System.out.println(field4text);
+
+			field5text = field5.getText();
+			System.out.println(field5text);
+
+			field1.setVisible(false);
+			field2.setVisible(false);
+			field3.setVisible(false);
+			field4.setVisible(false);
+			field5.setVisible(false);
+			loginAsProvider.setVisible(false);
+			loginAsAdmin.setVisible(false);
+			loginAsPatient.setVisible(false);
+			confirmRegisterAsPatient.setVisible(false);
+			cancelButton.setVisible(false);
+			frame.repaint();
+
+			Encryption en = new Encryption();
+			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
+			connectionService.connect();
+			UserLogin userLog = new UserLogin(connectionService);
+
+			if (userLog.con != null) {
+				try {
+
+		                	Boolean reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "false");
+//					Boolean reg = userLog.register("Sue", "Smith", "1993-05-14", "suesmith", "Password123", "false");
 
 				} catch (Exception e1) {
 					System.out.println(e1);
@@ -286,6 +347,8 @@ public class ScreenViewer extends JFrame {
 
 		textPanel.add(loginAsPatient);
 		textPanel.add(registerAsProviderButton);
+		textPanel.add(registerAsPatientButton);
+
 
 		// panel.add(loginAsPatient);
 
@@ -317,6 +380,7 @@ public class ScreenViewer extends JFrame {
 		cancelButton.setVisible(true);
 		confirmRegisterAsProvider.setVisible(false);
 		registerAsProviderButton.setVisible(false);
+		registerAsPatientButton.setVisible(false);
 
 	}
 
@@ -336,14 +400,14 @@ public class ScreenViewer extends JFrame {
 		}
 
 		else if (typeOfUser == UserType.PATIENT) {
-			textPanel.add(confirmLogInButtonPatient);
-			confirmLogInButtonPatient.setVisible(true);
+			textPanel.add(confirmLogInButton);
+			confirmLogInButton.setVisible(true);
 
 		}
 
 		else {
-			textPanel.add(confirmLogInButtonProvider);
-			confirmLogInButtonProvider.setVisible(true);
+			textPanel.add(confirmLogInButton);
+			confirmLogInButton.setVisible(true);
 
 		}
 
@@ -355,29 +419,29 @@ public class ScreenViewer extends JFrame {
 		frame.repaint();
 	}
 
-	private void registerActionListener(UserType userType) {
-		field1.setText(userType + " First Name");
+	private void registerActionListener(UserType u) {
+		field1.setText(u + " First Name");
 		textPanel.add(field1);
 
-		field2.setText(userType + " Last Name");
+		field2.setText(u + " Last Name");
 		textPanel.add(field2);
 
-		field3.setText(userType + " DOB");
+		field3.setText(u + " DOB");
 		textPanel.add(field3);
 
-		field4.setText(userType + " Username");
+		field4.setText(u + " Username");
 		textPanel.add(field4);
 
-		field5.setText(userType + " Password");
+		field5.setText(u + " Password");
 		textPanel.add(field5);
 
-		if (userType == UserType.PROVIDER) {
+		if (u == UserType.PROVIDER) {
 			textPanel.add(confirmRegisterAsProvider);
 		}
 
-//        else if(userType == User.PATIENT) {
-//       	 textPanel.add(confirmLogInButtonPatient);
-//        }
+        else if(u == UserType.PATIENT) {
+       	 textPanel.add(confirmRegisterAsPatient);
+        }
 //        
 //        else {
 //       	 textPanel.add(confirmLogInButtonProvider);
@@ -386,12 +450,12 @@ public class ScreenViewer extends JFrame {
 		textPanel.add(cancelButton);
 
 		updateFrame();
-		frame.setTitle(userType + " Register");
-		setRegisterButtons();
+		frame.setTitle(u + " Register");
+		setRegisterButtons(u);
 		frame.repaint();
 	}
 
-	private void setRegisterButtons() {
+	private void setRegisterButtons(UserType u) {
 		field1.setVisible(true);
 		field2.setVisible(true);
 		field3.setVisible(true);
@@ -401,8 +465,19 @@ public class ScreenViewer extends JFrame {
 		loginAsProvider.setVisible(false);
 		loginAsPatient.setVisible(false);
 		loginAsAdmin.setVisible(false);
-		confirmRegisterAsProvider.setVisible(true);
+		if(u == UserType.PROVIDER) {
+			confirmRegisterAsProvider.setVisible(true);
+			confirmRegisterAsPatient.setVisible(false);
+		}
+		else if (u == UserType.PATIENT) {
+			confirmRegisterAsProvider.setVisible(false);
+			confirmRegisterAsPatient.setVisible(true);
+
+		}
 		registerAsProviderButton.setVisible(false);
+
+		registerAsPatientButton.setVisible(false);
+
 		cancelButton.setVisible(true);
 	}
 
