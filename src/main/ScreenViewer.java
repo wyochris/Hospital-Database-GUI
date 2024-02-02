@@ -2,6 +2,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -268,9 +269,15 @@ public class ScreenViewer extends JFrame {
 			
 			if(loginSuccess) {
 				JOptionPane.showMessageDialog(null, "Login success.");
+				this.user = new Provider(connectionService, frame);
+			}
+			try {
+				Main.main(null);
+				frame.dispose();
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
 			}
 
-			this.user = new Provider(connectionService, frame);
 			return;
 
 		});

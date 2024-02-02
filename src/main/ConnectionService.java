@@ -29,7 +29,7 @@ public class ConnectionService {
             System.out.println("Connected");
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error: Incorrct Login Information");
+            JOptionPane.showMessageDialog(null, "Error: Incorrect Login Information");
             return false;
         }
         return true;
