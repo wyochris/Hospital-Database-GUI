@@ -215,7 +215,8 @@ public class Admin extends User {
 
 					}
 				} catch (SQLException er) {
-					throw new RuntimeException(er);
+					JOptionPane.showMessageDialog(null, "Unknown Error Occurred.");
+//					throw new RuntimeException(er);
 				}
 
 				Statement stmt = connection.getConnection().createStatement();
@@ -314,7 +315,9 @@ public class Admin extends User {
 
                     }
                 } catch (SQLException er) {
-                    throw new RuntimeException(er);
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+
+//                    throw new RuntimeException(er);
                 }
 
                 Statement stmt = connection.getConnection().createStatement();
@@ -365,7 +368,8 @@ public class Admin extends User {
 //                        return false;
 
                 } catch (SQLException er) {
-                    throw new RuntimeException(er);
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+//                    throw new RuntimeException(er);
                 }
 
                 Statement stmt = connection.getConnection().createStatement();
@@ -454,15 +458,11 @@ public class Admin extends User {
 //	                        rests.add(restName);
 //	                        return true;
 					} else {
-//	                        if (returnCode == 1) {
-//	                            JOptionPane.showMessageDialog(null, "Error: Duplicate restaurant name.");
-//	                        } else {
-//	                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
-//	                        }
-//	                        return false;
+
 					}
 				} catch (SQLException er) {
-					throw new RuntimeException(er);
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+//					throw new RuntimeException(er);
 				}
 
 				Statement stmt = connection.getConnection().createStatement();

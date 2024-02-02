@@ -2,6 +2,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -25,7 +26,7 @@ public class ScreenViewer extends JFrame {
 	private JPanel panel;
 	private JPanel textPanel;
 	private JPanel resultPanel;
-	private JPanel bottomPanel;
+//	private JPanel bottomPanel;
 	private JButton loginAsProvider;
 	private JButton loginAsAdmin;
 	private JButton cancelButton;
@@ -79,10 +80,10 @@ public class ScreenViewer extends JFrame {
 	}
 
 	public ScreenViewer(JFrame frame) {
-		this.panel = new JPanel();
+//		this.panel = new JPanel();
 		this.textPanel = new JPanel();
 		this.resultPanel = new JPanel();
-		this.bottomPanel = new JPanel();
+//		this.bottomPanel = new JPanel();
 		this.frame = frame;
 
 		this.frame.setTitle("Hospital");
@@ -134,7 +135,7 @@ public class ScreenViewer extends JFrame {
 //		loginAsPatient.setBackground(colour);
 
 
-		panel = new JPanel();
+//		panel = new JPanel();
 //        panel.setLayout(new BorderLayout());
 
 		field1 = new JTextField();
@@ -264,13 +265,20 @@ public class ScreenViewer extends JFrame {
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
 				System.out.println(e1);
+				try {
+					Main.main(null);
+					frame.dispose();
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
 			}
 			
 			if(loginSuccess) {
 				JOptionPane.showMessageDialog(null, "Login success.");
+				this.user = new Provider(connectionService, frame);
 			}
 
-			this.user = new Provider(connectionService, frame);
+
 			return;
 
 		});
