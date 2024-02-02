@@ -31,6 +31,11 @@ public class Provider extends User {
 	private JButton confirmAddMedicationButton;
 	private JButton updateMedicationButton;
 	private JButton confirmUpdateMedicationButton;
+	private JButton goBackButton; //work on making this work
+	private JButton addSymptomButton;
+	private JButton confirmAddSymptomButton;
+	private JButton deleteSymptomButton;
+	private JButton confirmDeleteSymptomButton;
 
 	// views
 	private JButton patientView;
@@ -79,9 +84,13 @@ public class Provider extends User {
 		confirmAddMedicationButton = new JButton("Confirm Add Medicine");
 		updateMedicationButton = new JButton("Update Patient Medication");
 		confirmUpdateMedicationButton = new JButton("Confirm Update Medication");
-		
-	
-		//init panels
+//		goBackButton = new JButton("Go Back");
+		addSymptomButton = new JButton("Add Symptom");
+		confirmAddSymptomButton = new JButton("Confirm Add Symptom");
+		deleteSymptomButton = new JButton("Delete Symptom");
+		confirmDeleteSymptomButton = new JButton("Confirm Delete Symptom");
+
+		// init panels
 		resultPanel = new JPanel();
 		textPanel = new JPanel();
 
@@ -101,9 +110,8 @@ public class Provider extends User {
 		// initlaize tables
 		try {
 			Statement stmt = this.connection.getConnection().createStatement();
-			//TODO: make it so that they can only see their own patients
+			// TODO: make it so that they can only see their own patients
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
-			
 
 			frame.add(textPanel, BorderLayout.SOUTH);
 
@@ -120,17 +128,28 @@ public class Provider extends User {
 		textPanel.add(addPatientButton);
 		addPatientButton.setVisible(true);
 		textPanel.add(logoutButton);
-		
+
 		deleteMedicationButton.setVisible(true);
 		textPanel.add(deleteMedicationButton);
-		
+
 		addMedicationButton.setVisible(true);
 		textPanel.add(addMedicationButton);
-		
+
 		updateMedicationButton.setVisible(true);
 		textPanel.add(updateMedicationButton);
 		
+		addSymptomButton.setVisible(true);
+		textPanel.add(addSymptomButton);
+		
+		deleteSymptomButton.setVisible(true);
+		textPanel.add(deleteSymptomButton);
+
+		
 		logoutButton.setVisible(true);
+		
+
+//		textPanel.add(goBackButton);
+//		goBackButton.setVisible(false);
 
 		logoutButton.addActionListener(e -> {
 			try {
@@ -143,7 +162,7 @@ public class Provider extends User {
 			}
 		});
 
-	
+
 		confirmAddPatientButton.addActionListener(e -> {
 
 			try {
@@ -203,6 +222,7 @@ public class Provider extends User {
 			field3.setVisible(false);
 			field4.setVisible(false);
 			logoutButton.setVisible(true);
+//			goBackButton.setVisible(true);
 
 		});
 
@@ -214,9 +234,10 @@ public class Provider extends User {
 			deleteMedicationButton.setVisible(false);
 			confirmDeleteMedicationButton.setVisible(false);
 			confirmUpdateMedicationButton.setVisible(false);
-	        updateMedicationButton.setVisible(false);
-	            
+			updateMedicationButton.setVisible(false);
+
 			confirmAddPatientButton.setVisible(true);
+			goBackButton.setVisible(true);
 
 			field1.setText("First Name");
 
@@ -238,24 +259,24 @@ public class Provider extends User {
 
 		});
 
-		patientView.addActionListener(e -> {
+//		patientView.addActionListener(e -> {
+//
+//			try {
+//
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+////	                frame.add(textPanel, BorderLayout.SOUTH);
+//
+//			} catch (SQLException ex) {
+//				throw new RuntimeException(ex);
+//			}
+//
+//			logoutButton.setVisible(true);
+//			addPatientButton.setVisible(true);
+//
+//		});
 
-			try {
-
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-				initalizeTable(rs, resultTable, resultPanel, frame);
-//	                frame.add(textPanel, BorderLayout.SOUTH);
-
-			} catch (SQLException ex) {
-				throw new RuntimeException(ex);
-			}
-
-			logoutButton.setVisible(true);
-			addPatientButton.setVisible(true);
-
-		});
-		
 		deleteMedicationButton.addActionListener(e -> {
 
 			logoutButton.setVisible(false);
@@ -268,89 +289,78 @@ public class Provider extends User {
 
 			field2.setText("PatientID");
 			field2.setVisible(true);
-			
+
 //			field3.setText("ProviderID");
 //			field3.setVisible(true);
-			
+
 //			textPanel.add(field3);
-			
 
 			textPanel.add(confirmDeleteMedicationButton);
 			confirmDeleteMedicationButton.setVisible(true);
-			
+
 			addPatientButton.setVisible(false);
-            confirmAddPatientButton.setVisible(false);
-            deleteMedicationButton.setVisible(false);
-            patientView.setVisible(false);
-            confirmUpdateMedicationButton.setVisible(false);
-            updateMedicationButton.setVisible(false);
-            
-            
-         
+			confirmAddPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			patientView.setVisible(false);
+			confirmUpdateMedicationButton.setVisible(false);
+			updateMedicationButton.setVisible(false);
+//			goBackButton.setVisible(true);
 
 		});
-		
+
 		confirmDeleteMedicationButton.addActionListener(e -> {
 
-            try {
-                String storedProcedureCall = "{? = call deleteMedicine(?, ?)}";
-                field1text = field1.getText();
-                field2text = field2.getText();
-                field3text = field3.getText();
-                int field2int = Integer.parseInt(field2text);
-                //if you need it to go with the provider id..someting we should add?
+			try {
+				String storedProcedureCall = "{? = call deleteMedicine(?, ?)}";
+				field1text = field1.getText();
+				field2text = field2.getText();
+				field3text = field3.getText();
+				int field2int = Integer.parseInt(field2text);
+				// if you need it to go with the provider id..someting we should add?
 //                int field3int = Integer.parseInt(field3text);
 
-
-
-
-                try {
-                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-                    cs.setString(2, field1text);
-                    cs.setInt(3, field2int);
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setInt(3, field2int);
 //                    cs.setInt(4, field3int);
 
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Medicine deleted!");
+					} else {
+						if (returnCode == 1) {
+							JOptionPane.showMessageDialog(null,
+									"Error: medicineName or patient id or provider id is null");
+						} else if (returnCode == 2) {
+							JOptionPane.showMessageDialog(null, "Error: Medicine does not exist.");
+						} else if (returnCode == 3) {
+							JOptionPane.showMessageDialog(null, "Error: Patient is not taking this medicine.");
+						} else {
+							JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
+						}
 
-                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
-                    cs.executeUpdate();
-                    int returnCode = cs.getInt(1);
-                    if (returnCode == 0) {
-                        JOptionPane.showMessageDialog(null, "Medicine deleted!");
-                    } else {
-                        if (returnCode == 1) {
-                            JOptionPane.showMessageDialog(null, "Error: medicineName or patient id or provider id is null");
-                        } else if(returnCode == 2){
-                            JOptionPane.showMessageDialog(null, "Error: Medicine does not exist.");
-                        } else if(returnCode == 3) {
-                            JOptionPane.showMessageDialog(null, "Error: Patient is not taking this medicine.");
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
-                        }
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
 
-                    }
-                } catch (SQLException er) {
-                   JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
-                }
-
-                Statement stmt = connection.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
 
 //                frame.add(textPanel, BorderLayout.SOUTH);
 
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
 
+		});
 
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-
-
-
-        });
-		
-		//adding medication buttons
+		// adding medication buttons
 		addMedicationButton.addActionListener(e -> {
 
 			logoutButton.setVisible(false);
@@ -366,75 +376,67 @@ public class Provider extends User {
 			field3.setText("PatientID");
 			field3.setVisible(true);
 			textPanel.add(field3);
-			
+
 			field4.setText("ProviderID");
 			field4.setVisible(true);
 			textPanel.add(field4);
-			
-			
+
 			textPanel.add(confirmAddMedicationButton);
 			confirmAddMedicationButton.setVisible(true);
-			
+
 			addPatientButton.setVisible(false);
-            confirmAddPatientButton.setVisible(false);
-            deleteMedicationButton.setVisible(false);
-            patientView.setVisible(false);
-            addMedicationButton.setVisible(false);
-            confirmDeleteMedicationButton.setVisible(false);
-            confirmUpdateMedicationButton.setVisible(false);
-            updateMedicationButton.setVisible(false);
-            
-            
-         
+			confirmAddPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			patientView.setVisible(false);
+			addMedicationButton.setVisible(false);
+			confirmDeleteMedicationButton.setVisible(false);
+			confirmUpdateMedicationButton.setVisible(false);
+			updateMedicationButton.setVisible(false);
+//			goBackButton.setVisible(true);
 
 		});
 
 		confirmAddMedicationButton.addActionListener(e -> {
 
-            try {
-                String storedProcedureCall = "{? = call addMedicine(?, ?,?,?)}";
-                field1text = field1.getText(); //medicine name
-                field2text = field2.getText(); //dose
-                field3text = field3.getText();//patientid
-                field4text = field4.getText();//providerid
-                int field3int = Integer.parseInt(field3text);
-                int field4int = Integer.parseInt(field4text);
+			try {
+				String storedProcedureCall = "{? = call addMedicine(?, ?,?,?)}";
+				field1text = field1.getText(); // medicine name
+				field2text = field2.getText(); // dose
+				field3text = field3.getText();// patientid
+				field4text = field4.getText();// providerid
+				int field3int = Integer.parseInt(field3text);
+				int field4int = Integer.parseInt(field4text);
 
-                try {
-                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-                    cs.setString(2, field1text);
-                    cs.setString(3, field2text);
-                    cs.setInt(4, field3int);
-                    cs.setInt(5, field4int);
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setString(3, field2text);
+					cs.setInt(4, field3int);
+					cs.setInt(5, field4int);
 
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Medicine added!");
 
-                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
-                    cs.executeUpdate();
-                    int returnCode = cs.getInt(1);
-                    if (returnCode == 0) {
-                        JOptionPane.showMessageDialog(null, "Medicine added!");
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
 
-                    }
-                } catch (SQLException er) {
-                   JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
-                }
-
-                Statement stmt = connection.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
-
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
 
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Could Not Add Medicine");
+			}
 
+		});
+		// updating medications buttons
 
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Could Not Add Medicine");
-            }
-            
-            
-        });
-		//updating medications buttons
-		
 		updateMedicationButton.addActionListener(e -> {
 
 			logoutButton.setVisible(false);
@@ -450,66 +452,200 @@ public class Provider extends User {
 			field3.setText("PatientID");
 			field3.setVisible(true);
 			textPanel.add(field3);
-			
-			
+
 			textPanel.add(confirmUpdateMedicationButton);
 			confirmUpdateMedicationButton.setVisible(true);
-			
+
 			addPatientButton.setVisible(false);
-            confirmAddPatientButton.setVisible(false);
-            deleteMedicationButton.setVisible(false);
-            patientView.setVisible(false);
-            addMedicationButton.setVisible(false);
-            confirmDeleteMedicationButton.setVisible(false);
-            updateMedicationButton.setVisible(false);
-            confirmUpdateMedicationButton.setVisible(true);
-         
+			confirmAddPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			patientView.setVisible(false);
+			addMedicationButton.setVisible(false);
+			confirmDeleteMedicationButton.setVisible(false);
+			updateMedicationButton.setVisible(false);
+			confirmUpdateMedicationButton.setVisible(true);
+//			goBackButton.setVisible(true);
 
 		});
 
 		confirmUpdateMedicationButton.addActionListener(e -> {
 
-            try {
-                String storedProcedureCall = "{? = call updateMedicine(?, ?,?)}";
-                field1text = field1.getText(); //medicine name
-                field2text = field2.getText(); //dose
-                field3text = field3.getText();//patientid
-                int field3int = Integer.parseInt(field3text);
+			try {
+				String storedProcedureCall = "{? = call updateMedicine(?, ?,?)}";
+				field1text = field1.getText(); // medicine name
+				field2text = field2.getText(); // dose
+				field3text = field3.getText();// patientid
+				int field3int = Integer.parseInt(field3text);
 
-                try {
-                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-                    cs.setString(2, field1text);
-                    cs.setString(3, field2text);
-                    cs.setInt(4, field3int);
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setString(3, field2text);
+					cs.setInt(4, field3int);
 
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Medicine Updated!");
 
-                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
-                    cs.executeUpdate();
-                    int returnCode = cs.getInt(1);
-                    if (returnCode == 0) {
-                        JOptionPane.showMessageDialog(null, "Medicine Updated!");
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
 
-                    }
-                } catch (SQLException er) {
-                   JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
-                }
-
-                Statement stmt = connection.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
-
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
 
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Could Not Update Medicine");
+			}
 
-
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Could Not Update Medicine");
-            }
-            
-            
-        });
+		});
 		
+		
+		//adjusting symptoms
+		
+		//addsymptom
+		addSymptomButton.addActionListener(e -> {
 
+			logoutButton.setVisible(false);
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+
+			field1.setText("Symptom Name");
+			field1.setVisible(true);
+
+			field2.setText("Patient ID");
+			field2.setVisible(true);
+
+
+			textPanel.add(confirmAddSymptomButton);
+			confirmAddSymptomButton.setVisible(true);
+
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			patientView.setVisible(false);
+			addMedicationButton.setVisible(false);
+			confirmDeleteMedicationButton.setVisible(false);
+			updateMedicationButton.setVisible(false);
+			confirmUpdateMedicationButton.setVisible(false);
+			addSymptomButton.setVisible(false);
+			confirmAddSymptomButton.setVisible(true);
+			
+			
+//			goBackButton.setVisible(true);
+
+		});
+
+		confirmAddSymptomButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call addSymptom(?, ?)}";
+				field1text = field1.getText(); // symptom name
+				field2text = field2.getText(); // patientId
+				int field2int = Integer.parseInt(field2text);
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setInt(3, field2int);
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Symptom Added!");
+
+					}
+				} catch (SQLException er) {
+					System.out.println(er);
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
+			}
+
+		});
+		
+		//delete symptom
+		deleteSymptomButton.addActionListener(e -> {
+
+			logoutButton.setVisible(false);
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+
+			field1.setText("Symptom Name");
+			field1.setVisible(true);
+
+			field2.setText("Patient ID");
+			field2.setVisible(true);
+
+
+			textPanel.add(confirmDeleteSymptomButton);
+
+			addPatientButton.setVisible(false);
+			confirmAddPatientButton.setVisible(false);
+			deleteMedicationButton.setVisible(false);
+			patientView.setVisible(false);
+			addMedicationButton.setVisible(false);
+			confirmDeleteMedicationButton.setVisible(false);
+			updateMedicationButton.setVisible(false);
+			confirmUpdateMedicationButton.setVisible(false);
+			addSymptomButton.setVisible(false);
+			confirmAddSymptomButton.setVisible(false);
+			confirmDeleteSymptomButton.setVisible(true);
+			
+			
+//			goBackButton.setVisible(true);
+
+		});
+
+		confirmDeleteSymptomButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call deleteSymptom(?, ?)}";
+				field1text = field1.getText(); // symptom name
+				field2text = field2.getText(); // patientId
+				int field2int = Integer.parseInt(field2text);
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setInt(3, field2int);
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Symptom Deleted!");
+
+					}
+				} catch (SQLException er) {
+					System.out.println(er);
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
+
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
+			}
+
+		});
+		
 		// repaint the frame
 
 		frame.repaint();
