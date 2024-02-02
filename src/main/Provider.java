@@ -64,12 +64,26 @@ public class Provider extends User {
 	private String field5text;
 	private String field6text;
 
-	public Provider(ConnectionService connection, JFrame frame) {
+	static final int frameWidth = 1600;
+	static final int frameHeight = 800;
+
+	public Provider(ConnectionService connection, JFrame oldFrame) {
 		System.out.println("made an provider");
 		this.connection = connection;
-		this.frame = frame;
-//		this.frame = new JFrame();
+		oldFrame.dispose();
+		this.frame = new JFrame();
+		this.frame.setVisible(true);
+		updateFrame();
 		initializeUserScreen();
+	}
+
+	private void updateFrame() {
+//		frame.pack();
+//	        frame.setLocation(frameLocX, frameLocY);
+		frame.setSize(frameWidth, frameHeight);
+		frame.setLayout(new BorderLayout());
+		frame.repaint();
+
 	}
 
 	@Override

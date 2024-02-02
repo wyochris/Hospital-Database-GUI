@@ -63,13 +63,27 @@ public class Admin extends User {
 	private String field4text = "fail";
 	private String field5text = "fail";
 	private String field6text = "fail";
+	static final int frameWidth = 1600;
+	static final int frameHeight = 800;
 	
 
-	public Admin(ConnectionService connection, JFrame frame) {
+	public Admin(ConnectionService connection, JFrame oldFrame) {
 		System.out.println("made an admin");
 		this.connection = connection;
-		this.frame = frame;
+		this.frame = new JFrame();
+		oldFrame.dispose();
+		this.frame.setVisible(true);
+		updateFrame();
 		initializeUserScreen();
+	}
+
+	private void updateFrame() {
+//		frame.pack();
+//	        frame.setLocation(frameLocX, frameLocY);
+		frame.setSize(frameWidth, frameHeight);
+		frame.setLayout(new BorderLayout());
+		frame.repaint();
+
 	}
 
 	public void addPatient() {

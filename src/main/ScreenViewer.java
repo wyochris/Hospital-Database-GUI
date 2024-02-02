@@ -228,6 +228,7 @@ public class ScreenViewer extends JFrame {
 				confirmRegisterAsProvider.setVisible(false);
 				cancelButton.setVisible(false);
 				frame.repaint();
+				frame.dispose();
 				this.user = new Admin(connectionService, frame);
 			}
 
@@ -264,10 +265,10 @@ public class ScreenViewer extends JFrame {
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
-				System.out.println(e1);
+//				System.out.println(e1);
 				try {
-					Main.main(null);
 					frame.dispose();
+					Main.main(null);
 				} catch (IOException ex) {
 					throw new RuntimeException(ex);
 				}
@@ -276,6 +277,8 @@ public class ScreenViewer extends JFrame {
 			if(loginSuccess) {
 				JOptionPane.showMessageDialog(null, "Login success.");
 				this.user = new Provider(connectionService, frame);
+			}else {
+				cancelButton.setVisible(true);
 			}
 
 
