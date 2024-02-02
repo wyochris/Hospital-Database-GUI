@@ -45,8 +45,6 @@ public class UserLogin {
 
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
-	            System.out.println(storedHash.equals(hashedPassword) + " DB " + storedHash + " DB " + storedSalt + " USER " + hashedPassword);
-
 	            if (storedHash.equals(hashedPassword)) {
 	                return true; 
 	            }
@@ -63,6 +61,8 @@ public class UserLogin {
 	            if (pstmt != null) pstmt.close();
 	        } catch (SQLException e) {
 	            e.printStackTrace();
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+
 	        }
 	    }
 	}
@@ -82,8 +82,6 @@ public class UserLogin {
 			
             Date date = Date.valueOf(dob);
 			estmt.setDate(4, date);
-			System.out.println(firstName + " " + lastName + " " + date + " " + isProvider);
-
 			estmt.registerOutParameter(1, Types.INTEGER);
 			estmt.executeUpdate();
 			
@@ -95,7 +93,7 @@ public class UserLogin {
 		}
 		catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Registration failed.");
-			System.out.println("isUserExists");
+			System.out.println(e);
 			return false;
 		}
 		
@@ -108,8 +106,6 @@ public class UserLogin {
 			cstmt.setBytes(3, salt);
 			cstmt.setString(4, hashPassword(salt, password));
 			
-			System.out.println("entered pass" + " " + hashPassword(salt, password));
-
 			cstmt.registerOutParameter(1, Types.INTEGER);
 
 			cstmt.execute();
@@ -117,10 +113,10 @@ public class UserLogin {
 			int returnCode = cstmt.getInt(1);
 			if(returnCode != 0) {
 				JOptionPane.showMessageDialog(null, "Registration failed.");
+				System.out.println("returnCode: " + returnCode);
 				return false;
 			}
 			else {
-				JOptionPane.showMessageDialog(null, "Success.");
 				return true;
 			}
 		} catch (SQLException e) {
@@ -131,6 +127,8 @@ public class UserLogin {
 				if (cstmt != null) cstmt.close();
 			}
 			catch (SQLException e) {
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+
 				e.printStackTrace(); 
 			} 
 		}
@@ -144,14 +142,11 @@ public class UserLogin {
 	}
 	
 	public String getStringFromBytes(byte[] data) {
-		System.out.println("enc from USER " + " " + enc.encodeToString(data));
 		return enc.encodeToString(data);
 	}
 
 	public String hashPassword(byte[] salt, String password) {
 		
-		System.out.println("USER " + salt + " " + password);
-
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
 		SecretKeyFactory f;
 		byte[] hash = null;
