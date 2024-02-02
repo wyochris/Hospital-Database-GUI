@@ -31,7 +31,7 @@ public class Provider extends User {
 	private JButton confirmAddMedicationButton;
 	private JButton updateMedicationButton;
 	private JButton confirmUpdateMedicationButton;
-	private JButton goBackButton; //work on making this work
+	private JButton goBackButton; // work on making this work
 	private JButton addSymptomButton;
 	private JButton confirmAddSymptomButton;
 	private JButton deleteSymptomButton;
@@ -41,8 +41,9 @@ public class Provider extends User {
 	private JButton patientView;
 
 	// panels
-	private JPanel textPanel;
+	private JPanel buttonPanel;
 	private JPanel resultPanel;
+	private JPanel procedurePanel;
 
 	// result table
 	private JTable resultTable;
@@ -55,18 +56,19 @@ public class Provider extends User {
 	private JTextField field5;
 	private JTextField field6;
 
-	private String field1text = "fail";
-	private String field2text = "fail";
+	private String field1text;
+	private String field2text;
 
-	private String field3text = "fail";
-	private String field4text = "fail";
-	private String field5text = "fail";
-	private String field6text = "fail";
+	private String field3text;
+	private String field4text;
+	private String field5text;
+	private String field6text;
 
 	public Provider(ConnectionService connection, JFrame frame) {
 		System.out.println("made an provider");
 		this.connection = connection;
 		this.frame = frame;
+//		this.frame = new JFrame();
 		initializeUserScreen();
 	}
 
@@ -92,7 +94,8 @@ public class Provider extends User {
 
 		// init panels
 		resultPanel = new JPanel();
-		textPanel = new JPanel();
+		buttonPanel = new JPanel();
+		procedurePanel = new JPanel();
 
 		// intilize JTextFields
 		field1 = new JTextField();
@@ -102,55 +105,31 @@ public class Provider extends User {
 		field5 = new JTextField();
 		field6 = new JTextField();
 
-		textPanel.add(field1);
-		textPanel.add(field2);
-		field1.setVisible(false);
-		field2.setVisible(false);
-
+//		
+		//add to panel
+		buttonPanel.add(logoutButton);
+		buttonPanel.add(addPatientButton);
+		buttonPanel.add(addMedicationButton);
+		buttonPanel.add(updateMedicationButton);
+		buttonPanel.add(deleteMedicationButton);
+		buttonPanel.add(addSymptomButton);
+		buttonPanel.add(deleteSymptomButton);
+		
+		buttonPanel.setVisible(true);
+		
 		// initlaize tables
 		try {
 			Statement stmt = this.connection.getConnection().createStatement();
 			// TODO: make it so that they can only see their own patients
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
-
-			frame.add(textPanel, BorderLayout.SOUTH);
-
 			initalizeTable(rs, resultTable, resultPanel, frame);
-
+			frame.add(buttonPanel, BorderLayout.SOUTH);
+			frame.repaint();
+			
 		} catch (SQLException ex) {
 			throw new RuntimeException(ex);
 		}
-		// set buttons visible
-		System.out.println("setting buttons");
-
-		textPanel.add(patientView);
-		patientView.setVisible(true);
-		textPanel.add(addPatientButton);
-		addPatientButton.setVisible(true);
-		textPanel.add(logoutButton);
-
-		deleteMedicationButton.setVisible(true);
-		textPanel.add(deleteMedicationButton);
-
-		addMedicationButton.setVisible(true);
-		textPanel.add(addMedicationButton);
-
-		updateMedicationButton.setVisible(true);
-		textPanel.add(updateMedicationButton);
 		
-		addSymptomButton.setVisible(true);
-		textPanel.add(addSymptomButton);
-		
-		deleteSymptomButton.setVisible(true);
-		textPanel.add(deleteSymptomButton);
-
-		
-		logoutButton.setVisible(true);
-		
-
-//		textPanel.add(goBackButton);
-//		goBackButton.setVisible(false);
-
 		logoutButton.addActionListener(e -> {
 			try {
 				// makes a new frame and reinitalizes the program
@@ -162,6 +141,21 @@ public class Provider extends User {
 			}
 		});
 
+		addPatientButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("First Name");
+			field2.setText("Last Name");
+			field3.setText("Middle Initial");
+			field4.setText("DOB as yyyy-MM-dd");
+
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(confirmAddPatientButton);
+
+		});
 
 		confirmAddPatientButton.addActionListener(e -> {
 
@@ -199,11 +193,12 @@ public class Provider extends User {
 //	                        return false;
 					}
 				} catch (SQLException er) {
-					throw new RuntimeException(er);
+					JOptionPane.showMessageDialog(null, "Could not add patient");
+
 				}
 
 				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientInformationView");
 
 //	                frame.add(textPanel, BorderLayout.SOUTH);
 				initalizeTable(rs, resultTable, resultPanel, frame);
@@ -212,99 +207,18 @@ public class Provider extends User {
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
-			patientView.setVisible(true);
-//	            success.setVisible(true);
-			addPatientButton.setVisible(true);
-			confirmAddPatientButton.setVisible(false);
-			resultPanel.setVisible(true);
-			field1.setVisible(false);
-			field2.setVisible(false);
-			field3.setVisible(false);
-			field4.setVisible(false);
-			logoutButton.setVisible(true);
-//			goBackButton.setVisible(true);
 
 		});
-
-		addPatientButton.addActionListener(e -> {
-
-			logoutButton.setVisible(false);
-			patientView.setVisible(false);
-			addPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			confirmDeleteMedicationButton.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-
-			confirmAddPatientButton.setVisible(true);
-			goBackButton.setVisible(true);
-
-			field1.setText("First Name");
-
-			field1.setVisible(true);
-
-			field2.setText("Last Name");
-			field2.setVisible(true);
-
-			field3.setText("Middle Initial");
-
-			textPanel.add(field3);
-			field3.setVisible(true);
-
-			field4.setText("DOB as yyyy-MM-dd");
-			textPanel.add(field4);
-			field4.setVisible(true);
-
-			textPanel.add(confirmAddPatientButton);
-
-		});
-
-//		patientView.addActionListener(e -> {
-//
-//			try {
-//
-//				Statement stmt = connection.getConnection().createStatement();
-//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-//				initalizeTable(rs, resultTable, resultPanel, frame);
-////	                frame.add(textPanel, BorderLayout.SOUTH);
-//
-//			} catch (SQLException ex) {
-//				throw new RuntimeException(ex);
-//			}
-//
-//			logoutButton.setVisible(true);
-//			addPatientButton.setVisible(true);
-//
-//		});
 
 		deleteMedicationButton.addActionListener(e -> {
-
-			logoutButton.setVisible(false);
-//			patientView.setVisible(false);
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
+			setUpFramesForActions();
 
 			field1.setText("MedicineName");
-			field1.setVisible(true);
-
 			field2.setText("PatientID");
-			field2.setVisible(true);
 
-//			field3.setText("ProviderID");
-//			field3.setVisible(true);
-
-//			textPanel.add(field3);
-
-			textPanel.add(confirmDeleteMedicationButton);
-			confirmDeleteMedicationButton.setVisible(true);
-
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			patientView.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-//			goBackButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(confirmDeleteMedicationButton);
 
 		});
 
@@ -355,44 +269,24 @@ public class Provider extends User {
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
-				throw new RuntimeException(ex);
+				JOptionPane.showMessageDialog(null, "Error: Could not delete medicine");
 			}
-
 		});
 
 		// adding medication buttons
 		addMedicationButton.addActionListener(e -> {
-
-			logoutButton.setVisible(false);
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
+			setUpFramesForActions();
 
 			field1.setText("MedicineName");
-			field1.setVisible(true);
-
 			field2.setText("Dose, include units");
-			field2.setVisible(true);
-
 			field3.setText("PatientID");
-			field3.setVisible(true);
-			textPanel.add(field3);
-
 			field4.setText("ProviderID");
-			field4.setVisible(true);
-			textPanel.add(field4);
 
-			textPanel.add(confirmAddMedicationButton);
-			confirmAddMedicationButton.setVisible(true);
-
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			patientView.setVisible(false);
-			addMedicationButton.setVisible(false);
-			confirmDeleteMedicationButton.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-//			goBackButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(confirmAddMedicationButton);
 
 		});
 
@@ -438,33 +332,16 @@ public class Provider extends User {
 		// updating medications buttons
 
 		updateMedicationButton.addActionListener(e -> {
-
-			logoutButton.setVisible(false);
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
+			setUpFramesForActions();
 
 			field1.setText("MedicineName");
-			field1.setVisible(true);
-
 			field2.setText("Dose, include units");
-			field2.setVisible(true);
-
 			field3.setText("PatientID");
-			field3.setVisible(true);
-			textPanel.add(field3);
 
-			textPanel.add(confirmUpdateMedicationButton);
-			confirmUpdateMedicationButton.setVisible(true);
-
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			patientView.setVisible(false);
-			addMedicationButton.setVisible(false);
-			confirmDeleteMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(true);
-//			goBackButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(confirmUpdateMedicationButton);
 
 		});
 
@@ -504,40 +381,19 @@ public class Provider extends User {
 			}
 
 		});
-		
-		
-		//adjusting symptoms
-		
-		//addsymptom
-		addSymptomButton.addActionListener(e -> {
 
-			logoutButton.setVisible(false);
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
+		// adjusting symptoms
+
+		// addsymptom
+		addSymptomButton.addActionListener(e -> {
+			setUpFramesForActions();
 
 			field1.setText("Symptom Name");
-			field1.setVisible(true);
-
 			field2.setText("Patient ID");
-			field2.setVisible(true);
 
-
-			textPanel.add(confirmAddSymptomButton);
-			confirmAddSymptomButton.setVisible(true);
-
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			patientView.setVisible(false);
-			addMedicationButton.setVisible(false);
-			confirmDeleteMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(false);
-			addSymptomButton.setVisible(false);
-			confirmAddSymptomButton.setVisible(true);
-			
-			
-//			goBackButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(confirmAddSymptomButton);
 
 		});
 
@@ -576,37 +432,17 @@ public class Provider extends User {
 			}
 
 		});
-		
-		//delete symptom
-		deleteSymptomButton.addActionListener(e -> {
 
-			logoutButton.setVisible(false);
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
+		// delete symptom
+		deleteSymptomButton.addActionListener(e -> {
+			setUpFramesForActions();
 
 			field1.setText("Symptom Name");
-			field1.setVisible(true);
-
 			field2.setText("Patient ID");
-			field2.setVisible(true);
 
-
-			textPanel.add(confirmDeleteSymptomButton);
-
-			addPatientButton.setVisible(false);
-			confirmAddPatientButton.setVisible(false);
-			deleteMedicationButton.setVisible(false);
-			patientView.setVisible(false);
-			addMedicationButton.setVisible(false);
-			confirmDeleteMedicationButton.setVisible(false);
-			updateMedicationButton.setVisible(false);
-			confirmUpdateMedicationButton.setVisible(false);
-			addSymptomButton.setVisible(false);
-			confirmAddSymptomButton.setVisible(false);
-			confirmDeleteSymptomButton.setVisible(true);
-			
-			
-//			goBackButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(confirmDeleteSymptomButton);
 
 		});
 
@@ -646,10 +482,19 @@ public class Provider extends User {
 
 		});
 		
-		// repaint the frame
 
-		frame.repaint();
-		this.frame.setVisible(true);
+		// repaint the frame --causing it to break
+
+//		frame.repaint();
+//		this.frame.setVisible(true);
+
+	}
+
+	private void setUpFramesForActions() {
+		buttonPanel.setVisible(false);
+		procedurePanel.removeAll();
+		procedurePanel.setVisible(true);
+		frame.add(procedurePanel, BorderLayout.SOUTH);
 
 	}
 

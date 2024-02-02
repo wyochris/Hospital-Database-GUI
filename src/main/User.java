@@ -43,6 +43,7 @@ public abstract class User {
 		resultPanel.removeAll();
 		resultPanel.add(new JScrollPane(resultTable));
 
+		
 		// Add the result panel to the frame
 		frame.add(resultPanel, BorderLayout.CENTER);
 		frame.revalidate();
