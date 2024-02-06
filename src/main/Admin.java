@@ -38,12 +38,14 @@ public class Admin extends User {
 	private JButton confirmDeleteProviderButton;
 
 	// views
-	private JButton doctorView;
+	private JButton providerView;
 	private JButton patientView;
 
 	// panels
-	private JPanel textPanel;
+	private JPanel procedurePanel;
+	private JPanel buttonPanel;
 	private JPanel resultPanel;
+	private JPanel titlePanel;
 
 	// result table
 	private JTable resultTable;
@@ -56,20 +58,21 @@ public class Admin extends User {
 	private JTextField field5;
 	private JTextField field6;
 
-	private String field1text = "fail";
-	private String field2text = "fail";
+	private String field1text;
+	private String field2text;
 
-	private String field3text = "fail";
-	private String field4text = "fail";
-	private String field5text = "fail";
-	private String field6text = "fail";
+	private String field3text;
+	private String field4text;
+	private String field5text;
+	private String field6text;
+	
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
-	
 
 	public Admin(ConnectionService connection, JFrame oldFrame) {
 		System.out.println("made an admin");
 		this.connection = connection;
+//		JFrame.setDefaultLookAndFeelDecorated(true);
 		this.frame = new JFrame();
 		oldFrame.dispose();
 		this.frame.setVisible(true);
@@ -98,7 +101,7 @@ public class Admin extends User {
 	public void initializeUserScreen() {
 		System.out.println("init admin screen");
 		// initlize buttons
-		doctorView = new JButton("Doctor View");
+		providerView = new JButton("Doctor View");
 		patientView = new JButton("Patient View");
 		confirmAddPatientButton = new JButton("Confirm Add Patient");
 		addPatientButton = new JButton("Add Patient");
@@ -112,22 +115,22 @@ public class Admin extends User {
 
 //		init panels
 		resultPanel = new JPanel();
-		textPanel = new JPanel();
-		
-		//intilize JTextFields
+		procedurePanel = new JPanel();
+		buttonPanel = new JPanel();
+
+		// intilize JTextFields
 		field1 = new JTextField();
 		field2 = new JTextField();
 		field3 = new JTextField();
 		field4 = new JTextField();
 		field5 = new JTextField();
 		field6 = new JTextField();
-		
-		textPanel.add(field1);
-		textPanel.add(field2);
-		field1.setVisible(false);
-		field2.setVisible(false);
 
-
+		buttonPanel.add(logoutButton);
+		buttonPanel.add(providerView);
+		buttonPanel.add(addPatientButton);
+		buttonPanel.add(deletePatientButton);
+//		
 
 		// initlaize tables
 		try {
@@ -135,31 +138,17 @@ public class Admin extends User {
 			Statement stmt = this.connection.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 
-			frame.add(textPanel, BorderLayout.SOUTH);
-			
-			initalizeTable(rs, resultTable, resultPanel, frame);
+			frame.add(buttonPanel, BorderLayout.SOUTH);
 
+			initalizeTable(rs, resultTable, resultPanel, frame);
 
 		} catch (SQLException ex) {
 			throw new RuntimeException(ex);
 		}
-		// set buttons visible
-		System.out.println("setting buttons");
-		logoutButton.setVisible(true);
-		textPanel.add(doctorView);
-		doctorView.setVisible(true);
-		textPanel.add(patientView);
-		patientView.setVisible(true);
-		textPanel.add(addPatientButton);
-		addPatientButton.setVisible(true);
-		textPanel.add(logoutButton);
-		textPanel.add(deletePatientButton);
-		textPanel.add(deleteProviderButton);
-		deleteProviderButton.setVisible(false);
 
 		logoutButton.addActionListener(e -> {
 			try {
-				//makes a new frame and reinitalizes the program
+				// makes a new frame and reinitalizes the program
 				this.frame.dispose();
 				Main.main(null);
 			} catch (IOException e1) {
@@ -169,12 +158,13 @@ public class Admin extends User {
 		});
 
 		// action listeners to buttons
-		doctorView.addActionListener(e -> {
+		providerView.addActionListener(e -> {
+			setUpFramesForActions();
 
 			try {
 
 				Statement stmt = this.connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
 
 //                frame.add(textPanel, BorderLayout.SOUTH);
 				initalizeTable(rs, resultTable, resultPanel, frame);
@@ -182,42 +172,192 @@ public class Admin extends User {
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
-
-			logoutButton.setVisible(true);
-			addPatientButton.setVisible(false);
-			textPanel.add(addProviderButton);
-			addProviderButton.setVisible(true);
-			deletePatientButton.setVisible(false);
-			deleteProviderButton.setVisible(true);
-			confirmDeleteProviderButton.setVisible(false);
+			procedurePanel.add(logoutButton);
+			procedurePanel.add(patientView);
+			procedurePanel.add(addProviderButton);
+			procedurePanel.add(deleteProviderButton);
 
 		});
+
+		deleteProviderButton.addActionListener(e -> {
+			setUpFramesForActions();
+			
+			field1.setText("Provider ID");
+
+			procedurePanel.add(field1);
+			procedurePanel.add(confirmDeleteProviderButton);
+
+		});
+
+		confirmDeleteProviderButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call deleteProvider(?)}";
+				field1text = field1.getText(); //providerID
+				int field1int;
+				field1int = Integer.parseInt(field1text);
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setInt(2, field1int);
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Provider deleted!");
+					} else {
+						if (returnCode == 1) {
+							JOptionPane.showMessageDialog(null, "Error: Provider does not exist.");
+						} else {
+							JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
+						}
+
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+
+//                    throw new RuntimeException(er);
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+	
+		});
+		
+		addProviderButton.addActionListener(e -> {
+			setUpFramesForActions();
+//			
+
+			field1.setText("First Name");
+			field2.setText("Last Name");
+			field3.setText("Middle Initial");
+			field4.setText("DOB as yyyy-MM-dd");
+			field5.setText("Specialty");
+			field6.setText("canPrecribes: true or false");
+			
+			
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(field5);
+			procedurePanel.add(field6);
+			procedurePanel.add(confirmAddProviderButton);
+
+		});
+		
+		confirmAddProviderButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call AddProvider(?, ?, ?, ?, ?, ?)}";
+				field1text = field1.getText(); //Fname
+				field2text = field2.getText(); //lname
+				field3text = field3.getText(); //minit
+				field4text = field4.getText(); //DOB
+				field5text = field5.getText(); //speciality
+				field6text = field6.getText(); //can prescribe
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setString(3, field2text);
+					cs.setString(4, field3text);
+					java.sql.Date date = java.sql.Date.valueOf(field4text);
+
+					cs.setDate(5, date);
+					cs.setString(6, field5text);
+					cs.setString(7, field6text);
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Provider added!");
+					} else {
+
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
+
+				initalizeTable(rs, resultTable, resultPanel, frame);				
+
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+			
+		});
+
+		patientView.addActionListener(e -> {
+			setUpFramesForActions();
+			procedurePanel.add(logoutButton);
+			procedurePanel.add(providerView);
+			procedurePanel.add(addPatientButton);
+			procedurePanel.add(deletePatientButton);
+
+			try {
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+//	                frame.add(textPanel, BorderLayout.SOUTH);
+
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+
+		});
+		
+		addPatientButton.addActionListener(e -> {
+			setUpFramesForActions();
+//			
+
+			field1.setText("First Name");
+			field2.setText("Last Name");
+			field3.setText("Middle Initial");
+			field4.setText("DOB as yyyy-MM-dd");
+			
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(confirmAddPatientButton);
+
+		});
+
+		
 
 		confirmAddPatientButton.addActionListener(e -> {
 
 			try {
 				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?)}";
-				field1text = field1.getText(); //firstname
+				field1text = field1.getText(); // firstname
 
-				field2text = field2.getText(); //last anme
-				field3text = field3.getText(); //middle inital
+				field2text = field2.getText(); // last anme
+				field3text = field3.getText(); // middle inital
 
-				field4text = field4.getText(); //date of birth
+				field4text = field4.getText(); // date of birth
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
-					
-					//first need to check if middle initial
+
+					// first need to check if middle initial
 					if (field3text.equals("Middle Initial")) {
-						cs.setString(4, null); //unchanged so we set to null
+						cs.setString(4, null); // unchanged so we set to null
 					} else {
 						cs.setString(4, field3text);
 					}
 					java.sql.Date date = java.sql.Date.valueOf(field4text);
 
 					cs.setDate(5, date);
-//	                    cs.setDate(5, date);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -230,346 +370,65 @@ public class Admin extends User {
 					}
 				} catch (SQLException er) {
 					JOptionPane.showMessageDialog(null, "Unknown Error Occurred.");
-//					throw new RuntimeException(er);
 				}
 
 				Statement stmt = connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 
-//	                frame.add(textPanel, BorderLayout.SOUTH);
 				initalizeTable(rs, resultTable, resultPanel, frame);
 //				
 
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
-			doctorView.setVisible(true);
-			patientView.setVisible(true);
-//	            success.setVisible(true);
-			addPatientButton.setVisible(true);
-			confirmAddPatientButton.setVisible(false);
-			resultPanel.setVisible(true);
-			field1.setVisible(false);
-			field2.setVisible(false);
-			field3.setVisible(false);
-			field4.setVisible(false);
-			logoutButton.setVisible(true);
-			deletePatientButton.setVisible(true);
-
 		});
 
 		deletePatientButton.addActionListener(e -> {
-
-//			resultPanel.setVisible(false);
-			logoutButton.setVisible(false);
-			doctorView.setVisible(false);
-			patientView.setVisible(false);
-//	            success.setVisible(false);
-			addPatientButton.setVisible(false);
-			deletePatientButton.setVisible(false);
+			setUpFramesForActions();
 
 			field1.setText("Patient ID");
 
-			field1.setVisible(true);
-
-
-
-			textPanel.add(confirmDeletePatientButton);
-			confirmDeletePatientButton.setVisible(true);
+			procedurePanel.add(field1);
+			procedurePanel.add(confirmDeletePatientButton);
 
 		});
-
-
-		deleteProviderButton.addActionListener(e -> {
-
-//			resultPanel.setVisible(false);
-			logoutButton.setVisible(false);
-			doctorView.setVisible(false);
-			patientView.setVisible(false);
-//	            success.setVisible(false);
-			addProviderButton.setVisible(false);
-			deleteProviderButton.setVisible(false);
-
-			field1.setText("Provider ID");
-
-			field1.setVisible(true);
-
-
-
-			textPanel.add(confirmDeleteProviderButton);
-			confirmDeleteProviderButton.setVisible(true);
-
-		});
-
-		    confirmDeleteProviderButton.addActionListener(e -> {
-
-            try {
-                String storedProcedureCall = "{? = call deleteProvider(?)}";
-                field1text = field1.getText();
-				int field1int;
-                field1int = Integer.parseInt(field1text);
-
-
-                try {
-                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-                    cs.setInt(2, field1int);
-
-
-                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
-                    cs.executeUpdate();
-                    int returnCode = cs.getInt(1);
-                    if (returnCode == 0) {
-                        JOptionPane.showMessageDialog(null, "Provider deleted!");
-                    } else {
-                        if (returnCode == 1) {
-                            JOptionPane.showMessageDialog(null, "Error: Provider does not exist.");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Error: Unknown error occurred.");
-                        }
-
-                    }
-                } catch (SQLException er) {
-					JOptionPane.showMessageDialog(null, "Error Occurred.");
-
-//                    throw new RuntimeException(er);
-                }
-
-                Statement stmt = connection.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
-				initalizeTable(rs, resultTable, resultPanel, frame);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-				doctorView.setVisible(true);
-				patientView.setVisible(true);
-//	            success.setVisible(true);
-				addProviderButton.setVisible(true);
-				confirmDeleteProviderButton.setVisible(false);
-				resultPanel.setVisible(true);
-				field1.setVisible(false);
-				field2.setVisible(false);
-				field3.setVisible(false);
-				field4.setVisible(false);
-				field5.setVisible(false);
-				field6.setVisible(false);
-				logoutButton.setVisible(true);
-				deletePatientButton.setVisible(true);
-
-        });
-
 		confirmDeletePatientButton.addActionListener(e -> {
 
-            try {
-                String storedProcedureCall = "{? = call deletePatient(?)}";
-                field1text = field1.getText();
+			try {
+				String storedProcedureCall = "{? = call deletePatient(?)}";
+				field1text = field1.getText(); //patientid
 				int field1int;
 
-
-                field1int = Integer.parseInt(field1text);
-                try {
-                    CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-                    cs.setInt(2, field1int);
-
-
-                    cs.registerOutParameter(1, java.sql.Types.INTEGER);
-                    cs.executeUpdate();
-                    int returnCode = cs.getInt(1);
-                    if (returnCode == 0) {
-                        JOptionPane.showMessageDialog(null, "Patient deleted!");
-                    } else {
-                            JOptionPane.showMessageDialog(null, "Error: Patient does not exist.");
-                        }
-//                        return false;
-
-                } catch (SQLException er) {
-					JOptionPane.showMessageDialog(null, "Error Occurred.");
-//                    throw new RuntimeException(er);
-                }
-
-                Statement stmt = connection.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-				initalizeTable(rs, resultTable, resultPanel, frame);
-
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-			doctorView.setVisible(true);
-			patientView.setVisible(true);
-//	            success.setVisible(true);
-			addPatientButton.setVisible(true);
-			confirmAddProviderButton.setVisible(false);
-			resultPanel.setVisible(true);
-			field1.setVisible(false);
-			logoutButton.setVisible(true);
-			deletePatientButton.setVisible(true);
-			confirmDeletePatientButton.setVisible(false);
-
-
-        });
-
-		addPatientButton.addActionListener(e -> {
-
-//			resultPanel.setVisible(false);
-			logoutButton.setVisible(false);
-			doctorView.setVisible(false);
-			patientView.setVisible(false);
-//	            success.setVisible(false);
-			addPatientButton.setVisible(false);
-			deletePatientButton.setVisible(false);
-
-			field1.setText("First Name");
-
-			field1.setVisible(true);
-
-			field2.setText("Last Name");
-			field2.setVisible(true);
-
-			field3.setText("Middle Initial");
-
-			textPanel.add(field3);
-			field3.setVisible(true);
-
-			field4.setText("DOB as yyyy-MM-dd");
-			textPanel.add(field4);
-			field4.setVisible(true);
-
-			textPanel.add(confirmAddPatientButton);
-			confirmAddPatientButton.setVisible(true);
-
-		});
-
-		confirmAddProviderButton.addActionListener(e -> {
-
-			try {
-				String storedProcedureCall = "{? = call AddProvider(?, ?, ?, ?, ?, ?)}";
-				field1text = field1.getText();
-
-				field2text = field2.getText();
-				field3text = field3.getText();
-
-				field4text = field4.getText();
-
-				field5text = field5.getText();
-
-				field6text = field6.getText();
+				field1int = Integer.parseInt(field1text);
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
-					cs.setString(2, field1text);
-					cs.setString(3, field2text);
-					cs.setString(4, field3text);
-					java.sql.Date date = java.sql.Date.valueOf(field4text);
-
-					cs.setDate(5, date);
-//	                    cs.setDate(5, date);
-					cs.setString(6, field5text);
-					cs.setString(7, field6text);
+					cs.setInt(2, field1int);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
 					int returnCode = cs.getInt(1);
 					if (returnCode == 0) {
-						JOptionPane.showMessageDialog(null, "Provider added!");
-//	                        rests.add(restName);
-//	                        return true;
+						JOptionPane.showMessageDialog(null, "Patient deleted!");
 					} else {
-
+						JOptionPane.showMessageDialog(null, "Error: Patient does not exist.");
 					}
+//                        return false;
+
 				} catch (SQLException er) {
 					JOptionPane.showMessageDialog(null, "Error Occurred.");
-//					throw new RuntimeException(er);
+//                    throw new RuntimeException(er);
 				}
-
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.DoctorView");
-
-//	                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs, resultTable, resultPanel, frame);
-//				
-
-			} catch (SQLException ex) {
-				throw new RuntimeException(ex);
-			}
-			doctorView.setVisible(true);
-			patientView.setVisible(true);
-//	            success.setVisible(true);
-			addProviderButton.setVisible(true);
-			confirmAddProviderButton.setVisible(false);
-			resultPanel.setVisible(true);
-			field1.setVisible(false);
-			field2.setVisible(false);
-			field3.setVisible(false);
-			field4.setVisible(false);
-			field5.setVisible(false);
-			field6.setVisible(false);
-			logoutButton.setVisible(true);
-			deleteProviderButton.setVisible(true);
-
-		});
-
-		addProviderButton.addActionListener(e -> {
-
-//			resultPanel.setVisible(false);
-			logoutButton.setVisible(false);
-			doctorView.setVisible(false);
-			patientView.setVisible(false);
-//	            success.setVisible(false);
-			addProviderButton.setVisible(false);
-			deleteProviderButton.setVisible(false);
-
-			field1.setText("First Name");
-
-			field1.setVisible(true);
-
-			field2.setText("Last Name");
-			field2.setVisible(true);
-
-			field3.setText("Middle Initial");
-
-			textPanel.add(field3);
-			field3.setVisible(true);
-
-			field4.setText("DOB as yyyy-MM-dd");
-			textPanel.add(field4);
-			field4.setVisible(true);
-
-			field5.setText("Specialty");
-
-			textPanel.add(field5);
-			field5.setVisible(true);
-
-			field6.setText("canPrecribes: true or false");
-			textPanel.add(field6);
-			field6.setVisible(true);
-
-			textPanel.add(confirmAddProviderButton);
-			confirmAddProviderButton.setVisible(true);
-
-		});
-
-		patientView.addActionListener(e -> {
-
-			try {
 
 				Statement stmt = connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
 				initalizeTable(rs, resultTable, resultPanel, frame);
-//	                frame.add(textPanel, BorderLayout.SOUTH);
-
-
 
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
-
-			logoutButton.setVisible(true);
-			addPatientButton.setVisible(true);
-			addProviderButton.setVisible(false);
-			deleteProviderButton.setVisible(false);
-			deletePatientButton.setVisible(true);
-			confirmDeletePatientButton.setVisible(false);
-
+	
 		});
-
+	
 		// repaint the frame
 
 		frame.repaint();
@@ -577,6 +436,12 @@ public class Admin extends User {
 
 	}
 
+	private void setUpFramesForActions() {
+		buttonPanel.setVisible(false);
+		procedurePanel.removeAll();
+		procedurePanel.setVisible(true);
+		frame.add(procedurePanel, BorderLayout.SOUTH);
 
-	
+	}
+
 }
