@@ -93,10 +93,7 @@ public class ScreenViewer extends JFrame {
 		initializeHospitalLogin();
 //        Color c = new Color(47, 47, 47);
 //        frame.getContentPane().setBackground( c );
-//        panel.setBackground(c);
 //        textPanel.setBackground(c);
-//        resultPanel.setBackground(c);
-//        bottomPanel.setBackground(c);
         
 //		this.frame.pack();
 		this.frame.setVisible(true);
@@ -179,6 +176,8 @@ public class ScreenViewer extends JFrame {
 			field3.setVisible(false);
 			field4.setVisible(false);
 			field5.setVisible(false);
+			field6.setVisible(false);
+
 
 			updateFrame();
 			frame.setTitle("Hospital");
@@ -210,10 +209,10 @@ public class ScreenViewer extends JFrame {
 
 		confirmLogInButtonAdmin.addActionListener(e -> {
 			field1text = field1.getText();
-			System.out.println(field1text);
+//			System.out.println(field1text);
 
 			field2text = field2.getText();
-			System.out.println(field2text);
+//			System.out.println(field2text);
 
 			connectionService = new ConnectionService(field1text, field2text);
 			if (connectionService.connect()) {
@@ -236,13 +235,13 @@ public class ScreenViewer extends JFrame {
 
 		});
 
-		// TODO: Refactor?
+		// TODO: Refactor?		
 		confirmLogInButton.addActionListener(e -> {
 			field1text = field1.getText();
-			System.out.println(field1text);
+//			System.out.println(field1text);
 
 			field2text = field2.getText();
-			System.out.println(field2text);
+//			System.out.println(field2text);
 
 			field1.setVisible(false);
 			field2.setVisible(false);
@@ -257,11 +256,11 @@ public class ScreenViewer extends JFrame {
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
 			
-			Boolean loginSuccess = false;
+			int loginSuccess = 0;
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-				loginSuccess = userLog.login(field1text, field2text);
+				loginSuccess = userLog.login(field1text, field2text, 0);
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -274,9 +273,14 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			if(loginSuccess) {
+			if(loginSuccess != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
-				this.user = new Provider(connectionService, frame);
+				if(loginSuccess == 11) {
+					this.user = new Provider(connectionService, frame);
+				}
+				else if(loginSuccess == 10) {
+//					this.user = new Patient(connectionService, frame);
+				}
 			}else {
 				cancelButton.setVisible(true);
 			}
@@ -289,25 +293,32 @@ public class ScreenViewer extends JFrame {
 		// TODO: Refactor?? - PROVIDER LOGIN CONFIRMATION
 		confirmRegisterAsProvider.addActionListener(e -> {
 			field1text = field1.getText();
-			System.out.println(field1text);
+//			System.out.println(field1text);
 
 			field2text = field2.getText();
-			System.out.println(field2text);
+//			System.out.println(field2text);
 
 			field3text = field3.getText();
-			System.out.println(field3text);
+//			System.out.println(field3text);
 
 			field4text = field4.getText();
-			System.out.println(field4text);
+//			System.out.println(field4text);
 
 			field5text = field5.getText();
-			System.out.println(field5text);
+//			System.out.println(field5text);
+			
+			field6text = field6.getText();
+			System.out.println(field6text);
+			
+			int field6int = Integer.parseInt(field6text);
 
 			field1.setVisible(false);
 			field2.setVisible(false);
 			field3.setVisible(false);
 			field4.setVisible(false);
 			field5.setVisible(false);
+			field6.setVisible(false);
+
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
@@ -325,7 +336,7 @@ public class ScreenViewer extends JFrame {
 			if (userLog.con != null) {
 				try {
 
-                	reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true");
+                	reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true",field6int);
 //					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
 
 				} catch (Exception e1) {
@@ -345,25 +356,33 @@ public class ScreenViewer extends JFrame {
 		// TODO: Refactor?? - PATIENT LOGIN CONFIRMATION
 		confirmRegisterAsPatient.addActionListener(e -> {
 			field1text = field1.getText();
-			System.out.println(field1text);
+//			System.out.println(field1text);
 
 			field2text = field2.getText();
-			System.out.println(field2text);
+//			System.out.println(field2text);
 
 			field3text = field3.getText();
-			System.out.println(field3text);
+//			System.out.println(field3text);
 
 			field4text = field4.getText();
-			System.out.println(field4text);
+//			System.out.println(field4text);
 
 			field5text = field5.getText();
-			System.out.println(field5text);
+//			System.out.println(field5text);
+			
+			field6text = field6.getText();
+			System.out.println(field6text);
+			
+			int field6int = Integer.parseInt(field6text);
+
 
 			field1.setVisible(false);
 			field2.setVisible(false);
 			field3.setVisible(false);
 			field4.setVisible(false);
 			field5.setVisible(false);
+			field6.setVisible(false);
+
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
@@ -383,7 +402,7 @@ public class ScreenViewer extends JFrame {
 			if (userLog.con != null) {
 				try {
 
-					regPat = userLog.register(field1text, field2text, field3text, field4text,field5text, "false");
+					regPat = userLog.register(field1text, field2text, field3text, field4text,field5text, "false", field6int);
 //					Boolean reg = userLog.register("Sue", "Smith", "1993-05-14", "suesmith", "Password123", "false");
 
 				} catch (Exception e1) {
@@ -493,6 +512,9 @@ public class ScreenViewer extends JFrame {
 
 		field5.setText(u + " Password");
 		textPanel.add(field5);
+		
+		field6.setText(u + " ID Number");
+		textPanel.add(field6);
 
 		if (u == UserType.PROVIDER) {
 			textPanel.add(confirmRegisterAsProvider);
@@ -520,6 +542,8 @@ public class ScreenViewer extends JFrame {
 		field3.setVisible(true);
 		field4.setVisible(true);
 		field5.setVisible(true);
+		field6.setVisible(true);
+
 
 		loginAsProvider.setVisible(false);
 		loginAsPatient.setVisible(false);

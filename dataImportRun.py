@@ -107,7 +107,8 @@ def do_data(df, cursor):
         pro_fName = row['Provider Name'].split()[0]
         pro_minit = None
         if row['Provider Name'].split()[1] != "":
-            pro_minit = row['Provider Name'].split()[1]
+            dictionary = row['Provider Name'].split(' ')[1]
+            pro_minit = row['Provider Name'].split(' ')[2:]
         pro_lName = row['Provider Name'].split()[-1]
         pro_id = None
         pro_dob = format_date(row['Provider DOB'])
@@ -199,10 +200,10 @@ def do_data(df, cursor):
         cursor.execute("""
            IF NOT EXISTS (SELECT 1 FROM diagnosis WHERE Name = ?)
             BEGIN
-                INSERT INTO diagnosis (Name, Occurrence, Frequency)
-                VALUES (?, ?, ?)
+                INSERT INTO diagnosis (Name)
+                VALUES (?)
             END
-        """, diag_name, diag_name, diag_occ, diag_freq)
+        """, diag_name, diag_name)
         
         diag_id = get_scope_identity(cursor)
 
@@ -317,9 +318,9 @@ def do_data(df, cursor):
             cursor.execute("""
                            IF NOT EXISTS(SELECT 1 FROM has WHERE PatientID = ? AND DiagnosisID = ?)
                            BEGIN   
-                                INSERT INTO has(PatientID, DiagnosisID) VALUES (?, ?)
+                                INSERT INTO has(PatientID, DiagnosisID, Occurrence, Frequency) VALUES (?, ?, ?, ?)
                            END
-                           """, pat_id, diag_id, pat_id, diag_id)
+                           """, pat_id, diag_id, pat_id, diag_id, diag_occ, diag_freq)
 
 # Call the function
 do_data(df, cursor)
