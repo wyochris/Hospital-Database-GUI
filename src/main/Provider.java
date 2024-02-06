@@ -100,7 +100,7 @@ public class Provider extends User {
 		confirmAddMedicationButton = new JButton("Confirm Add Medicine");
 		updateMedicationButton = new JButton("Update Patient Medication");
 		confirmUpdateMedicationButton = new JButton("Confirm Update Medication");
-//		goBackButton = new JButton("Go Back");
+		goBackButton = new JButton("Go Back");
 		addSymptomButton = new JButton("Add Symptom");
 		confirmAddSymptomButton = new JButton("Confirm Add Symptom");
 		deleteSymptomButton = new JButton("Delete Symptom");
@@ -144,6 +144,10 @@ public class Provider extends User {
 			throw new RuntimeException(ex);
 		}
 		
+		goBackButton.addActionListener(e ->{
+			new Provider(this.connection, this.frame);
+		});
+		
 		logoutButton.addActionListener(e -> {
 			try {
 				// makes a new frame and reinitalizes the program
@@ -162,7 +166,8 @@ public class Provider extends User {
 			field2.setText("Last Name");
 			field3.setText("Middle Initial");
 			field4.setText("DOB as yyyy-MM-dd");
-
+			
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
@@ -230,6 +235,7 @@ public class Provider extends User {
 			field1.setText("MedicineName");
 			field2.setText("PatientID");
 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmDeleteMedicationButton);
@@ -296,6 +302,7 @@ public class Provider extends User {
 			field3.setText("PatientID");
 			field4.setText("ProviderID");
 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
@@ -351,7 +358,8 @@ public class Provider extends User {
 			field1.setText("MedicineName");
 			field2.setText("Dose, include units");
 			field3.setText("PatientID");
-
+			
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
@@ -405,6 +413,7 @@ public class Provider extends User {
 			field1.setText("Symptom Name");
 			field2.setText("Patient ID");
 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmAddSymptomButton);
@@ -454,6 +463,7 @@ public class Provider extends User {
 			field1.setText("Symptom Name");
 			field2.setText("Patient ID");
 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmDeleteSymptomButton);
@@ -503,6 +513,9 @@ public class Provider extends User {
 //		this.frame.setVisible(true);
 
 	}
+		
+		
+	
 
 	private void setUpFramesForActions() {
 		buttonPanel.setVisible(false);

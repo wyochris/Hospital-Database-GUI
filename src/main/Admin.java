@@ -33,10 +33,9 @@ public class Admin extends User {
 	private JButton logoutButton;
 	private JButton deletePatientButton;
 	private JButton confirmDeletePatientButton;
-
 	private JButton deleteProviderButton;
 	private JButton confirmDeleteProviderButton;
-
+	private JButton goBackButton;
 	// views
 	private JButton providerView;
 	private JButton patientView;
@@ -45,7 +44,6 @@ public class Admin extends User {
 	private JPanel procedurePanel;
 	private JPanel buttonPanel;
 	private JPanel resultPanel;
-	private JPanel titlePanel;
 
 	// result table
 	private JTable resultTable;
@@ -101,7 +99,7 @@ public class Admin extends User {
 	public void initializeUserScreen() {
 		System.out.println("init admin screen");
 		// initlize buttons
-		providerView = new JButton("Doctor View");
+		providerView = new JButton("Provider View");
 		patientView = new JButton("Patient View");
 		confirmAddPatientButton = new JButton("Confirm Add Patient");
 		addPatientButton = new JButton("Add Patient");
@@ -112,6 +110,7 @@ public class Admin extends User {
 		logoutButton = new JButton("Logout");
 		deleteProviderButton = new JButton("Delete Provider");
 		confirmDeleteProviderButton = new JButton("Confirm Delete Provider");
+		goBackButton = new JButton("Go Back");
 
 //		init panels
 		resultPanel = new JPanel();
@@ -146,6 +145,11 @@ public class Admin extends User {
 			throw new RuntimeException(ex);
 		}
 
+		goBackButton.addActionListener(e ->{
+			new Admin(this.connection, this.frame);
+		});
+
+		
 		logoutButton.addActionListener(e -> {
 			try {
 				// makes a new frame and reinitalizes the program
@@ -159,12 +163,18 @@ public class Admin extends User {
 
 		// action listeners to buttons
 		providerView.addActionListener(e -> {
+			
+		
 			setUpFramesForActions();
+			procedurePanel.add(logoutButton);
+			procedurePanel.add(patientView);
+			procedurePanel.add(addProviderButton);
+			procedurePanel.add(deleteProviderButton);
 
 			try {
 
 				Statement stmt = this.connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
 
 //                frame.add(textPanel, BorderLayout.SOUTH);
 				initalizeTable(rs, resultTable, resultPanel, frame);
@@ -172,10 +182,7 @@ public class Admin extends User {
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
-			procedurePanel.add(logoutButton);
-			procedurePanel.add(patientView);
-			procedurePanel.add(addProviderButton);
-			procedurePanel.add(deleteProviderButton);
+			
 
 		});
 
@@ -184,8 +191,11 @@ public class Admin extends User {
 			
 			field1.setText("Provider ID");
 
+			 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(confirmDeleteProviderButton);
+			
 
 		});
 
@@ -221,7 +231,7 @@ public class Admin extends User {
 				}
 
 				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
 				initalizeTable(rs, resultTable, resultPanel, frame);
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
@@ -241,6 +251,7 @@ public class Admin extends User {
 			field6.setText("canPrecribes: true or false");
 			
 			
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
@@ -285,7 +296,7 @@ public class Admin extends User {
 				}
 
 				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.providerView");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
 
 				initalizeTable(rs, resultTable, resultPanel, frame);				
 
@@ -324,6 +335,7 @@ public class Admin extends User {
 			field3.setText("Middle Initial");
 			field4.setText("DOB as yyyy-MM-dd");
 			
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
@@ -388,6 +400,7 @@ public class Admin extends User {
 
 			field1.setText("Patient ID");
 
+			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(confirmDeletePatientButton);
 
@@ -430,11 +443,13 @@ public class Admin extends User {
 		});
 	
 		// repaint the frame
-
-		frame.repaint();
-		this.frame.setVisible(true);
+//
+//		frame.repaint();
+//		this.frame.setVisible(true);
 
 	}
+	
+
 
 	private void setUpFramesForActions() {
 		buttonPanel.setVisible(false);
