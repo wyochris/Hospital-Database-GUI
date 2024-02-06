@@ -33,8 +33,10 @@ public class UserLogin {
 	    ResultSet rs = null;
 
 	    try {
-	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
-	        pstmt = con.getConnection().prepareStatement(query);
+//	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
+	        String call = "? = call userLogin (?)";
+//	    	pstmt = con.getConnection().prepareStatement(query);
+	        pstmt = con.getConnection().prepareStatement(call);
 	        pstmt.setString(1, username);
 
 	        rs = pstmt.executeQuery();
@@ -70,14 +72,16 @@ public class UserLogin {
 	 * Register will call register stored procedure if the user exists in provider or patient table
 	 * @return if the registration is successful 
 	 */
-	public boolean register(String firstName, String lastName, String dob, String username, String password, String isProvider) {
-		String existsProc = "{? = call isUserExists(?, ?, ?, ?)}";
+	public boolean register(String firstName, String lastName, String dob, String username, String password, String isProvider, int idNum) {
+		System.out.println(idNum);
+		String existsProc = "{? = call isUserExists(?, ?, ?, ?, ?)}";
 		CallableStatement estmt = null;
 		try {
 			estmt = con.getConnection().prepareCall(existsProc);
 			estmt.setString(2, firstName);
 			estmt.setString(3, lastName);
 			estmt.setString(5, isProvider);
+			estmt.setInt(6, idNum);
 
 			
             Date date = Date.valueOf(dob);
@@ -97,7 +101,7 @@ public class UserLogin {
 			return false;
 		}
 		
-		String storedProc = "{? = call Register(?, ?, ?)}";
+		String storedProc = "{? = call Register(?, ?, ?, ?)}";
 		CallableStatement cstmt = null;
 		try {
 			byte[] salt = getNewSalt();
@@ -105,6 +109,7 @@ public class UserLogin {
 			cstmt.setString(2, username);
 			cstmt.setBytes(3, salt);
 			cstmt.setString(4, hashPassword(salt, password));
+			cstmt.setInt(5, idNum);
 			
 			cstmt.registerOutParameter(1, Types.INTEGER);
 
