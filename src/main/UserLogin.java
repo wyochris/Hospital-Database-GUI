@@ -28,35 +28,55 @@ public class UserLogin {
 		this.con = connect;
 	}
 	
-	public boolean login(String username, String password) {
-	    PreparedStatement pstmt = null;
+	public int login(String username, String password, int isProvider) {
+		CallableStatement pstmt = null;
 	    ResultSet rs = null;
 
 	    try {
 //	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
 	        String call = "? = call userLogin (?)";
 //	    	pstmt = con.getConnection().prepareStatement(query);
-	        pstmt = con.getConnection().prepareStatement(call);
-	        pstmt.setString(1, username);
+	        pstmt = con.getConnection().prepareCall(call);
+	        pstmt.setString(2, username);
+	        
+	        pstmt.registerOutParameter(1, Types.INTEGER);
+
 
 	        rs = pstmt.executeQuery();
 
 	        if (rs.next()) {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
 	            String storedHash = rs.getString("passwordHash");
-
+	            int patOrPro = rs.getInt("CoolNumber");
+	            
+	            String errMsg = "";
+	            
+	            if(patOrPro != isProvider) {
+	            	if(isProvider == 11) {
+	            		errMsg = "Must be Provider.";
+	            	}
+	            	else if(isProvider == 10) {
+	            		errMsg = "Must be Patient.";
+	            	}
+	            	else {
+	            		errMsg = "Unknown error.";
+	            	}
+			        JOptionPane.showMessageDialog(null, errMsg);
+	            	return 0;
+	            }
+	            
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
 	            if (storedHash.equals(hashedPassword)) {
-	                return true; 
+	                return patOrPro; 
 	            }
 	        }
 	        JOptionPane.showMessageDialog(null, "Login Failed. !");
-	        return false; // Login failed
+	        return 0; // Login failed
 	    } catch (SQLException e) {
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
 	        e.printStackTrace();
-	        return false;
+	        return 0;
 	    } finally {
 	        try {
 	            if (rs != null) rs.close();

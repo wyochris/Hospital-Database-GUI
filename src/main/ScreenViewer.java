@@ -235,7 +235,7 @@ public class ScreenViewer extends JFrame {
 
 		});
 
-		// TODO: Refactor?
+		// TODO: Refactor?		
 		confirmLogInButton.addActionListener(e -> {
 			field1text = field1.getText();
 //			System.out.println(field1text);
@@ -256,11 +256,11 @@ public class ScreenViewer extends JFrame {
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
 			
-			Boolean loginSuccess = false;
+			int loginSuccess = 0;
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-				loginSuccess = userLog.login(field1text, field2text);
+				loginSuccess = userLog.login(field1text, field2text, 0);
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -273,9 +273,14 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			if(loginSuccess) {
+			if(loginSuccess != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
-				this.user = new Provider(connectionService, frame);
+				if(loginSuccess == 11) {
+					this.user = new Provider(connectionService, frame);
+				}
+				else if(loginSuccess == 10) {
+//					this.user = new Patient(connectionService, frame);
+				}
 			}else {
 				cancelButton.setVisible(true);
 			}

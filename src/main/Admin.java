@@ -81,7 +81,7 @@ public class Admin extends User {
 //		frame.pack();
 //	        frame.setLocation(frameLocX, frameLocY);
 		frame.setSize(frameWidth, frameHeight);
-		frame.setLayout(new BorderLayout());
+//		frame.setLayout(new BorderLayout());
 		frame.repaint();
 
 	}
