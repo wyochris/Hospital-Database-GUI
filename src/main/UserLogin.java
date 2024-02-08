@@ -111,7 +111,7 @@ public class UserLogin {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
 	            String storedHash = rs.getString("passwordHash");
 	            int returnID = rs.getInt("ID");
-
+	            System.out.println("UserLogin" + " " + returnID);
 	            
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
