@@ -34,7 +34,7 @@ public class UserLogin {
 
 	    try {
 //	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
-	        String call = "? = call [userLoginPro] (?)";
+	        String call = "{? = call [userLoginPro] (?)}";
 //	    	pstmt = con.getConnection().prepareStatement(query);
 	        pstmt = con.getConnection().prepareCall(call);
 	        pstmt.setString(2, username);
@@ -44,11 +44,13 @@ public class UserLogin {
 	        pstmt.registerOutParameter(1, Types.INTEGER);
 
 
-	        boolean work = pstmt.execute();
-	        if(!work) {
-		        JOptionPane.showMessageDialog(null, "Login Error");
-		        return 0;
-	        }
+	        pstmt.execute();
+//	        System.out.println(work);
+//	        if(!work) {
+//		        JOptionPane.showMessageDialog(null, "Login Error");
+//		        return 0;
+//	        }
+	        System.out.println("here");
 	        rs = pstmt.getResultSet();
 	        if (rs.next()) {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
@@ -59,12 +61,14 @@ public class UserLogin {
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
 	            if (storedHash.equals(hashedPassword)) {
+	            	System.out.println("HELLO"+returnID);
 	                return returnID; 
 	            }
 	        }
 	        JOptionPane.showMessageDialog(null, "Login Failed. !");
 	        return 0; // Login failed
 	    } catch (SQLException e) {
+	    	System.out.println("hihihi");
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
 	        e.printStackTrace();
 	        return 0;
@@ -73,6 +77,7 @@ public class UserLogin {
 	            if (rs != null) rs.close();
 	            if (pstmt != null) pstmt.close();
 	        } catch (SQLException e) {
+	        	System.out.println("hallooo!");
 	            e.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Connection Failed.");
 		        return 0;
@@ -86,7 +91,7 @@ public class UserLogin {
 
 	    try {
 //	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
-	        String call = "? = call [userLoginPat] (?)";
+	        String call = "{? = call [userLoginPat] (?)}";
 //	    	pstmt = con.getConnection().prepareStatement(query);
 	        pstmt = con.getConnection().prepareCall(call);
 	        pstmt.setString(2, username);
@@ -117,6 +122,7 @@ public class UserLogin {
 	        JOptionPane.showMessageDialog(null, "Login Failed. !");
 	        return 0; // Login failed
 	    } catch (SQLException e) {
+	    	System.out.println("hihihi");
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
 	        e.printStackTrace();
 	        return 0;
@@ -125,6 +131,7 @@ public class UserLogin {
 	            if (rs != null) rs.close();
 	            if (pstmt != null) pstmt.close();
 	        } catch (SQLException e) {
+	        	System.out.println("hallloo");
 	            e.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Connection Failed.");
 		        return 0;

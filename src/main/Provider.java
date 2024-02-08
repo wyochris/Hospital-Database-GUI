@@ -145,7 +145,7 @@ public class Provider extends User {
 		}
 		
 		goBackButton.addActionListener(e ->{
-			new Provider(this.connection, this.frame);
+			new Provider(this.connection, this.frame, 0);
 		});
 		
 		logoutButton.addActionListener(e -> {

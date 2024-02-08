@@ -269,6 +269,7 @@ public class ScreenViewer extends JFrame {
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
 				proID = userLog.loginPro(field1text, field2text);
+				System.out.println("ProID"+ proID);
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
