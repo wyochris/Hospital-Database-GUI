@@ -107,8 +107,7 @@ def do_data(df, cursor):
         pro_fName = row['Provider Name'].split()[0]
         pro_minit = None
         if row['Provider Name'].split()[1] != "":
-            dictionary = row['Provider Name'].split(' ')[1]
-            pro_minit = row['Provider Name'].split(' ')[2:]
+            pro_minit = row['Provider Name'].split()[1]
         pro_lName = row['Provider Name'].split()[-1]
         pro_id = None
         pro_dob = format_date(row['Provider DOB'])
@@ -146,7 +145,7 @@ def do_data(df, cursor):
         pat_id = get_scope_identity(cursor)
 
         if pat_id:
-            person_list.append(Person_cl(pat_fName, pat_minit, pat_lName, pat_dob, pat_id))
+            person_list.append(Person_cl(pat_fName, pat_lName, pat_dob, pat_id))
 
         else:
             for pat in person_list:
@@ -250,22 +249,22 @@ def do_data(df, cursor):
 
 ###################################################################################################################################
 
-        # INSERT INTO HOSPITAL
-        cursor.execute("""
-                       IF NOT EXISTS (SELECT 1 FROM hospital WHERE Name = ? AND Address = ?)
-                       INSERT INTO hospital (Name, Address) VALUES (?, ?)
-                       """,
-                       hos_name, hos_addr, hos_name, hos_addr)
+        # # INSERT INTO HOSPITAL
+        # cursor.execute("""
+        #                IF NOT EXISTS (SELECT 1 FROM hospital WHERE Name = ? AND Address = ?)
+        #                INSERT INTO hospital (Name, Address) VALUES (?, ?)
+        #                """,
+        #                hos_name, hos_addr, hos_name, hos_addr)
         
-        hos_id = get_scope_identity(cursor)
+        # hos_id = get_scope_identity(cursor)
 
-        if hos_id:
-            hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
+        # if hos_id:
+        #     hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
 
-        else:
-            for hos in hospital_list:
-                if hos.hName == hos_name:
-                    hos_id = hos_id
+        # else:
+        #     for hos in hospital_list:
+        #         if hos.hName == hos_name:
+        #             hos_id = hos_id
 
 ###################################################################################################################################
 
@@ -274,8 +273,8 @@ def do_data(df, cursor):
         if pro_id and pat_id and hos_id:
                     cursor.execute("""
                         INSERT INTO takesCareOf (ProviderID, PatientID, HospitalID, DateOfVisit)
-                        VALUES (?, ?, ?, ?)
-                    """, pro_id, pat_id, hos_id, diag_occ) 
+                        VALUES (?, ?)
+                    """, pro_id, pat_id) 
 
 ###################################################################################################################################
         if med_valid:
