@@ -456,6 +456,10 @@ public class Admin extends User {
 		procedurePanel.removeAll();
 		procedurePanel.setVisible(true);
 		frame.add(procedurePanel, BorderLayout.SOUTH);
+		this.frame.setSize(frameWidth, frameHeight);
+//		this.frame.pack();
+//		this.frame.repaint();
+		this.frame.setVisible(true);
 
 	}
 

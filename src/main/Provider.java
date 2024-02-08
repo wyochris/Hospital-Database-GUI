@@ -66,10 +66,13 @@ public class Provider extends User {
 
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
+	
+	private int id;
 
 	public Provider(ConnectionService connection, JFrame oldFrame) {
 		System.out.println("made an provider");
 		this.connection = connection;
+//		this.id = ID;
 		oldFrame.dispose();
 		this.frame = new JFrame();
 		this.frame.setVisible(true);
