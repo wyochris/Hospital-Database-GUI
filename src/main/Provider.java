@@ -69,7 +69,7 @@ public class Provider extends User {
 	
 	private int id;
 
-	public Provider(ConnectionService connection, JFrame oldFrame) {
+	public Provider(ConnectionService connection, JFrame oldFrame, int proID) {
 		System.out.println("made an provider");
 		this.connection = connection;
 //		this.id = ID;
@@ -148,7 +148,7 @@ public class Provider extends User {
 		}
 		
 		goBackButton.addActionListener(e ->{
-			new Provider(this.connection, this.frame);
+			new Provider(this.connection, this.frame, 0);
 		});
 		
 		logoutButton.addActionListener(e -> {
