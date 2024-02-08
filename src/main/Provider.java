@@ -67,7 +67,7 @@ public class Provider extends User {
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
 
-	public Provider(ConnectionService connection, JFrame oldFrame) {
+	public Provider(ConnectionService connection, JFrame oldFrame, int proID) {
 		System.out.println("made an provider");
 		this.connection = connection;
 		oldFrame.dispose();

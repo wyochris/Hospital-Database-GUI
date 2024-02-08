@@ -28,47 +28,38 @@ public class UserLogin {
 		this.con = connect;
 	}
 	
-	public int login(String username, String password, int isProvider) {
+	public int loginPro(String username, String password) {
 		CallableStatement pstmt = null;
-	    ResultSet rs = null;
+		ResultSet rs = null;
 
 	    try {
 //	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
-	        String call = "? = call userLogin (?)";
+	        String call = "? = call [userLoginPro] (?)";
 //	    	pstmt = con.getConnection().prepareStatement(query);
 	        pstmt = con.getConnection().prepareCall(call);
 	        pstmt.setString(2, username);
+
+	        System.out.println(username);
 	        
 	        pstmt.registerOutParameter(1, Types.INTEGER);
 
 
-	        rs = pstmt.executeQuery();
-
+	        boolean work = pstmt.execute();
+	        if(!work) {
+		        JOptionPane.showMessageDialog(null, "Login Error");
+		        return 0;
+	        }
+	        rs = pstmt.getResultSet();
 	        if (rs.next()) {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
 	            String storedHash = rs.getString("passwordHash");
-	            int patOrPro = rs.getInt("CoolNumber");
-	            
-	            String errMsg = "";
-	            
-	            if(patOrPro != isProvider) {
-	            	if(isProvider == 11) {
-	            		errMsg = "Must be Provider.";
-	            	}
-	            	else if(isProvider == 10) {
-	            		errMsg = "Must be Patient.";
-	            	}
-	            	else {
-	            		errMsg = "Unknown error.";
-	            	}
-			        JOptionPane.showMessageDialog(null, errMsg);
-	            	return 0;
-	            }
+	            int returnID = rs.getInt("ID");
+
 	            
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
 	            if (storedHash.equals(hashedPassword)) {
-	                return patOrPro; 
+	                return returnID; 
 	            }
 	        }
 	        JOptionPane.showMessageDialog(null, "Login Failed. !");
@@ -84,7 +75,59 @@ public class UserLogin {
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+		        return 0;
+	        }
+	    }
+	}
+	
+	public int loginPat(String username, String password) {
+		CallableStatement pstmt = null;
+		ResultSet rs = null;
 
+	    try {
+//	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
+	        String call = "? = call [userLoginPat] (?)";
+//	    	pstmt = con.getConnection().prepareStatement(query);
+	        pstmt = con.getConnection().prepareCall(call);
+	        pstmt.setString(2, username);
+
+	        System.out.println(username);
+	        
+	        pstmt.registerOutParameter(1, Types.INTEGER);
+
+
+	        boolean work = pstmt.execute();
+	        if(!work) {
+		        JOptionPane.showMessageDialog(null, "Login Error");
+		        return 0;
+	        }
+	        rs = pstmt.getResultSet();
+	        if (rs.next()) {
+	            byte[] storedSalt = rs.getBytes("PasswordSalt");
+	            String storedHash = rs.getString("passwordHash");
+	            int returnID = rs.getInt("ID");
+
+	            
+	            String hashedPassword = hashPassword(storedSalt, password);
+	            
+	            if (storedHash.equals(hashedPassword)) {
+	                return returnID; 
+	            }
+	        }
+	        JOptionPane.showMessageDialog(null, "Login Failed. !");
+	        return 0; // Login failed
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, "Login Failed.");
+	        e.printStackTrace();
+	        return 0;
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+		        return 0;
 	        }
 	    }
 	}
