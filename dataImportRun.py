@@ -270,9 +270,9 @@ def do_data(df, cursor):
 
         # INSERT INTO TAKESCAREOF
 
-        if pro_id and pat_id and hos_id:
+        if pro_id and pat_id:
                     cursor.execute("""
-                        INSERT INTO takesCareOf (ProviderID, PatientID, HospitalID, DateOfVisit)
+                        INSERT INTO takesCareOf (ProviderID, PatientID)
                         VALUES (?, ?)
                     """, pro_id, pat_id) 
 
