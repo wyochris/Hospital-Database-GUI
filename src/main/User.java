@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -11,6 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 public abstract class User {
 	
@@ -40,11 +44,18 @@ public abstract class User {
 		// Create JTable with the table model
 		resultTable = new JTable(tableModel);
 
-		
+
+//		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		// Add the table to the result panel
 		resultPanel.removeAll();
 		resultPanel.add(new JScrollPane(resultTable));
 		
+
+		
+		JScrollPane scroll = new JScrollPane(resultTable);
+		scroll.setPreferredSize(new Dimension(1000, 1000));
+		resultPanel.add(scroll);
+
 		
 		// Add the result panel to the frame
 		frame.add(resultPanel, BorderLayout.CENTER);
@@ -54,5 +65,6 @@ public abstract class User {
 		}
 		
 	}
+	
 }
 

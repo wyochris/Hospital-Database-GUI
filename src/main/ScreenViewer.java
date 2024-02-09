@@ -269,7 +269,6 @@ public class ScreenViewer extends JFrame {
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
 				proID = userLog.loginPro(field1text, field2text);
-				System.out.println("ProID"+ proID);
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -320,6 +319,8 @@ public class ScreenViewer extends JFrame {
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
 				patID = userLog.loginPat(field1text, field2text);
+//				patID = userLog.loginPat("suesmith", "Password123");
+
 
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -334,6 +335,7 @@ public class ScreenViewer extends JFrame {
 			
 			if(patID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
+				System.out.println("it's not zero" + " " + patID);
 				this.user = new Patient(connectionService, frame, patID);
 
 			}else {
