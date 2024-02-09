@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 public abstract class User {
 	
@@ -39,10 +40,11 @@ public abstract class User {
 		// Create JTable with the table model
 		resultTable = new JTable(tableModel);
 
+		
 		// Add the table to the result panel
 		resultPanel.removeAll();
 		resultPanel.add(new JScrollPane(resultTable));
-
+		
 		
 		// Add the result panel to the frame
 		frame.add(resultPanel, BorderLayout.CENTER);
