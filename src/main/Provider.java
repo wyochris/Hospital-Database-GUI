@@ -215,7 +215,7 @@ public class Provider extends User {
 
 					cs.setDate(5, date);
 //	                    cs.setDate(5, date);
-					cs.setInt(5, this.id);
+					cs.setInt(6, this.id);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -249,11 +249,10 @@ public class Provider extends User {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.setInt(2, this.id);
-					cs.executeUpdate();
+					cs.execute();
 					ResultSet rs = cs.getResultSet();
 					this.frame.setTitle("Provider: " + this.id);
 					initalizeTable(rs, resultTable, resultPanel, frame);
-//					return cs.getResultSet();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -323,7 +322,7 @@ public class Provider extends User {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.setInt(2, this.id);
-					cs.executeUpdate();
+					cs.execute();
 					ResultSet rs = cs.getResultSet();
 					this.frame.setTitle("Provider: " + this.id);
 					initalizeTable(rs, resultTable, resultPanel, frame);
@@ -393,7 +392,7 @@ public class Provider extends User {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.setInt(2, this.id);
-					cs.executeUpdate();
+					cs.execute();
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 					this.frame.setTitle("Provider: " + this.id);
@@ -563,7 +562,7 @@ public class Provider extends User {
 					cs.setInt(3, field2int);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.executeUpdate();
+					cs.execute();
 					int returnCode = cs.getInt(1);
 					if (returnCode == 0) {
 						JOptionPane.showMessageDialog(null, "Symptom Deleted!");
