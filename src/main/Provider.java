@@ -36,6 +36,10 @@ public class Provider extends User {
 	private JButton confirmAddSymptomButton;
 	private JButton deleteSymptomButton;
 	private JButton confirmDeleteSymptomButton;
+	private JButton addDiagnosisButton;
+	private JButton confirmAddDiagnosisButton;
+	private JButton deleteDiagnosisButton;
+	private JButton confirmDeleteDiagnosisButton;
 
 	// views
 	private JButton patientView;
@@ -108,6 +112,11 @@ public class Provider extends User {
 		confirmAddSymptomButton = new JButton("Confirm Add Symptom");
 		deleteSymptomButton = new JButton("Delete Symptom");
 		confirmDeleteSymptomButton = new JButton("Confirm Delete Symptom");
+		addDiagnosisButton = new JButton("Add Diagnosis");
+		confirmAddDiagnosisButton = new JButton("Confirm Add Diagnosis");
+		deleteDiagnosisButton = new JButton("Delete Diagnosis");
+		confirmDeleteDiagnosisButton = new JButton("Confirm Delete Diagnosis");
+
 
 		// init panels
 		resultPanel = new JPanel();
@@ -131,6 +140,8 @@ public class Provider extends User {
 		buttonPanel.add(deleteMedicationButton);
 		buttonPanel.add(addSymptomButton);
 		buttonPanel.add(deleteSymptomButton);
+		buttonPanel.add(addDiagnosisButton);
+		buttonPanel.add(deleteDiagnosisButton);
 
 		buttonPanel.setVisible(true);
 
@@ -572,6 +583,177 @@ public class Provider extends User {
 					System.out.println(er);
 					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
 				}
+				
+				String stmtCall = "{? = call getPatientsOfProvider(?)}";
+				CallableStatement cs;
+				try {
+					cs = connection.getConnection().prepareCall(stmtCall);
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.setInt(2, this.id);
+					cs.execute();
+					this.frame.setTitle("Provider: " + this.id);
+					ResultSet rs = cs.getResultSet();
+					initalizeTable(rs, resultTable, resultPanel, frame);
+//					return cs.getResultSet();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+
+//			} catch (SQLException ex) {
+//				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
+//			}
+
+		});
+		
+		
+		addDiagnosisButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Patient ID");
+			field2.setText("Provider ID");
+			field3.setText("Diagnosis Name");
+			field4.setText("Occurrence");
+			field5.setText("Frequency");
+
+
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(field5);
+
+			procedurePanel.add(confirmAddDiagnosisButton);
+
+		});
+
+		confirmAddDiagnosisButton.addActionListener(e -> {
+
+//			try {
+				String storedProcedureCall = "{? = call addDiagnosis(?, ?, ?, ?, ?)}";
+				field1text = field1.getText(); // patientId
+				field2text = field2.getText(); // providerID
+				field3text = field3.getText(); // diagnosis name
+				field4text = field4.getText(); // occurence
+				field5text = field5.getText(); // freq
+
+				int field1int = Integer.parseInt(field1text);
+				int field2int = Integer.parseInt(field2text);
+
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setInt(2, field1int);
+					cs.setInt(3, field2int);
+					cs.setString(4, field3text);
+					cs.setString(5, field4text);
+					cs.setString(6, field5text);
+
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.execute();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Diagnosis Added!");
+
+					}
+				} catch (SQLException er) {
+					System.out.println(er);
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
+				
+				String stmtCall = "{? = call getPatientsOfProvider(?)}";
+				CallableStatement cs;
+				try {
+					cs = connection.getConnection().prepareCall(stmtCall);
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.setInt(2, this.id);
+					cs.execute();
+					this.frame.setTitle("Provider: " + this.id);
+					ResultSet rs = cs.getResultSet();
+					initalizeTable(rs, resultTable, resultPanel, frame);
+//					return cs.getResultSet();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+
+//			} catch (SQLException ex) {
+//				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
+//			}
+
+		});
+		
+		deleteDiagnosisButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Diagnosis Name");
+			field2.setText("Patient ID");
+			field3.setText("Provider ID");
+	
+
+
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+	
+			procedurePanel.add(confirmDeleteDiagnosisButton);
+
+		});
+
+		confirmDeleteDiagnosisButton.addActionListener(e -> {
+
+//			try {
+				String storedProcedureCall = "{? = call deleteDiagnosis(?, ?, ?)}";
+				field1text = field1.getText(); // diagnosis name
+				field2text = field2.getText(); // patientID
+				field3text = field3.getText(); // providerID
+		
+
+				int field2int = Integer.parseInt(field2text);
+				int field3int = Integer.parseInt(field3text);
+
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setString(2, field1text);
+					cs.setInt(3, field2int);
+					cs.setInt(4, field3int);
+
+
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.execute();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Diagnosis Deleted!");
+
+					}
+				} catch (SQLException er) {
+					System.out.println(er);
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
+				
+				String stmtCall = "{? = call getPatientsOfProvider(?)}";
+				CallableStatement cs;
+				try {
+					cs = connection.getConnection().prepareCall(stmtCall);
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.setInt(2, this.id);
+					cs.execute();
+					this.frame.setTitle("Provider: " + this.id);
+					ResultSet rs = cs.getResultSet();
+					initalizeTable(rs, resultTable, resultPanel, frame);
+//					return cs.getResultSet();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 
 //			} catch (SQLException ex) {
 //				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
