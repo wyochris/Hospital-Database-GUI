@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 public class Patient extends User {
 	// frame
@@ -64,6 +67,7 @@ public class Patient extends User {
 		logoutButton = new JButton("Logout");
 		buttonPanel = new JPanel();
 		resultPanel = new JPanel();
+		resultPanel.setSize(frameWidth -25 , frameHeight - 25);
 
 		buttonPanel.add(logoutButton);
 		buttonPanel.setVisible(true);
@@ -85,6 +89,7 @@ public class Patient extends User {
 		        rs = cstmt.getResultSet();
 		        if(rs != null) {
 					initalizeTable(rs, resultTable, resultPanel, frame);
+
 					frame.repaint();
 
 		        }
@@ -121,5 +126,6 @@ public class Patient extends User {
 		
 
 	}
+
 	
 }

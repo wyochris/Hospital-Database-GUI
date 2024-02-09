@@ -318,8 +318,8 @@ public class ScreenViewer extends JFrame {
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-//				patID = userLog.loginPat(field1text, field2text);
-				patID = userLog.loginPat("suesmith", "Password123");
+				patID = userLog.loginPat(field1text, field2text);
+//				patID = userLog.loginPat("suesmith", "Password123");
 
 
 			} catch (Exception e1) {
