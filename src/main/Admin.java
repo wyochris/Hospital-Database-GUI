@@ -334,12 +334,16 @@ public class Admin extends User {
 			field2.setText("Last Name");
 			field3.setText("Middle Initial");
 			field4.setText("DOB as yyyy-MM-dd");
-			
+			field5.setText("Provider ID");
+
+
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
 			procedurePanel.add(field4);
+			procedurePanel.add(field5);
+
 			procedurePanel.add(confirmAddPatientButton);
 
 		});
@@ -349,13 +353,15 @@ public class Admin extends User {
 		confirmAddPatientButton.addActionListener(e -> {
 
 			try {
-				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?)}";
+				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?)}";
 				field1text = field1.getText(); // firstname
 
 				field2text = field2.getText(); // last anme
 				field3text = field3.getText(); // middle inital
 
 				field4text = field4.getText(); // date of birth
+				int field5int = Integer.parseInt(field5.getText());
+
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
@@ -370,6 +376,7 @@ public class Admin extends User {
 					java.sql.Date date = java.sql.Date.valueOf(field4text);
 
 					cs.setDate(5, date);
+					cs.setInt(6, field5int);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
