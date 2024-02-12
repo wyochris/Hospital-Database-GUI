@@ -355,13 +355,13 @@ public class Provider extends User {
 			field1.setText("MedicineName");
 			field2.setText("Dose, include units");
 			field3.setText("PatientID");
-			field4.setText("ProviderID");
+//			field4.setText("ProviderID");
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
-			procedurePanel.add(field4);
+//			procedurePanel.add(field4);
 			procedurePanel.add(confirmAddMedicationButton);
 
 		});
@@ -373,16 +373,16 @@ public class Provider extends User {
 				field1text = field1.getText(); // medicine name
 				field2text = field2.getText(); // dose
 				field3text = field3.getText();// patientid
-				field4text = field4.getText();// providerid
+//				field4text = field4.getText();// providerid
 				int field3int = Integer.parseInt(field3text);
-				int field4int = Integer.parseInt(field4text);
+//				int field4int = Integer.parseInt(field4text);
 
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
 					cs.setInt(4, field3int);
-					cs.setInt(5, field4int);
+					cs.setInt(5, this.id);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -612,7 +612,7 @@ public class Provider extends User {
 			setUpFramesForActions();
 
 			field1.setText("Patient ID");
-			field2.setText("Provider ID");
+//			field2.setText("Provider ID");
 			field3.setText("Diagnosis Name");
 			field4.setText("Occurrence");
 			field5.setText("Frequency");
@@ -620,7 +620,7 @@ public class Provider extends User {
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
-			procedurePanel.add(field2);
+//			procedurePanel.add(field2);
 			procedurePanel.add(field3);
 			procedurePanel.add(field4);
 			procedurePanel.add(field5);
@@ -634,19 +634,19 @@ public class Provider extends User {
 //			try {
 				String storedProcedureCall = "{? = call addDiagnosis(?, ?, ?, ?, ?)}";
 				field1text = field1.getText(); // patientId
-				field2text = field2.getText(); // providerID
+//				field2text = field2.getText(); // providerID
 				field3text = field3.getText(); // diagnosis name
 				field4text = field4.getText(); // occurence
 				field5text = field5.getText(); // freq
 
 				int field1int = Integer.parseInt(field1text);
-				int field2int = Integer.parseInt(field2text);
+//				int field2int = Integer.parseInt(field2text);
 
 
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setInt(2, field1int);
-					cs.setInt(3, field2int);
+					cs.setInt(3, this.id);
 					cs.setString(4, field3text);
 					cs.setString(5, field4text);
 					cs.setString(6, field5text);
@@ -692,14 +692,14 @@ public class Provider extends User {
 
 			field1.setText("Diagnosis Name");
 			field2.setText("Patient ID");
-			field3.setText("Provider ID");
+//			field3.setText("Provider ID");
 	
 
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
-			procedurePanel.add(field3);
+//			procedurePanel.add(field3);
 	
 			procedurePanel.add(confirmDeleteDiagnosisButton);
 
@@ -711,18 +711,18 @@ public class Provider extends User {
 				String storedProcedureCall = "{? = call deleteDiagnosis(?, ?, ?)}";
 				field1text = field1.getText(); // diagnosis name
 				field2text = field2.getText(); // patientID
-				field3text = field3.getText(); // providerID
+//				field3text = field3.getText(); // providerID
 		
 
 				int field2int = Integer.parseInt(field2text);
-				int field3int = Integer.parseInt(field3text);
+//				int field3int = Integer.parseInt(field3text);
 
 
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setInt(3, field2int);
-					cs.setInt(4, field3int);
+					cs.setInt(4, this.id);
 
 
 
@@ -768,23 +768,7 @@ public class Provider extends User {
 
 	}
 
-	private ResultSet initalizeView() {
-		String stmtCall = "{? = call getPatientsOfProvider(?)}";
-		CallableStatement cs;
-		try {
-			cs = connection.getConnection().prepareCall(stmtCall);
-			cs.registerOutParameter(1, java.sql.Types.INTEGER);
-			cs.setInt(2, this.id);
-			cs.execute();
-			this.frame.setTitle("Provider: " + this.id);
-//			return cs.getResultSet();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+	
 
 	private void setUpFramesForActions() {
 		buttonPanel.setVisible(false);
