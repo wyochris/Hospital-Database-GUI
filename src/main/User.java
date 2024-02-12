@@ -43,6 +43,7 @@ public abstract class User {
 
 		// Create JTable with the table model
 		resultTable = new JTable(tableModel);
+		
 
 
 //		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
