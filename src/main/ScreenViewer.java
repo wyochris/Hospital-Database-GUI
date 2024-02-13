@@ -248,9 +248,13 @@ public class ScreenViewer extends JFrame {
 
 			field2text = field2.getText();
 //			System.out.println(field2text);
+			
+			field3text = field3.getText();
 
 			field1.setVisible(false);
 			field2.setVisible(false);
+			field3.setVisible(false);
+
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
@@ -265,14 +269,13 @@ public class ScreenViewer extends JFrame {
 			connectionService.connect();
 			
 			int proID = 0;
+			int hosID = 0;
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
 				proID = userLog.loginPro(field1text, field2text);
-
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
-//				System.out.println(e1);
 				try {
 					frame.dispose();
 					Main.main(null);
@@ -281,9 +284,22 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			if(proID != 0) {
+			try {
+				hosID = userLog.getHospitalID(field3text);
+			}
+			catch(Exception e2) {
+		        JOptionPane.showMessageDialog(null, "Login Failed.");
+				try {
+					frame.dispose();
+					Main.main(null);
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+			
+			if(proID != 0 && hosID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
-				this.user = new Provider(connectionService, frame, proID);
+				this.user = new Provider(connectionService, frame, proID, hosID);
 			}else {
 				cancelButton.setVisible(true);
 			}
@@ -299,8 +315,12 @@ public class ScreenViewer extends JFrame {
 			field2text = field2.getText();
 //			System.out.println(field2text);
 
+			field3text = field3.getText();
+
 			field1.setVisible(false);
 			field2.setVisible(false);
+			field3.setVisible(false);
+
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
@@ -315,16 +335,14 @@ public class ScreenViewer extends JFrame {
 			connectionService.connect();
 			
 			int patID = 0;
+			int hosID = 0;
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
 				patID = userLog.loginPat(field1text, field2text);
 //				patID = userLog.loginPat("suesmith", "Password123");
-
-
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
-//				System.out.println(e1);
 				try {
 					frame.dispose();
 					Main.main(null);
@@ -333,10 +351,23 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			if(patID != 0) {
+			try {
+				hosID = userLog.getHospitalID(field3text);
+			}
+			catch(Exception e2) {
+		        JOptionPane.showMessageDialog(null, "Login Failed.");
+				try {
+					frame.dispose();
+					Main.main(null);
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+			
+			if(patID != 0 && hosID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
 				System.out.println("it's not zero" + " " + patID);
-				this.user = new Patient(connectionService, frame, patID);
+				this.user = new Patient(connectionService, frame, patID, hosID);
 
 			}else {
 				cancelButton.setVisible(true);
@@ -509,6 +540,8 @@ public class ScreenViewer extends JFrame {
 	private void setButtons() {
 		field1.setVisible(true);
 		field2.setVisible(true);
+		field3.setVisible(true);
+
 		loginAsProvider.setVisible(false);
 		loginAsPatient.setVisible(false);
 		loginAsAdmin.setVisible(false);
@@ -526,6 +559,9 @@ public class ScreenViewer extends JFrame {
 
 		field2.setText(typeOfUser + " Password");
 		textPanel.add(field2);
+		
+		field3.setText(typeOfUser + " Hospital");
+		textPanel.add(field3);
 
 		// NEW BY CHRIS
 

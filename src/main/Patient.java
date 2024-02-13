@@ -38,8 +38,9 @@ public class Patient extends User {
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
 	private int patID;
+	private int hosID;
 
-	public Patient(ConnectionService connection, JFrame oldFrame, int idNum) {
+	public Patient(ConnectionService connection, JFrame oldFrame, int idNum, int hosID) {
 		System.out.println("made a patient");
 		this.connection = connection;
 		oldFrame.dispose();
