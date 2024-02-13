@@ -249,22 +249,22 @@ def do_data(df, cursor):
 
 ###################################################################################################################################
 
-        # # INSERT INTO HOSPITAL
-        # cursor.execute("""
-        #                IF NOT EXISTS (SELECT 1 FROM hospital WHERE Name = ? AND Address = ?)
-        #                INSERT INTO hospital (Name, Address) VALUES (?, ?)
-        #                """,
-        #                hos_name, hos_addr, hos_name, hos_addr)
+        # INSERT INTO HOSPITAL
+        cursor.execute("""
+                       IF NOT EXISTS (SELECT 1 FROM hospital WHERE Name = ? AND Address = ?)
+                       INSERT INTO hospital (Name, Address) VALUES (?, ?)
+                       """,
+                       hos_name, hos_addr, hos_name, hos_addr)
         
-        # hos_id = get_scope_identity(cursor)
+        hos_id = get_scope_identity(cursor)
 
-        # if hos_id:
-        #     hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
+        if hos_id:
+            hospital_list.append(Hospital_cl(hos_name, str(hos_addr), hos_id))
 
-        # else:
-        #     for hos in hospital_list:
-        #         if hos.hName == hos_name:
-        #             hos_id = hos_id
+        else:
+            for hos in hospital_list:
+                if hos.hName == hos_name:
+                    hos_id = hos_id
 
 ###################################################################################################################################
 
@@ -272,9 +272,9 @@ def do_data(df, cursor):
 
         if pro_id and pat_id:
                     cursor.execute("""
-                        INSERT INTO takesCareOf (ProviderID, PatientID)
-                        VALUES (?, ?)
-                    """, pro_id, pat_id) 
+                        INSERT INTO takesCareOf (ProviderID, PatientID, HospitalID, DateOfVisit)
+                        VALUES (?, ?, ?, ?)
+                    """, pro_id, pat_id, hos_id, diag_occ) 
 
 ###################################################################################################################################
         if med_valid:
