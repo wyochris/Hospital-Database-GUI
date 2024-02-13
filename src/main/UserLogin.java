@@ -33,9 +33,7 @@ public class UserLogin {
 		ResultSet rs = null;
 
 	    try {
-//	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
 	        String call = "{? = call [userLoginPro] (?)}";
-//	    	pstmt = con.getConnection().prepareStatement(query);
 	        pstmt = con.getConnection().prepareCall(call);
 	        pstmt.setString(2, username);
 
@@ -45,12 +43,7 @@ public class UserLogin {
 
 
 	        pstmt.execute();
-//	        System.out.println(work);
-//	        if(!work) {
-//		        JOptionPane.showMessageDialog(null, "Login Error");
-//		        return 0;
-//	        }
-	        System.out.println("here");
+	        
 	        rs = pstmt.getResultSet();
 	        if (rs.next()) {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
@@ -61,7 +54,6 @@ public class UserLogin {
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
 	            if (storedHash.equals(hashedPassword)) {
-	            	System.out.println("HELLO"+returnID);
 	                return returnID; 
 	            }
 	        }
@@ -77,7 +69,6 @@ public class UserLogin {
 	            if (rs != null) rs.close();
 	            if (pstmt != null) pstmt.close();
 	        } catch (SQLException e) {
-	        	System.out.println("hallooo!");
 	            e.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Connection Failed.");
 		        return 0;
@@ -88,7 +79,7 @@ public class UserLogin {
 	public int loginPat(String username, String password) {
 		CallableStatement pstmt = null;
 		ResultSet rs = null;
-
+		int patID = 0;
 	    try {
 //	        String query = "SELECT passwordSalt, passwordHash FROM [User] WHERE username = ?";
 	        String call = "{? = call [userLoginPat] (?)}";
@@ -104,28 +95,27 @@ public class UserLogin {
 	        boolean work = pstmt.execute();
 	        if(!work) {
 		        JOptionPane.showMessageDialog(null, "Login Error");
-		        return 0;
+		        return patID;
 	        }
 	        rs = pstmt.getResultSet();
 	        if (rs.next()) {
 	            byte[] storedSalt = rs.getBytes("PasswordSalt");
 	            String storedHash = rs.getString("passwordHash");
-	            int returnID = rs.getInt("ID");
-	            System.out.println("UserLogin" + " " + returnID);
+	            patID = rs.getInt("ID");
 	            
 	            String hashedPassword = hashPassword(storedSalt, password);
 	            
 	            if (storedHash.equals(hashedPassword)) {
-	                return returnID; 
+	                return patID; 
 	            }
 	        }
 	        JOptionPane.showMessageDialog(null, "Login Failed. !");
-	        return 0; // Login failed
+	        return patID; // Login failed
 	    } catch (SQLException e) {
 	    	System.out.println("hihihi");
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
 	        e.printStackTrace();
-	        return 0;
+	        return patID;
 	    } finally {
 	        try {
 	            if (rs != null) rs.close();
@@ -134,7 +124,7 @@ public class UserLogin {
 	        	System.out.println("hallloo");
 	            e.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Connection Failed.");
-		        return 0;
+		        return patID;
 	        }
 	    }
 	}
@@ -236,6 +226,48 @@ public class UserLogin {
 			e.printStackTrace();
 		}
 		return getStringFromBytes(hash);
+	}
+	
+	
+	public int getHospitalID(String name) {
+		int hosID = 0;
+		CallableStatement pstmt = null;
+		ResultSet rs = null;
+
+	    try {
+	        String call = "{? = call [isHospital] (?)}";
+	        pstmt = con.getConnection().prepareCall(call);
+	        pstmt.setString(2, name);
+
+	        System.out.println(name);
+	        
+	        pstmt.registerOutParameter(1, Types.INTEGER);
+
+
+	        pstmt.execute();
+
+	        rs = pstmt.getResultSet();
+	        if (rs.next()) {
+	            hosID = rs.getInt("ID");
+	            return hosID; 
+	        }
+	        JOptionPane.showMessageDialog(null, "Hospital Failed. !");
+	        return 0; // Login failed
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, "Hospital Failed.");
+	        e.printStackTrace();
+	        return 0;
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+		        JOptionPane.showMessageDialog(null, "Connection Failed.");
+		        return 0;
+	        }
+	    }
+		
 	}
 	
 }
