@@ -630,8 +630,6 @@ public class ScreenViewer extends JFrame {
 						JOptionPane.showMessageDialog(null, "Unknown error.");
 						System.out.println(regPat);
 						break;
-
-
 					}
 			}
 
