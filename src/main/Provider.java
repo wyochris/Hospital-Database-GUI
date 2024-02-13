@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
@@ -160,7 +162,13 @@ public class Provider extends User {
 				cs.execute();
 				ResultSet rs = cs.getResultSet();
 				this.frame.setTitle("Provider: " + this.id);
-				initalizeTable(rs, resultTable, resultPanel, frame);
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+				resultTable = initalizeTableRETURN(rs);
+				addEventListenerToTable(resultTable);
+				putTableInPanel(resultTable, resultPanel, frame);
+				
+				
+					
 //				return cs.getResultSet();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -208,7 +216,22 @@ public class Provider extends User {
 
 		confirmAddPatientButton.addActionListener(e -> {
 
-//			try {
+			try {
+				CallableStatement stmt;
+				String stmtCall = "{? = call getPatientsOfProvider(?)}";
+				try {
+					stmt = connection.getConnection().prepareCall(stmtCall);
+					stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+					stmt.setInt(2, this.id);
+					stmt.execute();
+					ResultSet rs = stmt.getResultSet();
+					this.frame.setTitle("Provider: " + this.id);
+					initalizeTable(rs, resultTable, resultPanel, frame);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
 				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?)}";
 				field1text = field1.getText();
 
@@ -217,7 +240,7 @@ public class Provider extends User {
 
 				field4text = field4.getText();
 
-				try {
+				
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
@@ -254,20 +277,7 @@ public class Provider extends User {
 //				cs.setInt(1, this.id);
 //				cs.executeUpdate();
 
-				CallableStatement cs;
-				String stmtCall = "{? = call getPatientsOfProvider(?)}";
-				try {
-					cs = connection.getConnection().prepareCall(stmtCall);
-					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
-					cs.execute();
-					ResultSet rs = cs.getResultSet();
-					this.frame.setTitle("Provider: " + this.id);
-					initalizeTable(rs, resultTable, resultPanel, frame);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 
 //			} catch (SQLException ex) {
 //				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
@@ -280,6 +290,22 @@ public class Provider extends User {
 
 			field1.setText("MedicineName");
 			field2.setText("PatientID");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 8)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -350,11 +376,32 @@ public class Provider extends User {
 
 		// adding medication buttons
 		addMedicationButton.addActionListener(e -> {
+			
+			
 			setUpFramesForActions();
-
-			field1.setText("MedicineName");
+			field1.setText("Medicine Name");
 			field2.setText("Dose, include units");
 			field3.setText("PatientID");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
+			
+
+//			field2.setText("Dose, include units");
+//			field3.setText("PatientID");
+			
 //			field4.setText("ProviderID");
 
 			procedurePanel.add(goBackButton);
@@ -419,6 +466,7 @@ public class Provider extends User {
 		});
 		// updating medications buttons
 
+		//TODO: FIX SO THAT IT AUTOFILS LIKE THE REST OF THEM
 		updateMedicationButton.addActionListener(e -> {
 			setUpFramesForActions();
 
@@ -426,13 +474,44 @@ public class Provider extends User {
 			field2.setText("Dose, include units");
 			field3.setText("PatientID");
 
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 8)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 9)));
+			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
+			
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
 			procedurePanel.add(confirmUpdateMedicationButton);
+			
+			String stmtCall = "{? = call getPatientsOfProvider(?)}";
+			CallableStatement cs;
+			try {
+				cs = connection.getConnection().prepareCall(stmtCall);
+				cs.registerOutParameter(1, java.sql.Types.INTEGER);
+				cs.setInt(2, this.id);
+				cs.execute();
+				this.frame.setTitle("Provider: " + this.id);
+				ResultSet rs = cs.getResultSet();
+				initalizeTable(rs, resultTable, resultPanel, frame);
+			
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
 		});
+		
+		
 
 		confirmUpdateMedicationButton.addActionListener(e -> {
 
@@ -493,6 +572,23 @@ public class Provider extends User {
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmAddSymptomButton);
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
+			
+			
 
 		});
 
@@ -556,6 +652,21 @@ public class Provider extends User {
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmDeleteSymptomButton);
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 7)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
 
 		});
 
@@ -610,17 +721,30 @@ public class Provider extends User {
 		
 		addDiagnosisButton.addActionListener(e -> {
 			setUpFramesForActions();
-
+						
 			field1.setText("Patient ID");
-//			field2.setText("Provider ID");
 			field3.setText("Diagnosis Name");
-			field4.setText("Occurrence");
+			field4.setText("Occurrence as YYYY-MM-DD");
 			field5.setText("Frequency");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
 
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
-//			procedurePanel.add(field2);
 			procedurePanel.add(field3);
 			procedurePanel.add(field4);
 			procedurePanel.add(field5);
@@ -634,13 +758,11 @@ public class Provider extends User {
 //			try {
 				String storedProcedureCall = "{? = call addDiagnosis(?, ?, ?, ?, ?)}";
 				field1text = field1.getText(); // patientId
-//				field2text = field2.getText(); // providerID
 				field3text = field3.getText(); // diagnosis name
 				field4text = field4.getText(); // occurence
 				field5text = field5.getText(); // freq
 
 				int field1int = Integer.parseInt(field1text);
-//				int field2int = Integer.parseInt(field2text);
 
 
 				try {
@@ -694,12 +816,27 @@ public class Provider extends User {
 			field2.setText("Patient ID");
 //			field3.setText("Provider ID");
 	
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 4)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
 
+			        }
+			    }
+			});
+
+			
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
-//			procedurePanel.add(field3);
 	
 			procedurePanel.add(confirmDeleteDiagnosisButton);
 
@@ -711,7 +848,6 @@ public class Provider extends User {
 				String storedProcedureCall = "{? = call deleteDiagnosis(?, ?, ?)}";
 				field1text = field1.getText(); // diagnosis name
 				field2text = field2.getText(); // patientID
-//				field3text = field3.getText(); // providerID
 		
 
 				int field2int = Integer.parseInt(field2text);
@@ -767,8 +903,6 @@ public class Provider extends User {
 //		this.frame.setVisible(true);
 
 	}
-
-	
 
 	private void setUpFramesForActions() {
 		buttonPanel.setVisible(false);
