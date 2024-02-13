@@ -132,8 +132,7 @@ public class UserLogin {
 	 * Register will call register stored procedure if the user exists in provider or patient table
 	 * @return if the registration is successful 
 	 */
-	public boolean register(String firstName, String lastName, String dob, String username, String password, String isProvider, int idNum) {
-		System.out.println(idNum);
+	public int register(String firstName, String lastName, Date dob, String username, String password, String isProvider, int idNum) {
 		String existsProc = "{? = call isUserExists(?, ?, ?, ?, ?)}";
 		CallableStatement estmt = null;
 		try {
@@ -144,23 +143,23 @@ public class UserLogin {
 			estmt.setInt(6, idNum);
 
 			
-            Date date = Date.valueOf(dob);
-			estmt.setDate(4, date);
+			estmt.setDate(4, dob);
 			estmt.registerOutParameter(1, Types.INTEGER);
 			estmt.executeUpdate();
 			
             int returnCode = estmt.getInt(1);
+            
             if (returnCode != 0) {
-				JOptionPane.showMessageDialog(null, "Registration failed. Error Code: " + returnCode);
-            	return false;
+            	return returnCode;
             }
 		}
 		catch(SQLException e) {
-			JOptionPane.showMessageDialog(null, "Registration failed.");
-			System.out.println(e);
-			return false;
+			JOptionPane.showMessageDialog(null, "Registration failed" + e);
+			e.printStackTrace();
+			return 100;
 		}
 		
+		System.out.println("made it past part 1");
 		String storedProc = "{? = call Register(?, ?, ?, ?)}";
 		CallableStatement cstmt = null;
 		try {
@@ -176,14 +175,10 @@ public class UserLogin {
 			cstmt.execute();
 			
 			int returnCode = cstmt.getInt(1);
-			if(returnCode != 0) {
-				JOptionPane.showMessageDialog(null, "Registration failed.");
-				System.out.println("returnCode: " + returnCode);
-				return false;
-			}
-			else {
-				return true;
-			}
+			
+			return returnCode;
+
+            
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			e.printStackTrace();
@@ -197,7 +192,7 @@ public class UserLogin {
 				e.printStackTrace(); 
 			} 
 		}
-		return false;
+		return 100;
 	}
 	
 	public byte[] getNewSalt() {

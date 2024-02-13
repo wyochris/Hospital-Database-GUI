@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -396,9 +397,26 @@ public class ScreenViewer extends JFrame {
 //			System.out.println(field5text);
 			
 			field6text = field6.getText();
-			System.out.println(field6text);
 			
-			int field6int = Integer.parseInt(field6text);
+			int field6int = 0;
+			try {
+				field6int = Integer.parseInt(field6text);
+			}
+			catch(Exception e3) {
+				JOptionPane.showMessageDialog(null, "Incorrect ID Format");
+				return;
+			}
+			
+			Date date = null;
+			try {
+	            date = Date.valueOf(field3text);
+
+			}
+			catch(Exception e3) {
+				JOptionPane.showMessageDialog(null, "Incorrect Date Format");
+				return;
+			}
+			
 
 			field1.setVisible(false);
 			field2.setVisible(false);
@@ -419,23 +437,69 @@ public class ScreenViewer extends JFrame {
 			connectionService.connect();
 			UserLogin userLog = new UserLogin(connectionService);
 			
-			Boolean reg = false;
+			int reg = 99;
 			
 			if (userLog.con != null) {
-				try {
-
-                	reg = userLog.register(field1text, field2text, field3text, field4text,field5text, "true",field6int);
+            	reg = userLog.register(field1text, field2text, date, field4text,field5text, "true",field6int);
 //					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
+	            switch(reg){
+		        	case 1:
+						JOptionPane.showMessageDialog(null, "Username cannot be null or empty");
+						break;
+		        	case 2:
+						JOptionPane.showMessageDialog(null, "Password cannot be null or empty");
+						break;
+		        	case 3:
+						JOptionPane.showMessageDialog(null, "Password cannot be null or empty");
+						break;
 
-				} catch (Exception e1) {
-			        JOptionPane.showMessageDialog(null, "Registration Failed.");
-					System.out.println(e1);
-				}
-				
-			
-			}
-			if(reg) {
-				JOptionPane.showMessageDialog(null, "Registration success.");
+		        	case 4:
+						JOptionPane.showMessageDialog(null, "Username is already registered");
+						break;
+
+		        	case 5:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+		        	case 6:
+						JOptionPane.showMessageDialog(null, "ID is already registered");
+		        	case 0:
+						JOptionPane.showMessageDialog(null, "Success.");
+						break;
+
+		        	case 11:
+						JOptionPane.showMessageDialog(null, "First Name cannot be null or empty");
+						break;
+
+		        	case 12:
+						JOptionPane.showMessageDialog(null, "LastName cannot be null or empty");
+						break;
+
+		        	case 13:
+						JOptionPane.showMessageDialog(null, "DOB cannot be null or empty");
+						break;
+
+		        	case 14:
+						JOptionPane.showMessageDialog(null, "No such provider exists");
+						break;
+
+		        	case 15:
+						JOptionPane.showMessageDialog(null, "No such patient exists");
+						break;
+
+		        	case 16:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+		        	case 17:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+					default:
+						JOptionPane.showMessageDialog(null, "Unknown error.");
+						System.out.println(reg);
+						break;
+					}
 			}
 
 			cancelButton.setVisible(true);
@@ -460,9 +524,24 @@ public class ScreenViewer extends JFrame {
 			
 			field6text = field6.getText();
 			System.out.println(field6text);
+			int field6int = 0;
+			try {
+				field6int = Integer.parseInt(field6text);
+			}
+			catch(Exception e3) {
+				JOptionPane.showMessageDialog(null, "Incorrect ID Format");
+				return;
+			}
 			
-			int field6int = Integer.parseInt(field6text);
+			Date date = null;
+			try {
+	            date = Date.valueOf(field3text);
 
+			}
+			catch(Exception e3) {
+				JOptionPane.showMessageDialog(null, "Incorrect Date Format");
+				return;
+			}
 
 			field1.setVisible(false);
 			field2.setVisible(false);
@@ -478,29 +557,82 @@ public class ScreenViewer extends JFrame {
 			cancelButton.setVisible(false);
 			frame.repaint();
 			
-			Boolean reg = false;
-
 			Encryption en = new Encryption();
 			connectionService = new ConnectionService(en.getEncryptionUsername(), en.getEncryptionPassword());
 			connectionService.connect();
 			UserLogin userLog = new UserLogin(connectionService);
 			
-			Boolean regPat = false;
+			int regPat = 100;
 
 			if (userLog.con != null) {
-				try {
 
-					regPat = userLog.register(field1text, field2text, field3text, field4text,field5text, "false", field6int);
+				regPat = userLog.register(field1text, field2text, date, field4text,field5text, "false", field6int);
 //					Boolean reg = userLog.register("Sue", "Smith", "1993-05-14", "suesmith", "Password123", "false");
+				System.out.println(regPat);
+	            switch(regPat){
+		        	case 1:
+						JOptionPane.showMessageDialog(null, "Username cannot be null or empty");
+						break;
 
-				} catch (Exception e1) {
-			        JOptionPane.showMessageDialog(null, "Registration Failed.");
-					System.out.println(e1);
-				}
-			}
-			
-			if(regPat) {
-				JOptionPane.showMessageDialog(null, "Registration success.");
+		        	case 2:
+						JOptionPane.showMessageDialog(null, "Password cannot be null or empty");
+						break;
+
+		        	case 3:
+						JOptionPane.showMessageDialog(null, "Password cannot be null or empty");
+						break;
+
+		        	case 4:
+						JOptionPane.showMessageDialog(null, "Username is already registered");
+						break;
+
+		        	case 5:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+		        	case 6:
+						JOptionPane.showMessageDialog(null, "ID is already registered");
+						break;
+
+		        	case 0:
+						JOptionPane.showMessageDialog(null, "Success.");
+						break;
+
+		        	case 11:
+						JOptionPane.showMessageDialog(null, "First Name cannot be null or empty");
+						break;
+
+		        	case 12:
+						JOptionPane.showMessageDialog(null, "LastName cannot be null or empty");
+						break;
+
+		        	case 13:
+						JOptionPane.showMessageDialog(null, "DOB cannot be null or empty");
+						break;
+
+		        	case 14:
+						JOptionPane.showMessageDialog(null, "No such provider exists");
+						break;
+
+		        	case 15:
+						JOptionPane.showMessageDialog(null, "No such patient exists");
+						break;
+
+		        	case 16:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+		        	case 17:
+						JOptionPane.showMessageDialog(null, "No such ID exists");
+						break;
+
+					default:
+						JOptionPane.showMessageDialog(null, "Unknown error.");
+						System.out.println(regPat);
+						break;
+
+
+					}
 			}
 
 			cancelButton.setVisible(true);
@@ -560,9 +692,11 @@ public class ScreenViewer extends JFrame {
 		field2.setText(typeOfUser + " Password");
 		textPanel.add(field2);
 		
-		field3.setText(typeOfUser + " Hospital");
-		textPanel.add(field3);
-
+		if(typeOfUser == UserType.PROVIDER || typeOfUser == UserType.PATIENT) {
+			field3.setText(typeOfUser + " Hospital");
+			textPanel.add(field3);
+		}
+		
 		// NEW BY CHRIS
 
 		if (typeOfUser == UserType.ADMIN) {
