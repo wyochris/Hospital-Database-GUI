@@ -39,6 +39,8 @@ public class Admin extends User {
 	// views
 	private JButton providerView;
 	private JButton patientView;
+	private JButton updatePatientButton;
+	private JButton confirmUpdatePatientButton;
 
 	// panels
 	private JPanel procedurePanel;
@@ -113,6 +115,8 @@ public class Admin extends User {
 		deleteProviderButton = new JButton("Delete Provider");
 		confirmDeleteProviderButton = new JButton("Confirm Delete Provider");
 		goBackButton = new JButton("Go Back");
+		updatePatientButton = new JButton("Update Patient");
+		confirmUpdatePatientButton = new JButton("Confirm Update Patient");
 
 //		init panels
 		resultPanel = new JPanel();
@@ -132,6 +136,7 @@ public class Admin extends User {
 		buttonPanel.add(providerView);
 		buttonPanel.add(addPatientButton);
 		buttonPanel.add(deletePatientButton);
+		buttonPanel.add(updatePatientButton);
 //		
 
 		// initlaize tables
@@ -315,6 +320,7 @@ public class Admin extends User {
 			procedurePanel.add(providerView);
 			procedurePanel.add(addPatientButton);
 			procedurePanel.add(deletePatientButton);
+			procedurePanel.add(updatePatientButton);
 
 			try {
 
@@ -461,6 +467,84 @@ public class Admin extends User {
 				throw new RuntimeException(ex);
 			}
 	
+		});
+
+
+		updatePatientButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Patient ID");
+			field2.setText("First Name");
+			field3.setText("Last Name");
+			field4.setText("Middle Initial");
+
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(confirmUpdatePatientButton);
+
+		});
+		confirmUpdatePatientButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call updatePatientInfo(?, ?, ?, ?)}";
+				field1text = field1.getText(); //patientid
+				field2text = field2.getText(); //FName
+				field3text = field3.getText(); //LName
+				field4text = field4.getText(); //MInit
+				int field1int;
+
+				field1int = Integer.parseInt(field1text);
+				try {
+
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+
+					cs.setInt(2, field1int);
+
+					if(field2text.equals("First Name")){
+						cs.setString(3, null);
+					}else{
+
+						cs.setString(3, field2text);
+					}
+					if(field3text.equals("Last Name")){
+						cs.setString(4, null);
+					}else{
+
+						cs.setString(4, field3text);
+					}
+					if(field4text.equals("Middle Initial")){
+						cs.setString(5, null);
+					}else{
+						cs.setString(5, field4text);
+					}
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					System.out.println("hello");
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Patient updated!");
+					} else {
+						JOptionPane.showMessageDialog(null, "Error: Patient does not exist.");
+					}
+//                        return false;
+
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+//                    throw new RuntimeException(er);
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+
 		});
 	
 		// repaint the frame
