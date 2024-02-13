@@ -55,6 +55,7 @@ public class Admin extends User {
 	private JTextField field4;
 	private JTextField field5;
 	private JTextField field6;
+	private JTextField field7;
 
 	private String field1text;
 	private String field2text;
@@ -63,6 +64,7 @@ public class Admin extends User {
 	private String field4text;
 	private String field5text;
 	private String field6text;
+	private String field7text;
 	
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
@@ -124,6 +126,7 @@ public class Admin extends User {
 		field4 = new JTextField();
 		field5 = new JTextField();
 		field6 = new JTextField();
+		field7 = new JTextField();
 
 		buttonPanel.add(logoutButton);
 		buttonPanel.add(providerView);
@@ -335,6 +338,8 @@ public class Admin extends User {
 			field3.setText("Middle Initial");
 			field4.setText("DOB as yyyy-MM-dd");
 			field5.setText("Provider ID");
+			field6.setText("Date of Visit");
+			field7.setText("Hospital Name");
 
 
 			procedurePanel.add(goBackButton);
@@ -343,6 +348,8 @@ public class Admin extends User {
 			procedurePanel.add(field3);
 			procedurePanel.add(field4);
 			procedurePanel.add(field5);
+			procedurePanel.add(field6);
+			procedurePanel.add(field7);
 
 			procedurePanel.add(confirmAddPatientButton);
 
@@ -353,7 +360,7 @@ public class Admin extends User {
 		confirmAddPatientButton.addActionListener(e -> {
 
 			try {
-				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?)}";
+				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?, ?, ?)}";
 				field1text = field1.getText(); // firstname
 
 				field2text = field2.getText(); // last anme
@@ -361,6 +368,8 @@ public class Admin extends User {
 
 				field4text = field4.getText(); // date of birth
 				int field5int = Integer.parseInt(field5.getText());
+				field6text = field6.getText(); //date of visit
+				field7text = field7.getText();
 
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
@@ -377,6 +386,11 @@ public class Admin extends User {
 
 					cs.setDate(5, date);
 					cs.setInt(6, field5int);
+
+					java.sql.Date dateOfVisit = java.sql.Date.valueOf(field6text);
+
+					cs.setDate(7, dateOfVisit);
+					cs.setString(8, field7text);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();

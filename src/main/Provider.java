@@ -73,12 +73,14 @@ public class Provider extends User {
 	static final int frameWidth = 1600;
 	static final int frameHeight = 800;
 
-	private int id;
+	private int proID;
+	private int hosID;
 
-	public Provider(ConnectionService connection, JFrame oldFrame, int proID) {
+	public Provider(ConnectionService connection, JFrame oldFrame, int proID, int hosID) {
 		System.out.println("made an provider");
 		this.connection = connection;
-		this.id = proID;
+		this.proID = proID;
+		this.hosID = hosID;
 		oldFrame.dispose();
 		this.frame = new JFrame();
 		this.frame.setVisible(true);
@@ -158,9 +160,10 @@ public class Provider extends User {
 			try {
 				cs = connection.getConnection().prepareCall(stmtCall);
 				cs.registerOutParameter(1, java.sql.Types.INTEGER);
-				cs.setInt(2, this.id);
+				cs.setInt(2, this.proID);
 				cs.execute();
 				ResultSet rs = cs.getResultSet();
+<<<<<<< HEAD
 				this.frame.setTitle("Provider: " + this.id);
 //				initalizeTable(rs, resultTable, resultPanel, frame);
 				resultTable = initalizeTableRETURN(rs);
@@ -169,6 +172,10 @@ public class Provider extends User {
 				
 				
 					
+=======
+				this.frame.setTitle("Provider: " + this.proID);
+				initalizeTable(rs, resultTable, resultPanel, frame);
+>>>>>>> branch 'main' of git@github.com:RHIT-CSSE333/project-s1g1-hospital.git
 //				return cs.getResultSet();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -183,7 +190,7 @@ public class Provider extends User {
 		}
 
 		goBackButton.addActionListener(e -> {
-			new Provider(this.connection, this.frame, this.id);
+			new Provider(this.connection, this.frame, this.proID, this.hosID);
 		});
 
 		logoutButton.addActionListener(e -> {
@@ -249,7 +256,7 @@ public class Provider extends User {
 
 					cs.setDate(5, date);
 //	                    cs.setDate(5, date);
-					cs.setInt(6, this.id);
+					cs.setInt(6, this.proID);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -277,7 +284,24 @@ public class Provider extends User {
 //				cs.setInt(1, this.id);
 //				cs.executeUpdate();
 
+<<<<<<< HEAD
 				
+=======
+				CallableStatement cs;
+				String stmtCall = "{? = call getPatientsOfProvider(?)}";
+				try {
+					cs = connection.getConnection().prepareCall(stmtCall);
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.setInt(2, this.proID);
+					cs.execute();
+					ResultSet rs = cs.getResultSet();
+					this.frame.setTitle("Provider: " + this.proID);
+					initalizeTable(rs, resultTable, resultPanel, frame);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+>>>>>>> branch 'main' of git@github.com:RHIT-CSSE333/project-s1g1-hospital.git
 
 //			} catch (SQLException ex) {
 //				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
@@ -358,10 +382,10 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
 					ResultSet rs = cs.getResultSet();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					initalizeTable(rs, resultTable, resultPanel, frame);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -429,7 +453,7 @@ public class Provider extends User {
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
 					cs.setInt(4, field3int);
-					cs.setInt(5, this.id);
+					cs.setInt(5, this.proID);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -449,11 +473,11 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 //					return cs.getResultSet();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -544,9 +568,9 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 				} catch (SQLException e1) {
@@ -622,9 +646,9 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 //					return cs.getResultSet();
@@ -700,9 +724,9 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 //					return cs.getResultSet();
@@ -768,7 +792,7 @@ public class Provider extends User {
 				try {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setInt(2, field1int);
-					cs.setInt(3, this.id);
+					cs.setInt(3, this.proID);
 					cs.setString(4, field3text);
 					cs.setString(5, field4text);
 					cs.setString(6, field5text);
@@ -791,9 +815,9 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 //					return cs.getResultSet();
@@ -858,7 +882,7 @@ public class Provider extends User {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setInt(3, field2int);
-					cs.setInt(4, this.id);
+					cs.setInt(4, this.proID);
 
 
 
@@ -879,9 +903,9 @@ public class Provider extends User {
 				try {
 					cs = connection.getConnection().prepareCall(stmtCall);
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
-					cs.setInt(2, this.id);
+					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
 //					return cs.getResultSet();
