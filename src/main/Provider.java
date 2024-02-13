@@ -163,8 +163,6 @@ public class Provider extends User {
 				cs.setInt(2, this.proID);
 				cs.execute();
 				ResultSet rs = cs.getResultSet();
-<<<<<<< HEAD
-				this.frame.setTitle("Provider: " + this.id);
 //				initalizeTable(rs, resultTable, resultPanel, frame);
 				resultTable = initalizeTableRETURN(rs);
 				addEventListenerToTable(resultTable);
@@ -172,10 +170,8 @@ public class Provider extends User {
 				
 				
 					
-=======
 				this.frame.setTitle("Provider: " + this.proID);
 				initalizeTable(rs, resultTable, resultPanel, frame);
->>>>>>> branch 'main' of git@github.com:RHIT-CSSE333/project-s1g1-hospital.git
 //				return cs.getResultSet();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -229,10 +225,10 @@ public class Provider extends User {
 				try {
 					stmt = connection.getConnection().prepareCall(stmtCall);
 					stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-					stmt.setInt(2, this.id);
+					stmt.setInt(2, this.proID);
 					stmt.execute();
 					ResultSet rs = stmt.getResultSet();
-					this.frame.setTitle("Provider: " + this.id);
+					this.frame.setTitle("Provider: " + this.proID);
 					initalizeTable(rs, resultTable, resultPanel, frame);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -284,9 +280,6 @@ public class Provider extends User {
 //				cs.setInt(1, this.id);
 //				cs.executeUpdate();
 
-<<<<<<< HEAD
-				
-=======
 				CallableStatement cs;
 				String stmtCall = "{? = call getPatientsOfProvider(?)}";
 				try {
@@ -301,7 +294,6 @@ public class Provider extends User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
->>>>>>> branch 'main' of git@github.com:RHIT-CSSE333/project-s1g1-hospital.git
 
 //			} catch (SQLException ex) {
 //				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
@@ -522,9 +514,9 @@ public class Provider extends User {
 			try {
 				cs = connection.getConnection().prepareCall(stmtCall);
 				cs.registerOutParameter(1, java.sql.Types.INTEGER);
-				cs.setInt(2, this.id);
+				cs.setInt(2, this.proID);
 				cs.execute();
-				this.frame.setTitle("Provider: " + this.id);
+				this.frame.setTitle("Provider: " + this.proID);
 				ResultSet rs = cs.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
 			
