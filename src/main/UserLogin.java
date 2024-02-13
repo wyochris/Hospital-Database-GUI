@@ -148,7 +148,7 @@ public class UserLogin {
 			
             int returnCode = estmt.getInt(1);
             
-            if (returnCode != 0) {
+            if (returnCode != 10) {
             	return returnCode;
             	
             }

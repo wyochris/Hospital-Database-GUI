@@ -461,6 +461,7 @@ public class ScreenViewer extends JFrame {
 
 		        	case 6:
 						JOptionPane.showMessageDialog(null, "ID is already registered");
+						
 		        	case 0:
 						JOptionPane.showMessageDialog(null, "Success.");
 						break;
