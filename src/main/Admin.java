@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
@@ -154,15 +156,19 @@ public class Admin extends User {
 		try {
 //             success = new JLabel("Successfully Connected");
 			Statement stmt = this.connection.getConnection().createStatement();
+			//TODO: ask about select *
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-
-			frame.add(buttonPanel, BorderLayout.SOUTH);
-
-			initalizeTable(rs, resultTable, resultPanel, frame);
+			resultTable = initalizeTableRETURN(rs);
+			
+			addEventListenerToTable(resultTable);
+			putTableInPanel(resultTable, resultPanel, frame);
+			
+//			initalizeTable(rs, resultTable, resultPanel, frame);
 
 		} catch (SQLException ex) {
 			throw new RuntimeException(ex);
 		}
+		frame.add(buttonPanel, BorderLayout.SOUTH);
 
 		goBackButton.addActionListener(e ->{
 			new Admin(this.connection, this.frame);
@@ -191,9 +197,12 @@ public class Admin extends User {
 
 				Statement stmt = this.connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
-
+				resultTable = initalizeTableRETURN(rs);
+				
+				addEventListenerToTable(resultTable);
+				putTableInPanel(resultTable, resultPanel, frame);
 //                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs, resultTable, resultPanel, frame);
+//				initalizeTable(rs, resultTable, resultPanel, frame);
 //
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
@@ -217,9 +226,12 @@ public class Admin extends User {
 
 				Statement stmt = this.connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
-
+				resultTable = initalizeTableRETURN(rs);
+				
+				addEventListenerToTable(resultTable);
+				putTableInPanel(resultTable, resultPanel, frame);
 //                frame.add(textPanel, BorderLayout.SOUTH);
-				initalizeTable(rs, resultTable, resultPanel, frame);
+//				initalizeTable(rs, resultTable, resultPanel, frame);
 //		
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
@@ -233,6 +245,20 @@ public class Admin extends User {
 			
 			field1.setText("Provider ID");
 
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
 			 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -461,6 +487,21 @@ public class Admin extends User {
 			setUpFramesForActions();
 
 			field1.setText("Patient ID");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+			        }
+			    }
+			});
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -512,6 +553,24 @@ public class Admin extends User {
 			field2.setText("First Name");
 			field3.setText("Last Name");
 			field4.setText("Middle Initial");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 1)));
+			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 3)));
+			            field4.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 2)));
+
+			        }
+			    }
+			});
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -590,6 +649,26 @@ public class Admin extends User {
 			field3.setText("Last Name");
 			field4.setText("Middle Initial");
 			field5.setText("Specialty");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 1)));
+			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 3)));
+			            field4.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 2)));
+			            field5.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 7)));
+
+			        }
+			    }
+			});
+			
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -674,6 +753,23 @@ public class Admin extends User {
 			field1.setText("Hospital ID");
 			field2.setText("Name");
 			field3.setText("Address");
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 1)));
+			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 2)));
+			           
+			        }
+			    }
+			});
 
 
 			procedurePanel.add(goBackButton);
