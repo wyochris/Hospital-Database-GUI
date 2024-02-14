@@ -39,6 +39,9 @@ public class Admin extends User {
 	// views
 	private JButton providerView;
 	private JButton patientView;
+	private JButton hospitalView;
+	private JButton updateHospitalButton;
+	private JButton confirmUpdateHospitalButton;
 	private JButton updatePatientButton;
 	private JButton confirmUpdatePatientButton;
 
@@ -119,9 +122,11 @@ public class Admin extends User {
 		goBackButton = new JButton("Go Back");
 		updatePatientButton = new JButton("Update Patient");
 		confirmUpdatePatientButton = new JButton("Confirm Update Patient");
-
 		updateProviderButton = new JButton("Update Provider");
 		confirmUpdateProviderButton = new JButton("Confirm Update Provider");
+		hospitalView = new JButton("Hospital View");
+		updateHospitalButton = new JButton("Update Hospital");
+		confirmUpdateHospitalButton = new JButton("Confirm Update Hospital");
 
 //		init panels
 		resultPanel = new JPanel();
@@ -139,6 +144,7 @@ public class Admin extends User {
 
 		buttonPanel.add(logoutButton);
 		buttonPanel.add(providerView);
+		buttonPanel.add(hospitalView);
 		buttonPanel.add(addPatientButton);
 		buttonPanel.add(deletePatientButton);
 		buttonPanel.add(updatePatientButton);
@@ -174,6 +180,27 @@ public class Admin extends User {
 			}
 		});
 
+		hospitalView.addActionListener(e -> {
+			setUpFramesForActions();
+			procedurePanel.add(logoutButton);
+			procedurePanel.add(patientView);
+			procedurePanel.add(providerView);
+			procedurePanel.add(updateHospitalButton);
+
+			try {
+
+				Statement stmt = this.connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
+
+//                frame.add(textPanel, BorderLayout.SOUTH);
+				initalizeTable(rs, resultTable, resultPanel, frame);
+//
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+
+		});
+
 		// action listeners to buttons
 		providerView.addActionListener(e -> {
 			
@@ -181,9 +208,11 @@ public class Admin extends User {
 			setUpFramesForActions();
 			procedurePanel.add(logoutButton);
 			procedurePanel.add(patientView);
+			procedurePanel.add(hospitalView);
 			procedurePanel.add(addProviderButton);
 			procedurePanel.add(deleteProviderButton);
 			procedurePanel.add(updateProviderButton);
+
 			try {
 
 				Statement stmt = this.connection.getConnection().createStatement();
@@ -323,6 +352,7 @@ public class Admin extends User {
 			setUpFramesForActions();
 			procedurePanel.add(logoutButton);
 			procedurePanel.add(providerView);
+			procedurePanel.add(hospitalView);
 			procedurePanel.add(addPatientButton);
 			procedurePanel.add(deletePatientButton);
 			procedurePanel.add(updatePatientButton);
@@ -629,6 +659,78 @@ public class Admin extends User {
 
 				Statement stmt = connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+
+		});
+
+
+		updateHospitalButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Hospital ID");
+			field2.setText("Name");
+			field3.setText("Address");
+
+
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(confirmUpdateHospitalButton);
+
+		});
+		confirmUpdateHospitalButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call updateHospitalInfo(?, ?, ?)}";
+				field1text = field1.getText(); //patientid
+				field2text = field2.getText(); //Name
+				field3text = field3.getText(); //Address
+
+				int field1int;
+
+				field1int = Integer.parseInt(field1text);
+				try {
+
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+
+					cs.setInt(2, field1int);
+
+					if(field2text.equals("Name")){
+						cs.setString(3, null);
+					}else{
+
+						cs.setString(3, field2text);
+					}
+					if(field3text.equals("Address")){
+						cs.setString(4, null);
+					}else{
+
+						cs.setString(4, field3text);
+					}
+					System.out.println("Hello");
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					System.out.println("Hello");
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Hospital updated!");
+					} else {
+						JOptionPane.showMessageDialog(null, "Error: Hospital does not exist.");
+					}
+//                        return false;
+
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+//                    throw new RuntimeException(er);
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
