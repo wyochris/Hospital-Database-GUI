@@ -41,8 +41,10 @@ public abstract class User {
 			Object[] rowData = new Object[columnsNumber];
 			for (int i = 1; i <= columnsNumber; i++) {
 				rowData[i - 1] = rs.getString(i);
+				System.out.println("STRING:" + rs.getString(i));
 			}
 			tableModel.addRow(rowData);
+			System.out.println("ROWDATA:" + rowData.toString());
 		}
 
 		// Create JTable with the table model

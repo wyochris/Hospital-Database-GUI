@@ -163,16 +163,12 @@ public class Provider extends User {
 				cs.setInt(2, this.proID);
 				cs.execute();
 				ResultSet rs = cs.getResultSet();
-//				initalizeTable(rs, resultTable, resultPanel, frame);
 				resultTable = initalizeTableRETURN(rs);
+				
 				addEventListenerToTable(resultTable);
 				putTableInPanel(resultTable, resultPanel, frame);
+		
 				
-				
-					
-				this.frame.setTitle("Provider: " + this.proID);
-				initalizeTable(rs, resultTable, resultPanel, frame);
-//				return cs.getResultSet();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -482,7 +478,6 @@ public class Provider extends User {
 		});
 		// updating medications buttons
 
-		//TODO: FIX SO THAT IT AUTOFILS LIKE THE REST OF THEM
 		updateMedicationButton.addActionListener(e -> {
 			setUpFramesForActions();
 
@@ -494,14 +489,23 @@ public class Provider extends User {
 			resultTable.addMouseListener(new MouseAdapter() {
 			    @Override
 			    public void mouseClicked(final MouseEvent e) {
+			    	System.out.println("WOOOO");
 			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
 			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 8)));
 			            field2.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 9)));
 			            field3.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
 
+
 			        }
 			    }
 			});
+			
+			
 			
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
@@ -509,21 +513,6 @@ public class Provider extends User {
 			procedurePanel.add(field3);
 			procedurePanel.add(confirmUpdateMedicationButton);
 			
-			String stmtCall = "{? = call getPatientsOfProvider(?)}";
-			CallableStatement cs;
-			try {
-				cs = connection.getConnection().prepareCall(stmtCall);
-				cs.registerOutParameter(1, java.sql.Types.INTEGER);
-				cs.setInt(2, this.proID);
-				cs.execute();
-				this.frame.setTitle("Provider: " + this.proID);
-				ResultSet rs = cs.getResultSet();
-				initalizeTable(rs, resultTable, resultPanel, frame);
-			
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 
 		});
 		
@@ -562,9 +551,10 @@ public class Provider extends User {
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.setInt(2, this.proID);
 					cs.execute();
-					this.frame.setTitle("Provider: " + this.proID);
 					ResultSet rs = cs.getResultSet();
 					initalizeTable(rs, resultTable, resultPanel, frame);
+					this.frame.setTitle("Provider: " + this.proID);
+//					return cs.getResultSet();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -668,6 +658,7 @@ public class Provider extends User {
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(confirmDeleteSymptomButton);
+			
 			resultTable.addMouseListener(new MouseAdapter() {
 			    @Override
 			    public void mouseClicked(final MouseEvent e) {
