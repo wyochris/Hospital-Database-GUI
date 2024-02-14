@@ -198,6 +198,7 @@ public class ScreenViewer extends JFrame {
 			confirmLogInButtonAdmin.setVisible(false);
 			confirmLogInButtonPro.setVisible(false);
 			confirmLogInButtonPat.setVisible(false);
+			confirmRegisterAsPatient.setVisible(false);
 
 			confirmRegisterAsProvider.setVisible(false);
 			registerAsProviderButton.setVisible(true);
@@ -285,9 +286,13 @@ public class ScreenViewer extends JFrame {
 			
 			try {
 				hosID = userLog.getHospitalID(field3text);
+				if(hosID == 0) {
+			        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
+
+				}
 			}
 			catch(Exception e2) {
-		        JOptionPane.showMessageDialog(null, "Login Failed.");
+		        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
 				try {
 					frame.dispose();
 					Main.main(null);
@@ -553,6 +558,7 @@ public class ScreenViewer extends JFrame {
 			loginAsAdmin.setVisible(false);
 			loginAsPatient.setVisible(false);
 			confirmRegisterAsPatient.setVisible(false);
+			
 			cancelButton.setVisible(false);
 			frame.repaint();
 			
