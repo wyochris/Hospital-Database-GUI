@@ -203,12 +203,16 @@ public class Provider extends User {
 			field2.setText("Last Name");
 			field3.setText("Middle Initial");
 			field4.setText("DOB as yyyy-MM-dd");
+			field5.setText("Date of Visit");
+			field6.setText("Hospital Name");
 
 			procedurePanel.add(goBackButton);
 			procedurePanel.add(field1);
 			procedurePanel.add(field2);
 			procedurePanel.add(field3);
 			procedurePanel.add(field4);
+			procedurePanel.add(field5);
+			procedurePanel.add(field6);
 			procedurePanel.add(confirmAddPatientButton);
 
 		});
@@ -231,13 +235,15 @@ public class Provider extends User {
 					e1.printStackTrace();
 				}
 			
-				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?)}";
+				String storedProcedureCall = "{? = call AddPatient(?, ?, ?, ?, ?, ?, ?)}";
 				field1text = field1.getText();
 
 				field2text = field2.getText();
 				field3text = field3.getText();
 
 				field4text = field4.getText();
+				field5text = field5.getText(); //date of visit
+				field6text = field6.getText(); //Hospital Name
 
 				
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
@@ -249,6 +255,11 @@ public class Provider extends User {
 					cs.setDate(5, date);
 //	                    cs.setDate(5, date);
 					cs.setInt(6, this.proID);
+
+				java.sql.Date dateOfVisit = java.sql.Date.valueOf(field5text);
+
+				cs.setDate(7, dateOfVisit);
+				cs.setString(8, field6text);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
