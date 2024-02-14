@@ -42,6 +42,8 @@ public class Admin extends User {
 	private JButton updatePatientButton;
 	private JButton confirmUpdatePatientButton;
 
+	private JButton updateProviderButton;
+	private JButton confirmUpdateProviderButton;
 	// panels
 	private JPanel procedurePanel;
 	private JPanel buttonPanel;
@@ -118,6 +120,9 @@ public class Admin extends User {
 		updatePatientButton = new JButton("Update Patient");
 		confirmUpdatePatientButton = new JButton("Confirm Update Patient");
 
+		updateProviderButton = new JButton("Update Provider");
+		confirmUpdateProviderButton = new JButton("Confirm Update Provider");
+
 //		init panels
 		resultPanel = new JPanel();
 		procedurePanel = new JPanel();
@@ -178,7 +183,7 @@ public class Admin extends User {
 			procedurePanel.add(patientView);
 			procedurePanel.add(addProviderButton);
 			procedurePanel.add(deleteProviderButton);
-
+			procedurePanel.add(updateProviderButton);
 			try {
 
 				Statement stmt = this.connection.getConnection().createStatement();
@@ -539,6 +544,91 @@ public class Admin extends User {
 
 				Statement stmt = connection.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				initalizeTable(rs, resultTable, resultPanel, frame);
+
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+
+		});
+
+		updateProviderButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Provider ID");
+			field2.setText("First Name");
+			field3.setText("Last Name");
+			field4.setText("Middle Initial");
+			field5.setText("Specialty");
+
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+			procedurePanel.add(field2);
+			procedurePanel.add(field3);
+			procedurePanel.add(field4);
+			procedurePanel.add(field5);
+			procedurePanel.add(confirmUpdateProviderButton);
+
+		});
+		confirmUpdateProviderButton.addActionListener(e -> {
+
+			try {
+				String storedProcedureCall = "{? = call updateProviderInfo(?, ?, ?, ?, ?)}";
+				field1text = field1.getText(); //patientid
+				field2text = field2.getText(); //FName
+				field3text = field3.getText(); //LName
+				field4text = field4.getText(); //MInit
+				field5text = field5.getText(); //Specialty
+				int field1int;
+
+				field1int = Integer.parseInt(field1text);
+				try {
+
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+
+					cs.setInt(2, field1int);
+
+					if(field2text.equals("First Name")){
+						cs.setString(3, null);
+					}else{
+
+						cs.setString(3, field2text);
+					}
+					if(field3text.equals("Last Name")){
+						cs.setString(4, null);
+					}else{
+
+						cs.setString(4, field3text);
+					}
+					if(field4text.equals("Middle Initial")){
+						cs.setString(5, null);
+					}else{
+						cs.setString(5, field4text);
+					}
+					if(field5text.equals("Specialty")){
+						cs.setString(6, null);
+					}else{
+						cs.setString(6, field5text);
+					}
+					System.out.println("Hello");
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					cs.executeUpdate();
+					System.out.println("Hello");
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Provider updated!");
+					} else {
+						JOptionPane.showMessageDialog(null, "Error: Provider does not exist.");
+					}
+//                        return false;
+
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error Occurred.");
+//                    throw new RuntimeException(er);
+				}
+
+				Statement stmt = connection.getConnection().createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
