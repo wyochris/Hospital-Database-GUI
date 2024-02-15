@@ -33,6 +33,10 @@ public class Provider extends User {
 	private JButton confirmAddMedicationButton;
 	private JButton updateMedicationButton;
 	private JButton confirmUpdateMedicationButton;
+	
+	private JButton searchMedsByPatientsButton;
+	private JButton confirmSearchMedsByPatientsButton;
+
 	private JButton goBackButton; // work on making this work
 	private JButton addSymptomButton;
 	private JButton confirmAddSymptomButton;
@@ -120,6 +124,9 @@ public class Provider extends User {
 		confirmAddDiagnosisButton = new JButton("Confirm Add Diagnosis");
 		deleteDiagnosisButton = new JButton("Delete Diagnosis");
 		confirmDeleteDiagnosisButton = new JButton("Confirm Delete Diagnosis");
+		searchMedsByPatientsButton = new JButton("Search Patient Meds");
+		confirmSearchMedsByPatientsButton = new JButton("Confirm Patient ID");
+
 
 
 		// init panels
@@ -142,6 +149,7 @@ public class Provider extends User {
 		buttonPanel.add(addMedicationButton);
 		buttonPanel.add(updateMedicationButton);
 		buttonPanel.add(deleteMedicationButton);
+		buttonPanel.add(searchMedsByPatientsButton);
 		buttonPanel.add(addSymptomButton);
 		buttonPanel.add(deleteSymptomButton);
 		buttonPanel.add(addDiagnosisButton);
@@ -575,6 +583,87 @@ public class Provider extends User {
 //			}
 
 		});
+		
+		//TODO: WRITE SPROC TO MATCH
+		
+		searchMedsByPatientsButton.addActionListener(e -> {
+			setUpFramesForActions();
+
+			field1.setText("Patient ID");
+		
+
+			
+			resultTable.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(final MouseEvent e) {
+			    	System.out.println("WOOOO");
+			        if (e.getClickCount() == 1) {
+			            final JTable jTable= (JTable)e.getSource();
+			            int row = jTable.getSelectedRow();
+			            int column = jTable.getSelectedColumn();
+			            String valueInCell = (String)jTable.getValueAt(row, column);
+			            System.out.println(valueInCell);
+			          
+			            field1.setText((String) (resultTable.getValueAt(resultTable.getSelectedRow(), 0)));
+
+
+			        }
+			    }
+			});
+			
+			
+			
+			procedurePanel.add(goBackButton);
+			procedurePanel.add(field1);
+		
+			procedurePanel.add(confirmSearchMedsByPatientsButton);
+			
+
+		});
+		
+		
+
+		confirmSearchMedsByPatientsButton.addActionListener(e -> {
+
+//			try {
+				String storedProcedureCall = "{? = call searchMedsByPatient(?, ?)}";
+				field1text = field1.getText(); // patientid
+
+			
+				int field1int = Integer.parseInt(field1text);
+				
+				ResultSet rs = null;
+
+				try {
+					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
+					cs.setInt(2, field1int);
+					cs.setInt(3, this.proID);
+
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
+					
+					cs.executeUpdate();
+					
+					rs = cs.getResultSet();
+					int returnCode = cs.getInt(1);
+					if (returnCode == 0) {
+						JOptionPane.showMessageDialog(null, "Patient Meds Shown");
+
+					}
+				} catch (SQLException er) {
+					JOptionPane.showMessageDialog(null, "Error: Incorrect Information");
+				}
+
+				
+				
+				initalizeTable(rs, resultTable, resultPanel, frame);
+				this.frame.setTitle("Displaying Meds for Patient: " + field1int);
+//				
+//			} catch (SQLException ex) {
+//				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
+//			}
+
+		});
+
 
 		// adjusting symptoms
 
