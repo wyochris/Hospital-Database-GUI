@@ -194,9 +194,18 @@ public class Admin extends User {
 			procedurePanel.add(updateHospitalButton);
 
 			try {
+				
+				String procCall = "{? = call showAllHospitals}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = this.connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
+				
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+
+//				Statement stmt = this.connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
 				resultTable = initalizeTableRETURN(rs);
 				
 				addEventListenerToTable(resultTable);
@@ -223,9 +232,17 @@ public class Admin extends User {
 			procedurePanel.add(updateProviderButton);
 
 			try {
+				
+				String procCall = "{? = call showAllProviders}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = this.connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+
+//				Statement stmt = this.connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
 				resultTable = initalizeTableRETURN(rs);
 				
 				addEventListenerToTable(resultTable);
@@ -297,10 +314,17 @@ public class Admin extends User {
 
 //                    throw new RuntimeException(er);
 				}
+				String procCall = "{? = call showAllProviders}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
+
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
 			}
@@ -362,11 +386,19 @@ public class Admin extends User {
 				} catch (SQLException er) {
 					JOptionPane.showMessageDialog(null, "Error Occurred.");
 				}
+				
+				String procCall = "{? = call showAllProviders}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
+				initalizeTable(rs, resultTable, resultPanel, frame);
 
-				initalizeTable(rs, resultTable, resultPanel, frame);				
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+//
+//				initalizeTable(rs, resultTable, resultPanel, frame);				
 
 			} catch (SQLException ex) {
 				throw new RuntimeException(ex);
@@ -384,10 +416,17 @@ public class Admin extends User {
 			procedurePanel.add(updatePatientButton);
 
 			try {
+				String procCall = "{? = call showAllPatients}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
+
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
 //	                frame.add(textPanel, BorderLayout.SOUTH);
 
 			} catch (SQLException ex) {
@@ -471,11 +510,21 @@ public class Admin extends User {
 				} catch (SQLException er) {
 					JOptionPane.showMessageDialog(null, "Unknown Error Occurred.");
 				}
+				
+				
+				String procCall = "{? = call showAllPatients}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
-
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
+				
+				//old with the select *
+				
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
 //				
 
 			} catch (SQLException ex) {
@@ -535,8 +584,16 @@ public class Admin extends User {
 //                    throw new RuntimeException(er);
 				}
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+				
+				String procCall = "{? = call showAllPatients}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
+
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
@@ -631,8 +688,16 @@ public class Admin extends User {
 //                    throw new RuntimeException(er);
 				}
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+				
+				String procCall = "{? = call showAllPatients}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
+
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
@@ -736,8 +801,16 @@ public class Admin extends User {
 //                    throw new RuntimeException(er);
 				}
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.ProvidersView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+				
+				String procCall = "{? = call showAllProviders}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
+
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {
@@ -825,8 +898,16 @@ public class Admin extends User {
 //                    throw new RuntimeException(er);
 				}
 
-				Statement stmt = connection.getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
+//				Statement stmt = connection.getConnection().createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.hospitalView");
+//				initalizeTable(rs, resultTable, resultPanel, frame);
+				
+				String procCall = "{? = call showAllHospitals}";
+				CallableStatement stmt = connection.getConnection().prepareCall(procCall);
+
+				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
 				initalizeTable(rs, resultTable, resultPanel, frame);
 
 			} catch (SQLException ex) {

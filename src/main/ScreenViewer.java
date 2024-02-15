@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -52,6 +53,8 @@ public class ScreenViewer extends JFrame {
 	private JTextField field4;
 	private JTextField field5;
 	private JTextField field6;
+	
+//	private JPasswordField pass1;
 
 	private String field1text = "fail";
 	private String field2text = "fail";
