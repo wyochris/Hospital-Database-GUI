@@ -54,7 +54,7 @@ public class ScreenViewer extends JFrame {
 	private JTextField field5;
 	private JTextField field6;
 	
-//	private JPasswordField pass1;
+	private JPasswordField pass1;
 
 	private String field1text = "fail";
 	private String field2text = "fail";
@@ -148,6 +148,9 @@ public class ScreenViewer extends JFrame {
 
 		field5 = new JTextField();
 		field6 = new JTextField();
+		
+		pass1 = new JPasswordField();
+
 
 //		TODO: add login as patient for later functionality
 //		JButton loginAsPatient = new JButton();
@@ -183,6 +186,7 @@ public class ScreenViewer extends JFrame {
 			field4.setVisible(false);
 			field5.setVisible(false);
 			field6.setVisible(false);
+			pass1.setVisible(false);
 
 
 			updateFrame();
@@ -219,15 +223,22 @@ public class ScreenViewer extends JFrame {
 		confirmLogInButtonAdmin.addActionListener(e -> {
 			field1text = field1.getText();
 //			System.out.println(field1text);
+			
+			char[] pass = pass1.getPassword();
+			field2text = String.valueOf(pass);
 
-			field2text = field2.getText();
-//			System.out.println(field2text);
+//			field2text = field2.getText();
+			System.out.println(field2text);
+			
 
 			connectionService = new ConnectionService(field1text, field2text);
 			if (connectionService.connect()) {
 
 				field1.setVisible(false);
 				field2.setVisible(false);
+				field3.setVisible(false);
+
+				pass1.setVisible(false);
 				loginAsProvider.setVisible(false);
 				loginAsAdmin.setVisible(false);
 				confirmLogInButtonAdmin.setVisible(false);
@@ -248,8 +259,11 @@ public class ScreenViewer extends JFrame {
 		confirmLogInButtonPro.addActionListener(e -> {
 			field1text = field1.getText();
 //			System.out.println(field1text);
-
-			field2text = field2.getText();
+			
+			char[] pass = pass1.getPassword();
+			field2text = pass.toString();
+			
+//			field2text = field2.getText();
 //			System.out.println(field2text);
 			
 			field3text = field3.getText();
@@ -257,6 +271,7 @@ public class ScreenViewer extends JFrame {
 			field1.setVisible(false);
 			field2.setVisible(false);
 			field3.setVisible(false);
+			pass1.setVisible(false);
 
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
@@ -276,7 +291,7 @@ public class ScreenViewer extends JFrame {
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-				proID = userLog.loginPro(field1text, field2text);
+				proID = userLog.loginPro(field1text, pass);
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
 				try {
@@ -287,24 +302,24 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			try {
-				hosID = userLog.getHospitalID(field3text);
-				if(hosID == 0) {
-			        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
-
-				}
-			}
-			catch(Exception e2) {
-		        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
-				try {
-					frame.dispose();
-					Main.main(null);
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
-				}
-			}
+//			try {
+//				hosID = userLog.getHospitalID(field3text);
+//				if(hosID == 0) {
+//			        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
+//
+//				}
+//			}
+//			catch(Exception e2) {
+//		        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
+//				try {
+//					frame.dispose();
+//					Main.main(null);
+//				} catch (IOException ex) {
+//					throw new RuntimeException(ex);
+//				}
+//			}
 			
-			if(proID != 0 && hosID != 0) {
+			if(proID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
 				this.user = new Provider(connectionService, frame, proID, hosID);
 			}else {
@@ -319,14 +334,18 @@ public class ScreenViewer extends JFrame {
 			field1text = field1.getText();
 //			System.out.println(field1text);
 
-			field2text = field2.getText();
+//			field2text = field2.getText();
 //			System.out.println(field2text);
+			
+			char[] pass = pass1.getPassword();
+			field2text = pass.toString();
 
 			field3text = field3.getText();
 
 			field1.setVisible(false);
 			field2.setVisible(false);
 			field3.setVisible(false);
+			pass1.setVisible(false);
 
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
@@ -346,7 +365,7 @@ public class ScreenViewer extends JFrame {
 
 			UserLogin userLog = new UserLogin(connectionService);
 			try {
-				patID = userLog.loginPat(field1text, field2text);
+				patID = userLog.loginPat(field1text, pass);
 //				patID = userLog.loginPat("suesmith", "Password123");
 			} catch (Exception e1) {
 		        JOptionPane.showMessageDialog(null, "Login Failed.");
@@ -358,20 +377,7 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			try {
-				hosID = userLog.getHospitalID(field3text);
-			}
-			catch(Exception e2) {
-		        JOptionPane.showMessageDialog(null, "Login Failed.");
-				try {
-					frame.dispose();
-					Main.main(null);
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
-				}
-			}
-			
-			if(patID != 0 && hosID != 0) {
+			if(patID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
 				System.out.println("it's not zero" + " " + patID);
 				this.user = new Patient(connectionService, frame, patID, hosID);
@@ -398,8 +404,12 @@ public class ScreenViewer extends JFrame {
 
 			field4text = field4.getText();
 //			System.out.println(field4text);
+			
+			char[] pass = pass1.getPassword();
+			field5text = pass.toString();
+//			field5text = pass1.getPassword();
 
-			field5text = field5.getText();
+//			field5text = field5.getText();
 //			System.out.println(field5text);
 			
 			field6text = field6.getText();
@@ -430,6 +440,8 @@ public class ScreenViewer extends JFrame {
 			field4.setVisible(false);
 			field5.setVisible(false);
 			field6.setVisible(false);
+			pass1.setVisible(false);
+			
 
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
@@ -446,7 +458,7 @@ public class ScreenViewer extends JFrame {
 			int reg = 99;
 			
 			if (userLog.con != null) {
-            	reg = userLog.register(field1text, field2text, date, field4text,field5text, "true",field6int);
+            	reg = userLog.register(field1text, field2text, date, field4text,pass, "true",field6int);
 //					Boolean reg = userLog.register("Tim", "Walker", "1985-05-11", "timwalker", "Password123", "true");
 	            switch(reg){
 		        	case 1:
@@ -525,6 +537,9 @@ public class ScreenViewer extends JFrame {
 
 			field4text = field4.getText();
 //			System.out.println(field4text);
+			
+			char[] pass = pass1.getPassword();
+			field5text = pass.toString();
 
 			field5text = field5.getText();
 //			System.out.println(field5text);
@@ -556,6 +571,7 @@ public class ScreenViewer extends JFrame {
 			field4.setVisible(false);
 			field5.setVisible(false);
 			field6.setVisible(false);
+			pass1.setVisible(false);
 
 			loginAsProvider.setVisible(false);
 			loginAsAdmin.setVisible(false);
@@ -574,7 +590,7 @@ public class ScreenViewer extends JFrame {
 
 			if (userLog.con != null) {
 
-				regPat = userLog.register(field1text, field2text, date, field4text,field5text, "false", field6int);
+				regPat = userLog.register(field1text, field2text, date, field4text,pass, "false", field6int);
 //					Boolean reg = userLog.register("Sue", "Smith", "1993-05-14", "suesmith", "Password123", "false");
 				System.out.println(regPat);
 	            switch(regPat){
@@ -675,10 +691,10 @@ public class ScreenViewer extends JFrame {
 
 	}
 
-	private void setButtons() {
+	private void setButtons(UserType typeOfUser) {
 		field1.setVisible(true);
-		field2.setVisible(true);
-		field3.setVisible(true);
+		pass1.setVisible(true);
+//		field2.setVisible(true);
 
 		loginAsProvider.setVisible(false);
 		loginAsPatient.setVisible(false);
@@ -694,14 +710,12 @@ public class ScreenViewer extends JFrame {
 		field1.setText(typeOfUser + " Username");
 
 		textPanel.add(field1);
-
-		field2.setText(typeOfUser + " Password");
-		textPanel.add(field2);
 		
-		if(typeOfUser == UserType.PROVIDER || typeOfUser == UserType.PATIENT) {
-			field3.setText(typeOfUser + " Hospital");
-			textPanel.add(field3);
-		}
+		pass1.setText("Changepasswordnow");
+		textPanel.add(pass1);
+
+//		field2.setText(typeOfUser + " Password");
+//		textPanel.add(field2);
 		
 		// NEW BY CHRIS
 
@@ -726,7 +740,7 @@ public class ScreenViewer extends JFrame {
 
 		updateFrame();
 		frame.setTitle(typeOfUser + " Login");
-		setButtons();
+		setButtons(typeOfUser);
 		frame.repaint();
 	}
 
@@ -742,9 +756,11 @@ public class ScreenViewer extends JFrame {
 
 		field4.setText(u + " Username");
 		textPanel.add(field4);
+		pass1.setText("Thispasswordmustbechanged");
+		textPanel.add(pass1);
 
-		field5.setText(u + " Password");
-		textPanel.add(field5);
+//		field5.setText(u + " Password");
+//		textPanel.add(field5);
 		
 		field6.setText(u + " ID Number");
 		textPanel.add(field6);
@@ -774,7 +790,8 @@ public class ScreenViewer extends JFrame {
 		field2.setVisible(true);
 		field3.setVisible(true);
 		field4.setVisible(true);
-		field5.setVisible(true);
+//		field5.setVisible(true);
+		pass1.setVisible(true);
 		field6.setVisible(true);
 
 
