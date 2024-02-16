@@ -717,11 +717,6 @@ public class ScreenViewer extends JFrame {
 //		field2.setText(typeOfUser + " Password");
 //		textPanel.add(field2);
 		
-		if(typeOfUser == UserType.PROVIDER) {
-			field3.setText(typeOfUser + " Hospital");
-			textPanel.add(field3);
-		}
-		
 		// NEW BY CHRIS
 
 		if (typeOfUser == UserType.ADMIN) {
