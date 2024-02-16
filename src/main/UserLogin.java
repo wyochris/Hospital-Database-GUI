@@ -27,7 +27,7 @@ public class UserLogin {
 		this.con = connect;
 	}
 	
-	public int loginPro(String username, String password) {
+	public int loginPro(String username, char[] pass) {
 		CallableStatement pstmt = null;
 		ResultSet rs = null;
 
@@ -50,7 +50,7 @@ public class UserLogin {
 	            int returnID = rs.getInt("ID");
 
 	            
-	            String hashedPassword = hashPassword(storedSalt, password);
+	            String hashedPassword = hashPassword(storedSalt, pass);
 	            
 	            if (storedHash.equals(hashedPassword)) {
 	                return returnID; 
@@ -74,8 +74,8 @@ public class UserLogin {
 	        }
 	    }
 	}
-	
-	public int loginPat(String username, String password) {
+
+	public int loginPat(String username, char[] password) {
 		CallableStatement pstmt = null;
 		ResultSet rs = null;
 		int patID = 0;
@@ -108,10 +108,9 @@ public class UserLogin {
 	                return patID; 
 	            }
 	        }
-	        JOptionPane.showMessageDialog(null, "Login Failed. !");
+//	        JOptionPane.showMessageDialog(null, "Login Failed. !!");
 	        return patID; // Login failed
 	    } catch (SQLException e) {
-	    	System.out.println("hihihi");
 	        JOptionPane.showMessageDialog(null, "Login Failed.");
 	        e.printStackTrace();
 	        return patID;
@@ -131,7 +130,7 @@ public class UserLogin {
 	 * Register will call register stored procedure if the user exists in provider or patient table
 	 * @return if the registration is successful 
 	 */
-	public int register(String firstName, String lastName, Date dob, String username, String password, String isProvider, int idNum) {
+	public int register(String firstName, String lastName, Date dob, String username, char[] password, String isProvider, int idNum) {
 		String existsProc = "{? = call isUserExists(?, ?, ?, ?, ?)}";
 		CallableStatement estmt = null;
 		try {
@@ -205,9 +204,9 @@ public class UserLogin {
 		return enc.encodeToString(data);
 	}
 
-	public String hashPassword(byte[] salt, String password) {
+	public String hashPassword(byte[] salt, char[] password) {
 		
-		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+		KeySpec spec = new PBEKeySpec(password, salt, 65536, 128);
 		SecretKeyFactory f;
 		byte[] hash = null;
 		try {
@@ -246,7 +245,7 @@ public class UserLogin {
 	            hosID = rs.getInt("ID");
 	            return hosID; 
 	        }
-	        JOptionPane.showMessageDialog(null, "Hospital Failed. !");
+	        JOptionPane.showMessageDialog(null, "Hospital Failed. !!!!!");
 	        return 0; // Login failed
 	    } catch (SQLException e) {
 	        JOptionPane.showMessageDialog(null, "Hospital Failed.");
