@@ -641,9 +641,11 @@ public class Provider extends User {
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					
-					cs.executeUpdate();
+					cs.execute();
 					
 					rs = cs.getResultSet();
+					initalizeTable(rs, resultTable, resultPanel, frame);
+					this.frame.setTitle("Displaying Meds for Patient: " + field1int);
 					int returnCode = cs.getInt(1);
 					if (returnCode == 0) {
 						JOptionPane.showMessageDialog(null, "Patient Meds Shown");
@@ -655,8 +657,8 @@ public class Provider extends User {
 
 				
 				
-				initalizeTable(rs, resultTable, resultPanel, frame);
-				this.frame.setTitle("Displaying Meds for Patient: " + field1int);
+
+
 //				
 //			} catch (SQLException ex) {
 //				JOptionPane.showMessageDialog(null, "Could Not Add Symptom");
