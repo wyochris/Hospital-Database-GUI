@@ -225,10 +225,11 @@ public class ScreenViewer extends JFrame {
 //			System.out.println(field1text);
 			
 			char[] pass = pass1.getPassword();
-			field2text = pass.toString();
+			field2text = String.valueOf(pass);
 
 //			field2text = field2.getText();
-//			System.out.println(field2text);
+			System.out.println(field2text);
+			
 
 			connectionService = new ConnectionService(field1text, field2text);
 			if (connectionService.connect()) {
