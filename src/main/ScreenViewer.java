@@ -299,24 +299,24 @@ public class ScreenViewer extends JFrame {
 				}
 			}
 			
-			try {
-				hosID = userLog.getHospitalID(field3text);
-				if(hosID == 0) {
-			        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
-
-				}
-			}
-			catch(Exception e2) {
-		        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
-				try {
-					frame.dispose();
-					Main.main(null);
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
-				}
-			}
+//			try {
+//				hosID = userLog.getHospitalID(field3text);
+//				if(hosID == 0) {
+//			        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
+//
+//				}
+//			}
+//			catch(Exception e2) {
+//		        JOptionPane.showMessageDialog(null, "Incorrect Hospital.");
+//				try {
+//					frame.dispose();
+//					Main.main(null);
+//				} catch (IOException ex) {
+//					throw new RuntimeException(ex);
+//				}
+//			}
 			
-			if(proID != 0 && hosID != 0) {
+			if(proID != 0) {
 				JOptionPane.showMessageDialog(null, "Login success.");
 				this.user = new Provider(connectionService, frame, proID, hosID);
 			}else {
