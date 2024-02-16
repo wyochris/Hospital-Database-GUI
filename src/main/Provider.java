@@ -247,7 +247,7 @@ public class Provider extends User {
 				field1text = field1.getText();
 
 				field2text = field2.getText();
-				field3text = field3.getText();
+				field3text = field3.getText(); //
 
 				field4text = field4.getText();
 				field5text = field5.getText(); //date of visit
@@ -257,17 +257,22 @@ public class Provider extends User {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
-					cs.setString(4, field3text);
+					
+					if (field3text.equals("")|| field3text.equals("Middle Initial")) {
+						cs.setString(4, null);
+					} else {
+						cs.setString(4, field3text);
+					}
 					java.sql.Date date = java.sql.Date.valueOf(field4text);
 
 					cs.setDate(5, date);
 //	                    cs.setDate(5, date);
 					cs.setInt(6, this.proID);
 
-				java.sql.Date dateOfVisit = java.sql.Date.valueOf(field5text);
-
-				cs.setDate(7, dateOfVisit);
-				cs.setString(8, field6text);
+					java.sql.Date dateOfVisit = java.sql.Date.valueOf(field5text);
+	
+					cs.setDate(7, dateOfVisit);
+					cs.setString(8, field6text);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -277,6 +282,7 @@ public class Provider extends User {
 //	                        rests.add(restName);
 //	                        return true;
 					} else {
+						System.out.println(returnCode);
 //	                        if (returnCode == 1) {
 //	                            JOptionPane.showMessageDialog(null, "Error: Duplicate restaurant name.");
 //	                        } else {
@@ -285,6 +291,7 @@ public class Provider extends User {
 //	                        return false;
 					}
 				} catch (SQLException er) {
+					System.out.println(er);
 					JOptionPane.showMessageDialog(null, "Could not add patient");
 
 				}
@@ -348,10 +355,9 @@ public class Provider extends User {
 		confirmDeleteMedicationButton.addActionListener(e -> {
 
 //			try {
-				String storedProcedureCall = "{? = call deleteMedicine(?, ?)}";
+				String storedProcedureCall = "{? = call deleteMedicine(?, ?, ?)}";
 				field1text = field1.getText();
 				field2text = field2.getText();
-				field3text = field3.getText();
 				int field2int = Integer.parseInt(field2text);
 				// if you need it to go with the provider id..someting we should add?
 //                int field3int = Integer.parseInt(field3text);
@@ -360,7 +366,7 @@ public class Provider extends User {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setInt(3, field2int);
-//                    cs.setInt(4, field3int);
+                    cs.setInt(4, this.proID);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
@@ -540,7 +546,7 @@ public class Provider extends User {
 		confirmUpdateMedicationButton.addActionListener(e -> {
 
 //			try {
-				String storedProcedureCall = "{? = call updateMedicine(?, ?,?)}";
+				String storedProcedureCall = "{? = call updateMedicine(?, ?, ?, ?)}";
 				field1text = field1.getText(); // medicine name
 				field2text = field2.getText(); // dose
 				field3text = field3.getText();// patientid
@@ -551,6 +557,7 @@ public class Provider extends User {
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
 					cs.setInt(4, field3int);
+					cs.setInt(5, this.proID);
 
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.executeUpdate();
