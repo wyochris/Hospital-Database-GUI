@@ -155,9 +155,15 @@ public class Admin extends User {
 		// initlaize tables
 		try {
 //             success = new JLabel("Successfully Connected");
-			Statement stmt = this.connection.getConnection().createStatement();
-			//TODO: ask about select *
-			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+//			Statement stmt = this.connection.getConnection().createStatement();
+//			//TODO: ask about select *
+//			ResultSet rs = stmt.executeQuery("SELECT * FROM dbo.PatientsView");
+			String procCall = "{? = call showAllPatients}";
+			CallableStatement stmt = connection.getConnection().prepareCall(procCall);
+
+			stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+			stmt.execute();
+			ResultSet rs = stmt.getResultSet();
 			resultTable = initalizeTableRETURN(rs);
 			
 			addEventListenerToTable(resultTable);
@@ -368,7 +374,12 @@ public class Admin extends User {
 					CallableStatement cs = connection.getConnection().prepareCall(storedProcedureCall);
 					cs.setString(2, field1text);
 					cs.setString(3, field2text);
-					cs.setString(4, field3text);
+					if (field3text.equals("")|| field3text.equals("Middle Initial")) {
+						cs.setString(4, null);
+					} else {
+						cs.setString(4, field3text);
+					}
+					
 					java.sql.Date date = java.sql.Date.valueOf(field4text);
 
 					cs.setDate(5, date);
@@ -471,6 +482,8 @@ public class Admin extends User {
 
 				field2text = field2.getText(); // last anme
 				field3text = field3.getText(); // middle inital
+				
+				
 
 				field4text = field4.getText(); // date of birth
 				int field5int = Integer.parseInt(field5.getText());
@@ -483,8 +496,8 @@ public class Admin extends User {
 					cs.setString(3, field2text);
 
 					// first need to check if middle initial
-					if (field3text.equals("Middle Initial")) {
-						cs.setString(4, null); // unchanged so we set to null
+					if (field3text.equals("")|| field3text.equals("Middle Initial")) {
+						cs.setString(4, null);
 					} else {
 						cs.setString(4, field3text);
 					}
