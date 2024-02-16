@@ -236,6 +236,8 @@ public class ScreenViewer extends JFrame {
 
 				field1.setVisible(false);
 				field2.setVisible(false);
+				field3.setVisible(false);
+
 				pass1.setVisible(false);
 				loginAsProvider.setVisible(false);
 				loginAsAdmin.setVisible(false);
@@ -693,9 +695,6 @@ public class ScreenViewer extends JFrame {
 		field1.setVisible(true);
 		pass1.setVisible(true);
 //		field2.setVisible(true);
-		if(typeOfUser == UserType.PROVIDER || typeOfUser == UserType.ADMIN) {
-			field3.setVisible(true);
-		}
 
 		loginAsProvider.setVisible(false);
 		loginAsPatient.setVisible(false);
